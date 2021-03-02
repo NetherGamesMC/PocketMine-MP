@@ -1635,9 +1635,9 @@ class World implements ChunkManager{
 			return false;
 		}
 
-		if($blockClicked->getId() === BlockLegacyIds::AIR){
-			return false;
-		}
+		//if($blockClicked->getId() === BlockLegacyIds::AIR){
+		//	return false;
+		//}
 
 		if($player !== null){
 			$ev = new PlayerInteractEvent($player, $item, $blockClicked, $clickVector, $face, PlayerInteractEvent::RIGHT_CLICK_BLOCK);
@@ -1669,7 +1669,7 @@ class World implements ChunkManager{
 			return false;
 		}
 
-		if($hand->canBePlacedAt($blockClicked, $clickVector, $face, true)){
+		if($blockClicked->getId() !== BlockLegacyIds::AIR && $hand->canBePlacedAt($blockClicked, $clickVector, $face, true)){
 			$blockReplace = $blockClicked;
 			$hand->position($this, $blockReplace->getPos()->x, $blockReplace->getPos()->y, $blockReplace->getPos()->z);
 		}elseif(!$hand->canBePlacedAt($blockReplace, $clickVector, $face, false)){
@@ -2221,9 +2221,11 @@ class World implements ChunkManager{
 				//we also can't allow this to cause chunk generation, nor can we just create an empty ungenerated chunk
 				//for it, because an empty chunk won't get saved, so the entity will vanish anyway. Therefore, this is
 				//the cleanest way to make sure this doesn't result in leaks.
-				$this->logger->debug("Entity " . $entity->getId() . " is in ungenerated terrain, flagging for despawn");
-				$entity->flagForDespawn();
-				$entity->despawnFromAll();
+				if(!$entity instanceof Player){
+					$this->logger->debug("Entity " . $entity->getId() . " is in ungenerated terrain, flagging for despawn");
+					$entity->flagForDespawn();
+					$entity->despawnFromAll();
+				}
 			}else{
 				$newViewers = $this->getViewersForPosition($newPosition);
 				foreach($entity->getViewers() as $player){
@@ -2244,6 +2246,7 @@ class World implements ChunkManager{
 	}
 
 	/**
+	 * @internal Tiles are now bound with blocks, and their creation is automatic. They should not be directly added.
 	 * @throws \InvalidArgumentException
 	 */
 	public function addTile(Tile $tile) : void{
@@ -2269,6 +2272,7 @@ class World implements ChunkManager{
 	}
 
 	/**
+	 * @internal Tiles are now bound with blocks, and their removal is automatic. They should not be directly removed.
 	 * @throws \InvalidArgumentException
 	 */
 	public function removeTile(Tile $tile) : void{

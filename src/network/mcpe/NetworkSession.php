@@ -24,12 +24,14 @@ declare(strict_types=1);
 namespace pocketmine\network\mcpe;
 
 use Mdanter\Ecc\Crypto\Key\PublicKeyInterface;
+use NetherGames\NGEssentials\player\NGPlayer;
 use pocketmine\data\bedrock\EffectIdMap;
 use pocketmine\entity\Attribute;
 use pocketmine\entity\effect\EffectInstance;
 use pocketmine\entity\Entity;
 use pocketmine\entity\Human;
 use pocketmine\entity\Living;
+use pocketmine\event\player\SessionDisconnectEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\event\server\DataPacketSendEvent;
 use pocketmine\form\Form;
@@ -71,6 +73,7 @@ use pocketmine\network\mcpe\protocol\PacketDecodeException;
 use pocketmine\network\mcpe\protocol\PacketPool;
 use pocketmine\network\mcpe\protocol\PlayerListPacket;
 use pocketmine\network\mcpe\protocol\PlayStatusPacket;
+use pocketmine\network\mcpe\protocol\ProtocolInfo;
 use pocketmine\network\mcpe\protocol\RemoveActorPacket;
 use pocketmine\network\mcpe\protocol\serializer\PacketBatch;
 use pocketmine\network\mcpe\protocol\ServerboundPacket;
@@ -170,6 +173,8 @@ class NetworkSession{
 	private $compressor;
 	/** @var bool */
 	private $forceAsyncCompression = true;
+	/** @var int|null */
+	private $protocolId = null;
 
 	/** @var PacketPool */
 	private $packetPool;
@@ -222,6 +227,14 @@ class NetworkSession{
 
 		$this->manager->add($this);
 		$this->logger->info("Session opened");
+	}
+
+	public function setProtocolId(int $protocolId) : void{
+		$this->protocolId = $protocolId;
+	}
+
+	public function getProtocolId() : int{
+		return $this->protocolId ?? ProtocolInfo::CURRENT_PROTOCOL;
 	}
 
 	private function getLogPrefix() : string{
@@ -341,8 +354,9 @@ class NetworkSession{
 			Timings::$playerNetworkReceiveDecompress->stopTiming();
 		}
 
+		$max = 500;
 		try{
-			foreach($stream->getPackets($this->packetPool, 500) as $packet){
+			foreach($stream->getPackets($this->getProtocolId(), $this->packetPool, $max) as $packet){
 				try{
 					$this->handleDataPacket($packet);
 				}catch(BadPacketException $e){
@@ -351,7 +365,9 @@ class NetworkSession{
 				}
 			}
 		}catch(PacketDecodeException $e){
-			$this->logger->logException($e);
+			if(strpos($e->getMessage(), "Reached limit of $max packets in a single batch") === false){
+				$this->logger->logException($e);
+			}
 			throw BadPacketException::wrap($e, "Packet batch decode error");
 		}
 	}
@@ -441,7 +457,7 @@ class NetworkSession{
 			}elseif($this->forceAsyncCompression){
 				$syncMode = false;
 			}
-			$promise = $this->server->prepareBatch(PacketBatch::fromPackets(...$this->sendBuffer), $this->compressor, $syncMode);
+			$promise = $this->server->prepareBatch(PacketBatch::fromPackets($this->getProtocolId(), ...$this->sendBuffer), $this->compressor, $syncMode);
 			$this->sendBuffer = [];
 			$this->queueCompressedNoBufferFlush($promise, $immediate);
 		}
@@ -559,6 +575,9 @@ class NetworkSession{
 		if($notify){
 			$this->sendDataPacket($reason === "" ? DisconnectPacket::silent() : DisconnectPacket::message($reason), true);
 		}
+
+		$event = new SessionDisconnectEvent($this);
+		$event->call();
 
 		$this->sender->close($notify ? $reason : "");
 	}
@@ -751,7 +770,9 @@ class NetworkSession{
 		$pk->setFlag(AdventureSettingsPacket::NO_PVP, $for->isSpectator());
 		$pk->setFlag(AdventureSettingsPacket::AUTO_JUMP, $for->hasAutoJump());
 		$pk->setFlag(AdventureSettingsPacket::ALLOW_FLIGHT, $for->getAllowFlight());
-		$pk->setFlag(AdventureSettingsPacket::NO_CLIP, $for->isSpectator());
+
+		/** @var NGPlayer $for */
+		$pk->setFlag(AdventureSettingsPacket::NO_CLIP, $for->canNoClip());
 		$pk->setFlag(AdventureSettingsPacket::FLYING, $for->isFlying());
 
 		//TODO: permission flags
