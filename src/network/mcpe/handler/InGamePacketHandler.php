@@ -881,6 +881,7 @@ class InGamePacketHandler extends PacketHandler{
 		 * action bound to it.
 		 * In addition, we use this handler to silence debug noise, since this packet is frequently sent by the client.
 		 */
+		$this->player->getWorld()->broadcastPacketToViewers($this->player->getPosition(), $packet);
 		return true;
 	}
 }
