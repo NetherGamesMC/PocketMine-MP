@@ -718,23 +718,23 @@
         },
         {
             "name": "pocketmine/raklib-ipc",
-            "version": "0.1.0",
+            "version": "0.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pmmp/RakLibIpc.git",
-                "reference": "85f1a4834e34abd6d77f622f14731e8ef06dc7cf"
+                "reference": "922a6444b0c6c7daaa5aa5a832107e1ec4738aed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pmmp/RakLibIpc/zipball/85f1a4834e34abd6d77f622f14731e8ef06dc7cf",
-                "reference": "85f1a4834e34abd6d77f622f14731e8ef06dc7cf",
+                "url": "https://api.github.com/repos/pmmp/RakLibIpc/zipball/922a6444b0c6c7daaa5aa5a832107e1ec4738aed",
+                "reference": "922a6444b0c6c7daaa5aa5a832107e1ec4738aed",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.4 || ^8.0",
                 "php-64bit": "*",
                 "pocketmine/binaryutils": "^0.2.0",
-                "pocketmine/raklib": "^0.13.1"
+                "pocketmine/raklib": "^0.13.1 || ^0.14.0"
             },
             "require-dev": {
                 "phpstan/phpstan": "0.12.81",
@@ -753,9 +753,9 @@
             "description": "Channel-based protocols for inter-thread/inter-process communication with RakLib",
             "support": {
                 "issues": "https://github.com/pmmp/RakLibIpc/issues",
-                "source": "https://github.com/pmmp/RakLibIpc/tree/0.1.0"
+                "source": "https://github.com/pmmp/RakLibIpc/tree/0.1.1"
             },
-            "time": "2021-05-18T21:19:03+00:00"
+            "time": "2021-09-22T17:01:12+00:00"
         },
         {
             "name": "pocketmine/snooze",
