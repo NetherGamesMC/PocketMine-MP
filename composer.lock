@@ -763,25 +763,25 @@
         },
         {
             "name": "pocketmine/snooze",
-            "version": "0.3.0",
+            "version": "0.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pmmp/Snooze.git",
-                "reference": "fe5b1dbf0d6267da882d1f67924772bd93db833d"
+                "reference": "0ac8fc2a781c419a1f64ebca4d5835028f59e29b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pmmp/Snooze/zipball/fe5b1dbf0d6267da882d1f67924772bd93db833d",
-                "reference": "fe5b1dbf0d6267da882d1f67924772bd93db833d",
+                "url": "https://api.github.com/repos/pmmp/Snooze/zipball/0ac8fc2a781c419a1f64ebca4d5835028f59e29b",
+                "reference": "0ac8fc2a781c419a1f64ebca4d5835028f59e29b",
                 "shasum": ""
             },
             "require": {
-                "ext-pthreads": ">=3.1.7dev",
+                "ext-pthreads": "~3.2.0 || ^4.0",
                 "php-64bit": "^7.3 || ^8.0"
             },
             "require-dev": {
                 "phpstan/extension-installer": "^1.0",
-                "phpstan/phpstan": "0.12.88",
+                "phpstan/phpstan": "0.12.99",
                 "phpstan/phpstan-strict-rules": "^0.12.4"
             },
             "type": "library",
@@ -797,9 +797,9 @@
             "description": "Thread notification management library for code using the pthreads extension",
             "support": {
                 "issues": "https://github.com/pmmp/Snooze/issues",
-                "source": "https://github.com/pmmp/Snooze/tree/0.3.0"
+                "source": "https://github.com/pmmp/Snooze/tree/0.3.1"
             },
-            "time": "2021-06-13T13:57:47+00:00"
+            "time": "2021-11-01T20:50:08+00:00"
         },
         {
             "name": "pocketmine/spl",
