@@ -895,7 +895,7 @@ class NetworkSession{
 		$isOp = $for->hasPermission(DefaultPermissions::ROOT_OPERATOR);
 		$pk = AdventureSettingsPacket::create(
 			0,
-			$isOp ? AdventureSettingsPacket::PERMISSION_OPERATOR : AdventureSettingsPacket::PERMISSION_NORMAL,
+			$isOp ? CommandPermissions::OPERATOR : CommandPermissions::NORMAL,
 			0,
 			$isOp ? PlayerPermissions::OPERATOR : PlayerPermissions::MEMBER,
 			0,
