@@ -39,6 +39,7 @@ use pocketmine\inventory\PlayerOffHandInventory;
 use pocketmine\item\enchantment\VanillaEnchantments;
 use pocketmine\item\Item;
 use pocketmine\item\Totem;
+use pocketmine\network\mcpe\protocol\UpdateAbilitiesPacket;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\CompoundTag;
@@ -471,18 +472,19 @@ class Human extends Living implements ProjectileSource, InventoryHolder{
 		$player->getNetworkSession()->sendDataPacket(AddPlayerPacket::create(
 			$this->getUniqueId(),
 			$this->getName(),
-			$this->getId(), //TODO: actor unique ID
+			$this->getId(),
 			$this->getId(),
 			"",
 			$this->location->asVector3(),
 			$this->getMotion(),
 			$this->location->pitch,
 			$this->location->yaw,
-			$this->location->yaw, //TODO: head yaw
+			$this->location->yaw,
 			ItemStackWrapper::legacy(TypeConverter::getInstance()->coreItemStackToNet($player->getNetworkSession()->getProtocolId(), $this->getInventory()->getItemInHand())),
 			GameMode::SURVIVAL,
 			$this->getAllNetworkData(),
 			AdventureSettingsPacket::create(0, 0, 0, 0, 0, $this->getId()), //TODO
+			UpdateAbilitiesPacket::create(0, 0, $this->getId() /* TODO: this should be unique ID */, []),
 			[], //TODO: entity links
 			"", //device ID (we intentionally don't send this - secvuln)
 			DeviceOS::UNKNOWN //we intentionally don't send this (secvuln)

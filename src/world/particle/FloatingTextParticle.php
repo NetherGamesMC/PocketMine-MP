@@ -121,6 +121,7 @@ class FloatingTextParticle implements Particle{
 				GameMode::SURVIVAL,
 				$actorMetadata,
 				AdventureSettingsPacket::create(0, 0, 0, 0, 0, $this->entityId),
+				UpdateAbilitiesPacket::create(0, 0, $this->entityId, []),
 				[],
 				"",
 				DeviceOS::UNKNOWN

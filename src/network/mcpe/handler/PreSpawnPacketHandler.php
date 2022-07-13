@@ -32,6 +32,7 @@ use pocketmine\network\mcpe\InventoryManager;
 use pocketmine\network\mcpe\NetworkSession;
 use pocketmine\network\mcpe\protocol\RequestChunkRadiusPacket;
 use pocketmine\network\mcpe\protocol\StartGamePacket;
+use pocketmine\network\mcpe\protocol\ProtocolInfo;
 use pocketmine\network\mcpe\protocol\types\BlockPosition;
 use pocketmine\network\mcpe\protocol\types\BoolGameRule;
 use pocketmine\network\mcpe\protocol\types\CacheableNbt;
@@ -109,7 +110,10 @@ class PreSpawnPacketHandler extends ChunkRequestPacketHandler{
 		$this->session->sendDataPacket(StaticPacketCache::getInstance()->getBiomeDefs());
 		$this->session->syncAttributes($this->player, $this->player->getAttributeMap()->getAll());
 		$this->session->syncAvailableCommands();
-		$this->session->syncAdventureSettings($this->player);
+		if ($this->session->getProtocolId() >= ProtocolInfo::PROTOCOL_1_19_10) {
+			$this->session->syncAbilities($this->player);
+			$this->session->syncAdventureSettings();
+		} else $this->session->syncAdventureSettings($this->player);
 		foreach($this->player->getEffects()->all() as $effect){
 			$this->session->onEntityEffectAdded($this->player, $effect, false);
 		}

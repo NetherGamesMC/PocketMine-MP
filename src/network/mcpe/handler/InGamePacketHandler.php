@@ -1002,7 +1002,8 @@ class InGamePacketHandler extends ChunkRequestPacketHandler{
 			}
 			if($isFlying !== $this->player->isFlying()){
 				if(!$this->player->toggleFlight($isFlying)){
-					$this->session->syncAdventureSettings($this->player);
+					if ($this->session->getProtocolId() >= ProtocolInfo::PROTOCOL_1_19_10) $this->session->syncAbilities($this->player);
+					else $this->session->syncAdventureSettings($this->player);
 				}
 			}
 

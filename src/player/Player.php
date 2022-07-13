@@ -110,6 +110,7 @@ use pocketmine\network\mcpe\protocol\types\BlockPosition;
 use pocketmine\network\mcpe\protocol\types\entity\EntityMetadataCollection;
 use pocketmine\network\mcpe\protocol\types\entity\EntityMetadataFlags;
 use pocketmine\network\mcpe\protocol\types\entity\EntityMetadataProperties;
+use pocketmine\network\mcpe\protocol\ProtocolInfo;
 use pocketmine\network\mcpe\protocol\types\entity\PlayerMetadataFlags;
 use pocketmine\permission\DefaultPermissionNames;
 use pocketmine\permission\DefaultPermissions;
@@ -421,7 +422,8 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer{
 	public function setAllowFlight(bool $value) : void{
 		if($this->allowFlight !== $value){
 			$this->allowFlight = $value;
-			$this->getNetworkSession()->syncAdventureSettings($this);
+			if ($this->getNetworkSession()->getProtocolId() >= ProtocolInfo::PROTOCOL_1_19_10) $this->getNetworkSession()->syncAbilities($this);
+			else $this->getNetworkSession()->syncAdventureSettings($this);
 		}
 	}
 
@@ -432,7 +434,8 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer{
 	public function setHasBlockCollision(bool $value) : void{
 		if($this->blockCollision !== $value){
 			$this->blockCollision = $value;
-			$this->getNetworkSession()->syncAdventureSettings($this);
+			if ($this->getNetworkSession()->getProtocolId() >= ProtocolInfo::PROTOCOL_1_19_10) $this->getNetworkSession()->syncAbilities($this);
+			else $this->getNetworkSession()->syncAdventureSettings($this);
 		}
 	}
 
@@ -455,7 +458,8 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer{
 	public function setAutoJump(bool $value) : void{
 		if($this->autoJump !== $value){
 			$this->autoJump = $value;
-			$this->getNetworkSession()->syncAdventureSettings($this);
+			if ($this->getNetworkSession()->getProtocolId() >= ProtocolInfo::PROTOCOL_1_19_10) $this->getNetworkSession()->syncAdventureSettings($this);
+			else $this->getNetworkSession()->syncAdventureSettings();
 		}
 	}
 
