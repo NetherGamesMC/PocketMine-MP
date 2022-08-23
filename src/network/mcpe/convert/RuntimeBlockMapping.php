@@ -132,6 +132,8 @@ final class RuntimeBlockMapping{
 	public static function getMappingProtocol(int $protocolId) : int{
 		if($protocolId === ProtocolInfo::PROTOCOL_1_19_0){
 			return ProtocolInfo::PROTOCOL_1_19_10;
+		}elseif($protocolId === ProtocolInfo::PROTOCOL_1_19_20){
+			return ProtocolInfo::PROTOCOL_1_19_21;
 		}
 
 		return $protocolId;
