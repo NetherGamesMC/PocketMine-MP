@@ -648,16 +648,16 @@
         },
         {
             "name": "pocketmine/math",
-            "version": "0.4.2",
+            "version": "0.4.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pmmp/Math.git",
-                "reference": "aacc3759a508a69dfa5bc4dfa770ab733c5c94bf"
+                "reference": "47a243d320b01c8099d65309967934c188111549"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pmmp/Math/zipball/aacc3759a508a69dfa5bc4dfa770ab733c5c94bf",
-                "reference": "aacc3759a508a69dfa5bc4dfa770ab733c5c94bf",
+                "url": "https://api.github.com/repos/pmmp/Math/zipball/47a243d320b01c8099d65309967934c188111549",
+                "reference": "47a243d320b01c8099d65309967934c188111549",
                 "shasum": ""
             },
             "require": {
@@ -666,7 +666,7 @@
             },
             "require-dev": {
                 "phpstan/extension-installer": "^1.0",
-                "phpstan/phpstan": "1.2.0",
+                "phpstan/phpstan": "1.8.2",
                 "phpstan/phpstan-strict-rules": "^1.0",
                 "phpunit/phpunit": "^8.5 || ^9.5"
             },
@@ -683,9 +683,9 @@
             "description": "PHP library containing math related code used in PocketMine-MP",
             "support": {
                 "issues": "https://github.com/pmmp/Math/issues",
-                "source": "https://github.com/pmmp/Math/tree/0.4.2"
+                "source": "https://github.com/pmmp/Math/tree/0.4.3"
             },
-            "time": "2021-12-05T01:15:17+00:00"
+            "time": "2022-08-25T18:43:37+00:00"
         },
         {
             "name": "pocketmine/nbt",
