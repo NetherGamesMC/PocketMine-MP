@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2eda027fc5b2d570be14ae507fc92be3",
+    "content-hash": "e8011139ccad4a90c47f8c3ee6ec4246",
     "packages": [
         {
             "name": "adhocore/json-comment",
-            "version": "1.1.2",
+            "version": "1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/adhocore/php-json-comment.git",
-                "reference": "fc2f76979f0a44a5f5bc2a2b600d0762fe0e78e7"
+                "reference": "651023f9fe52e9efa2198cbaf6e481d1968e2377"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/adhocore/php-json-comment/zipball/fc2f76979f0a44a5f5bc2a2b600d0762fe0e78e7",
-                "reference": "fc2f76979f0a44a5f5bc2a2b600d0762fe0e78e7",
+                "url": "https://api.github.com/repos/adhocore/php-json-comment/zipball/651023f9fe52e9efa2198cbaf6e481d1968e2377",
+                "reference": "651023f9fe52e9efa2198cbaf6e481d1968e2377",
                 "shasum": ""
             },
             "require": {
@@ -51,15 +51,19 @@
             ],
             "support": {
                 "issues": "https://github.com/adhocore/php-json-comment/issues",
-                "source": "https://github.com/adhocore/php-json-comment/tree/1.1.2"
+                "source": "https://github.com/adhocore/php-json-comment/tree/1.2.1"
             },
             "funding": [
                 {
                     "url": "https://paypal.me/ji10",
                     "type": "custom"
+                },
+                {
+                    "url": "https://github.com/adhocore",
+                    "type": "github"
                 }
             ],
-            "time": "2021-04-09T03:06:06+00:00"
+            "time": "2022-10-02T11:22:07+00:00"
         },
         {
             "name": "brick/math",
@@ -194,41 +198,40 @@
         },
         {
             "name": "nethergamesmc/bedrock-data",
-            "version": "dev-master",
+            "version": "dev-protocol/1_16",
             "source": {
                 "type": "git",
-                "url": "https://github.com/NetherGamesMC/BedrockData.git",
-                "reference": "7eebaf8516b5c99da85e8e7e666a5cb93cbf3ff6"
+                "url": "https://github.com/Flonja/BedrockData.git",
+                "reference": "066d97982fb41f917aeb21b79fc7ee90ecff9123"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/NetherGamesMC/BedrockData/zipball/7eebaf8516b5c99da85e8e7e666a5cb93cbf3ff6",
-                "reference": "7eebaf8516b5c99da85e8e7e666a5cb93cbf3ff6",
+                "url": "https://api.github.com/repos/Flonja/BedrockData/zipball/066d97982fb41f917aeb21b79fc7ee90ecff9123",
+                "reference": "066d97982fb41f917aeb21b79fc7ee90ecff9123",
                 "shasum": ""
             },
-            "default-branch": true,
             "type": "library",
             "license": [
                 "CC0-1.0"
             ],
             "description": "Blobs of data generated from Minecraft: Bedrock Edition, used by PocketMine-MP",
             "support": {
-                "source": "https://github.com/NetherGamesMC/BedrockData/tree/master"
+                "source": "https://github.com/Flonja/BedrockData/tree/protocol/1_16"
             },
-            "time": "2022-09-20T19:39:01+00:00"
+            "time": "2022-10-09T15:00:26+00:00"
         },
         {
             "name": "nethergamesmc/bedrock-protocol",
-            "version": "dev-master",
+            "version": "dev-protocol/1_16",
             "source": {
                 "type": "git",
-                "url": "https://github.com/NetherGamesMC/BedrockProtocol.git",
-                "reference": "a3eaf2184f5767966dc76990a78e89ace637b087"
+                "url": "https://github.com/Flonja/BedrockProtocol.git",
+                "reference": "3d226cb5797339041d1fc44d00f66b2d4fdccbf1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/NetherGamesMC/BedrockProtocol/zipball/a3eaf2184f5767966dc76990a78e89ace637b087",
-                "reference": "a3eaf2184f5767966dc76990a78e89ace637b087",
+                "url": "https://api.github.com/repos/Flonja/BedrockProtocol/zipball/3d226cb5797339041d1fc44d00f66b2d4fdccbf1",
+                "reference": "3d226cb5797339041d1fc44d00f66b2d4fdccbf1",
                 "shasum": ""
             },
             "require": {
@@ -247,7 +250,6 @@
                 "phpstan/phpstan-strict-rules": "^1.0.0",
                 "phpunit/phpunit": "^9.5"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -269,9 +271,9 @@
             ],
             "description": "An implementation of the Minecraft: Bedrock Edition protocol in PHP",
             "support": {
-                "source": "https://github.com/NetherGamesMC/BedrockProtocol/tree/master"
+                "source": "https://github.com/Flonja/BedrockProtocol/tree/protocol/1_16"
             },
-            "time": "2022-09-20T19:32:47+00:00"
+            "time": "2022-10-09T14:39:28+00:00"
         },
         {
             "name": "netresearch/jsonmapper",
@@ -3146,5 +3148,5 @@
     "platform-overrides": {
         "php": "8.0.0"
     },
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.1.0"
 }
