@@ -226,12 +226,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Flonja/BedrockProtocol.git",
-                "reference": "3d226cb5797339041d1fc44d00f66b2d4fdccbf1"
+                "reference": "bdcfad46046c785c1445a6d92c9718add6da91e6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Flonja/BedrockProtocol/zipball/3d226cb5797339041d1fc44d00f66b2d4fdccbf1",
-                "reference": "3d226cb5797339041d1fc44d00f66b2d4fdccbf1",
+                "url": "https://api.github.com/repos/Flonja/BedrockProtocol/zipball/bdcfad46046c785c1445a6d92c9718add6da91e6",
+                "reference": "bdcfad46046c785c1445a6d92c9718add6da91e6",
                 "shasum": ""
             },
             "require": {
@@ -273,7 +273,7 @@
             "support": {
                 "source": "https://github.com/Flonja/BedrockProtocol/tree/protocol/1_16"
             },
-            "time": "2022-10-09T14:39:28+00:00"
+            "time": "2022-10-09T19:41:51+00:00"
         },
         {
             "name": "netresearch/jsonmapper",

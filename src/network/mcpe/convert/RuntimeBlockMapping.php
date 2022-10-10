@@ -142,6 +142,10 @@ final class RuntimeBlockMapping{
 			return ProtocolInfo::PROTOCOL_1_19_30;
 		}
 
+		if($protocolId >= ProtocolInfo::PROTOCOL_1_16_210){
+			return ProtocolInfo::PROTOCOL_1_16_220;
+		}
+
 		return $protocolId;
 	}
 
