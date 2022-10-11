@@ -116,7 +116,7 @@ class FloatingTextParticle extends MappingParticle{
 				0,
 				0,
 				[],
-				$actorMetadata,
+				EntityMetadataProperties::convertProps($this->mappingProtocol, $actorMetadata),
 				[]
 			);
 		}

@@ -1475,7 +1475,7 @@ abstract class Entity{
 			array_map(function(Attribute $attr) : NetworkAttribute{
 				return new NetworkAttribute($attr->getId(), $attr->getMinValue(), $attr->getMaxValue(), $attr->getValue(), $attr->getDefaultValue(), []);
 			}, $this->attributeMap->getAll()),
-			$this->getAllNetworkData(),
+			EntityMetadataProperties::convertProps($player->getNetworkSession()->getProtocolId(), $this->getAllNetworkData()),
 			[] //TODO: entity links
 		));
 	}
