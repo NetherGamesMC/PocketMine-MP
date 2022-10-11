@@ -220,6 +220,7 @@ class LoginPacketHandler extends ChunkRequestPacketHandler{
 	}
 
 	protected function isCompatibleProtocol(int $protocolVersion) : bool{
-		return in_array($protocolVersion, ProtocolInfo::ACCEPTED_PROTOCOL, true);
+		$minimalProtocol = $this->server->getConfigGroup()->getConfigInt("protocol-support.min-accepted-protocol", ProtocolInfo::PROTOCOL_1_17_0);
+		return in_array($protocolVersion, ProtocolInfo::ACCEPTED_PROTOCOL, true) && $protocolVersion >= $minimalProtocol;
 	}
 }

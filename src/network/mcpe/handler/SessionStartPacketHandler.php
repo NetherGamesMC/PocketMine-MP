@@ -74,6 +74,7 @@ final class SessionStartPacketHandler extends PacketHandler{
 	}
 
 	protected function isCompatibleProtocol(int $protocolVersion) : bool{
-		return $protocolVersion >= ProtocolInfo::PROTOCOL_1_19_30 && in_array($protocolVersion, ProtocolInfo::ACCEPTED_PROTOCOL, true);
+		$minimalProtocol = $this->server->getConfigGroup()->getConfigInt("protocol-support.min-accepted-protocol", ProtocolInfo::PROTOCOL_1_17_0);
+		return $protocolVersion >= ProtocolInfo::PROTOCOL_1_19_30 && in_array($protocolVersion, ProtocolInfo::ACCEPTED_PROTOCOL, true) && $protocolVersion >= $minimalProtocol;
 	}
 }
