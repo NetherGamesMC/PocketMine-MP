@@ -843,7 +843,7 @@ class Server{
 					"xbox-auth" => true,
 					"language" => "eng"
 				]),
-				new Config($pocketmineYmlPath, Config::YAML, [])
+				new Config($nethergamesYmlPath, Config::YAML, [])
 			);
 
 			$debugLogLevel = $this->configGroup->getPropertyInt("debug.level", 1);
