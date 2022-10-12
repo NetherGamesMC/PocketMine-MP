@@ -38,10 +38,7 @@ final class ConsumingItemAnimation extends DictionaryAnimation{
 	){}
 
 	public function encode() : array{
-		[$netId, $netData] = [$this->item->getId(), $this->item->getMeta()];
-		if($this->dictionaryProtocol >= ProtocolInfo::PROTOCOL_1_16_100) {
-			[$netId, $netData] = ItemTranslator::getInstance()->toNetworkId($this->dictionaryProtocol, $this->item->getId(), $this->item->getMeta());
-		}
+		[$netId, $netData] = ItemTranslator::getInstance()->toNetworkId($this->dictionaryProtocol, $this->item->getId(), $this->item->getMeta());
 
 		return [
 			//TODO: need to check the data values
