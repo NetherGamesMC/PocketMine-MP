@@ -43,6 +43,7 @@ use pocketmine\nbt\NbtException;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
 use pocketmine\network\mcpe\InventoryManager;
+use pocketmine\network\mcpe\protocol\ProtocolInfo;
 use pocketmine\network\mcpe\protocol\types\GameMode as ProtocolGameMode;
 use pocketmine\network\mcpe\protocol\types\inventory\ContainerIds;
 use pocketmine\network\mcpe\protocol\types\inventory\ItemStack;
@@ -72,6 +73,7 @@ class TypeConverter{
 		foreach(GlobalItemTypeDictionary::getInstance()->getDictionaries() as $protocolId => $dictionary){
 			$this->shieldRuntimeIds[$protocolId] = $dictionary->fromStringId("minecraft:shield");
 		}
+		$this->shieldRuntimeIds[ProtocolInfo::PROTOCOL_1_16_20] = ItemIds::SHIELD;
 	}
 
 	/**

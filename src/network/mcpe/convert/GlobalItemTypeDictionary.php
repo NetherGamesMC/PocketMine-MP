@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace pocketmine\network\mcpe\convert;
 
+use pocketmine\data\bedrock\LegacyItemIdToStringIdMap;
 use pocketmine\network\mcpe\protocol\ProtocolInfo;
 use pocketmine\network\mcpe\protocol\serializer\ItemTypeDictionary;
 use pocketmine\network\mcpe\protocol\types\ItemTypeEntry;
@@ -54,6 +55,9 @@ final class GlobalItemTypeDictionary{
 			ProtocolInfo::PROTOCOL_1_17_0 => "-1.17.0",
 			ProtocolInfo::PROTOCOL_1_16_220 => "-1.16.100",
 		];
+		$legacyProtocols = [
+			ProtocolInfo::PROTOCOL_1_16_20,
+		];
 
 		$dictionaries = [];
 
@@ -70,6 +74,14 @@ final class GlobalItemTypeDictionary{
 					throw new AssumptionFailedError("Invalid item list format");
 				}
 				$params[] = new ItemTypeEntry($name, $entry["runtime_id"], $entry["component_based"]);
+			}
+
+			$dictionaries[$protocolId] = new ItemTypeDictionary($params);
+		}
+		foreach($legacyProtocols as $protocolId) {
+			$params = [];
+			foreach(LegacyItemIdToStringIdMap::getInstance()->getLegacyToStringMap() as $id => $name){
+				$params[] = new ItemTypeEntry($name, $id, false);
 			}
 
 			$dictionaries[$protocolId] = new ItemTypeDictionary($params);

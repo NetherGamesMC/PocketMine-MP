@@ -202,12 +202,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Flonja/BedrockData.git",
-                "reference": "cfc61f5e1d2a2bbb61262b6d604f7a7f97e187da"
+                "reference": "e0f6250c6977f066f9cd7f4c0233c2a4666a717d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Flonja/BedrockData/zipball/cfc61f5e1d2a2bbb61262b6d604f7a7f97e187da",
-                "reference": "cfc61f5e1d2a2bbb61262b6d604f7a7f97e187da",
+                "url": "https://api.github.com/repos/Flonja/BedrockData/zipball/e0f6250c6977f066f9cd7f4c0233c2a4666a717d",
+                "reference": "e0f6250c6977f066f9cd7f4c0233c2a4666a717d",
                 "shasum": ""
             },
             "type": "library",
@@ -218,7 +218,7 @@
             "support": {
                 "source": "https://github.com/Flonja/BedrockData/tree/protocol/1_16"
             },
-            "time": "2022-10-11T14:35:25+00:00"
+            "time": "2022-10-12T15:09:48+00:00"
         },
         {
             "name": "nethergamesmc/bedrock-protocol",
@@ -226,12 +226,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Flonja/BedrockProtocol.git",
-                "reference": "991b8533c075e21370ecf0d20d31bbf7f3cb2510"
+                "reference": "914a23824d1d3accfdcc57d1b0297e9ab7dfa8c0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Flonja/BedrockProtocol/zipball/991b8533c075e21370ecf0d20d31bbf7f3cb2510",
-                "reference": "991b8533c075e21370ecf0d20d31bbf7f3cb2510",
+                "url": "https://api.github.com/repos/Flonja/BedrockProtocol/zipball/914a23824d1d3accfdcc57d1b0297e9ab7dfa8c0",
+                "reference": "914a23824d1d3accfdcc57d1b0297e9ab7dfa8c0",
                 "shasum": ""
             },
             "require": {
@@ -273,7 +273,7 @@
             "support": {
                 "source": "https://github.com/Flonja/BedrockProtocol/tree/protocol/1_16"
             },
-            "time": "2022-10-11T17:56:11+00:00"
+            "time": "2022-10-12T14:10:45+00:00"
         },
         {
             "name": "netresearch/jsonmapper",

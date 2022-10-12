@@ -27,6 +27,7 @@ use pocketmine\entity\Human;
 use pocketmine\item\Item;
 use pocketmine\network\mcpe\convert\ItemTranslator;
 use pocketmine\network\mcpe\protocol\ActorEventPacket;
+use pocketmine\network\mcpe\protocol\ProtocolInfo;
 use pocketmine\network\mcpe\protocol\types\ActorEvent;
 
 final class ConsumingItemAnimation extends DictionaryAnimation{
@@ -37,7 +38,11 @@ final class ConsumingItemAnimation extends DictionaryAnimation{
 	){}
 
 	public function encode() : array{
-		[$netId, $netData] = ItemTranslator::getInstance()->toNetworkId($this->dictionaryProtocol, $this->item->getId(), $this->item->getMeta());
+		[$netId, $netData] = [$this->item->getId(), $this->item->getMeta()];
+		if($this->dictionaryProtocol >= ProtocolInfo::PROTOCOL_1_16_100) {
+			[$netId, $netData] = ItemTranslator::getInstance()->toNetworkId($this->dictionaryProtocol, $this->item->getId(), $this->item->getMeta());
+		}
+
 		return [
 			//TODO: need to check the data values
 			ActorEventPacket::create($this->human->getId(), ActorEvent::EATING_ITEM, ($netId << 16) | $netData)

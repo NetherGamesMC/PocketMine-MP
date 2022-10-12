@@ -23,15 +23,19 @@ declare(strict_types=1);
 
 namespace pocketmine\network\mcpe\handler;
 
+use pocketmine\data\bedrock\LegacyBlockIdToStringIdMap;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\network\mcpe\cache\CraftingDataCache;
 use pocketmine\network\mcpe\cache\StaticPacketCache;
 use pocketmine\network\mcpe\convert\GlobalItemTypeDictionary;
+use pocketmine\network\mcpe\convert\RuntimeBlockMapping;
 use pocketmine\network\mcpe\convert\TypeConverter;
 use pocketmine\network\mcpe\InventoryManager;
 use pocketmine\network\mcpe\NetworkSession;
+use pocketmine\network\mcpe\protocol\ProtocolInfo;
 use pocketmine\network\mcpe\protocol\RequestChunkRadiusPacket;
 use pocketmine\network\mcpe\protocol\StartGamePacket;
+use pocketmine\network\mcpe\protocol\types\BlockPaletteEntry;
 use pocketmine\network\mcpe\protocol\types\BlockPosition;
 use pocketmine\network\mcpe\protocol\types\BoolGameRule;
 use pocketmine\network\mcpe\protocol\types\CacheableNbt;
@@ -80,6 +84,20 @@ class PreSpawnPacketHandler extends ChunkRequestPacketHandler{
 		];
 		$levelSettings->experiments = new Experiments([], false);
 
+		$blockStates = [];
+		if($this->session->getProtocolId() < ProtocolInfo::PROTOCOL_1_16_100) {
+			$knownStates = RuntimeBlockMapping::getInstance()->getBedrockKnownStates($this->session->getProtocolId());
+
+			foreach($knownStates as $knownState) {
+				$name = $knownState->getString("name");
+
+				$state = CompoundTag::create();
+				$state->setTag("block", $knownState);
+				$state->setShort("id", LegacyBlockIdToStringIdMap::getInstance()->stringToLegacy($name) ?? 0);
+				$blockStates[] = new BlockPaletteEntry($name, new CacheableNbt($state));
+			}
+		}
+
 		$this->session->sendDataPacket(StartGamePacket::create(
 			$this->player->getId(),
 			$this->player->getId(),
@@ -101,7 +119,7 @@ class PreSpawnPacketHandler extends ChunkRequestPacketHandler{
 			 "NetherGames v4.0",
 			Uuid::fromString(Uuid::NIL),
 			false,
-			[],
+			$blockStates,
 			0,
 			GlobalItemTypeDictionary::getInstance()->getDictionary($dictionaryProtocol)->getEntries(),
 		));
