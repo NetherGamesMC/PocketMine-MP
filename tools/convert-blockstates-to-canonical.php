@@ -33,6 +33,11 @@ use pocketmine\network\mcpe\protocol\serializer\PacketSerializer;
 use pocketmine\network\mcpe\protocol\serializer\PacketSerializerContext;
 use pocketmine\utils\Utils;
 use Webmozart\PathUtil\Path;
+use function defined;
+use function dirname;
+use function file_get_contents;
+use function file_put_contents;
+use function usort;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
