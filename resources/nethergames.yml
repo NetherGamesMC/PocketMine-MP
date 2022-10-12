@@ -5,5 +5,5 @@
 protocol-support:
   #A minimal accepted protocol is to set a limit on what the oldest minecraft protocol can join, set to 0 to disable
   #The list of all protocols supported can be found at: (default 1.17.0)
-  #https://github.com/Flonja/BedrockProtocol/blob/protocol/1_16/src/ProtocolInfo.php#L59-L73 (TODO: UPDATE WHEN FINISHED)
+  #https://github.com/Flonja/BedrockProtocol/blob/protocol/1_16/src/ProtocolInfo.php#L62-L79
   min-accepted-protocol: 440
