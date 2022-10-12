@@ -33,6 +33,7 @@ use pocketmine\network\mcpe\convert\TypeConverter;
 use pocketmine\network\mcpe\InventoryManager;
 use pocketmine\network\mcpe\NetworkSession;
 use pocketmine\network\mcpe\protocol\ProtocolInfo;
+use pocketmine\network\mcpe\protocol\PlayerAuthInputPacket;
 use pocketmine\network\mcpe\protocol\RequestChunkRadiusPacket;
 use pocketmine\network\mcpe\protocol\StartGamePacket;
 use pocketmine\network\mcpe\protocol\types\BlockPaletteEntry;
@@ -150,8 +151,10 @@ class PreSpawnPacketHandler extends ChunkRequestPacketHandler{
 
 		$this->session->getLogger()->debug("Sending inventory");
 		$this->inventoryManager->syncAll();
-		$this->inventoryManager->syncCreative();
 		$this->inventoryManager->syncSelectedHotbarSlot();
+
+		$this->session->getLogger()->debug("Sending creative inventory data");
+		$this->inventoryManager->syncCreative();
 
 		$this->session->getLogger()->debug("Sending crafting data");
 		$this->session->sendDataPacket(CraftingDataCache::getInstance()->getCache($dictionaryProtocol, $this->server->getCraftingManager()));
@@ -163,6 +166,12 @@ class PreSpawnPacketHandler extends ChunkRequestPacketHandler{
 	public function handleRequestChunkRadius(RequestChunkRadiusPacket $packet) : bool{
 		$this->player->setViewDistance($packet->radius);
 
+		return true;
+	}
+
+	public function handlePlayerAuthInput(PlayerAuthInputPacket $packet) : bool{
+		//the client will send this every tick once we start sending chunks, but we don't handle it in this stage
+		//this is very spammy so we filter it out
 		return true;
 	}
 }
