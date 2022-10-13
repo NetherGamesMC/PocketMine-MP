@@ -638,6 +638,25 @@ class InGamePacketHandler extends ChunkRequestPacketHandler{
 			case PlayerAction::CREATIVE_PLAYER_DESTROY_BLOCK:
 				//TODO: do we need to handle this?
 				break;
+			case PlayerAction::START_SNEAK:
+			case PlayerAction::STOP_SNEAK:
+				$this->player->syncPlayerActions($action === PlayerAction::START_SNEAK, null, null, null);
+				break;
+			case PlayerAction::START_SPRINT:
+			case PlayerAction::STOP_SPRINT:
+				$this->player->syncPlayerActions(null, $action === PlayerAction::START_SPRINT, null, null);
+				break;
+			case PlayerAction::START_SWIMMING:
+			case PlayerAction::STOP_SWIMMING:
+				$this->player->syncPlayerActions(null, null, $action === PlayerAction::START_SWIMMING, null);
+				break;
+			case PlayerAction::START_GLIDE:
+			case PlayerAction::STOP_GLIDE:
+				$this->player->syncPlayerActions(null, null, null, $action === PlayerAction::START_GLIDE);
+				break;
+			case PlayerAction::JUMP:
+				$this->player->jump();
+				break;
 			case PlayerAction::START_ITEM_USE_ON:
 			case PlayerAction::STOP_ITEM_USE_ON:
 				//TODO: this has no obvious use and seems only used for analytics in vanilla - ignore it
