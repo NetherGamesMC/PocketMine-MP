@@ -55,6 +55,7 @@ final class GlobalItemTypeDictionary{
 			ProtocolInfo::PROTOCOL_1_17_0 => "-1.17.0",
 			ProtocolInfo::PROTOCOL_1_16_220 => "-1.16.100",
 			ProtocolInfo::PROTOCOL_1_16_20 => "-1.16.0",
+			ProtocolInfo::PROTOCOL_1_14_60 => "-1.14.0",
 		];
 
 		$dictionaries = [];
@@ -94,7 +95,7 @@ final class GlobalItemTypeDictionary{
 			return ProtocolInfo::PROTOCOL_1_16_220;
 		}
 
-		if($protocolId >= ProtocolInfo::PROTOCOL_1_14_60){
+		if($protocolId >= ProtocolInfo::PROTOCOL_1_16_0){
 			return ProtocolInfo::PROTOCOL_1_16_20;
 		}
 
