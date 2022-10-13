@@ -21,7 +21,7 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\tools\convert_blockstates_to_canonical;
+namespace pocketmine\tools\modernize_required_blockstates;
 
 use pocketmine\nbt\NbtDataException;
 use pocketmine\nbt\tag\CompoundTag;
@@ -74,12 +74,14 @@ function main(array $argv) : int{
 	}
 
 	usort($newEntries, fn(CompoundTag|null $a, CompoundTag|null $b) => $a <=> $b);
+
+	$nbtWriter = new NetworkNbtSerializer();
 	foreach($newEntries as $entry){
 		if($entry === null) {
 			continue;
 		}
 
-		$newContents .= (new NetworkNbtSerializer())->write(new TreeRoot($entry));
+		$newContents .= $nbtWriter->write(new TreeRoot($entry));
 	}
 
 	$rootPath = Path::getDirectory($file);

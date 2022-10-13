@@ -48,6 +48,7 @@ use pocketmine\network\mcpe\protocol\CreativeContentPacket;
 use pocketmine\network\mcpe\protocol\InventoryContentPacket;
 use pocketmine\network\mcpe\protocol\InventorySlotPacket;
 use pocketmine\network\mcpe\protocol\MobEquipmentPacket;
+use pocketmine\network\mcpe\protocol\ProtocolInfo;
 use pocketmine\network\mcpe\protocol\types\BlockPosition;
 use pocketmine\network\mcpe\protocol\types\inventory\ContainerIds;
 use pocketmine\network\mcpe\protocol\types\inventory\CreativeContentEntry;
@@ -383,9 +384,15 @@ class InventoryManager{
 	public function syncCreative() : void{
 		$typeConverter = TypeConverter::getInstance();
 
-		$nextEntryId = 1;
-		$this->session->sendDataPacket(CreativeContentPacket::create(array_map(function(Item $item) use($typeConverter, &$nextEntryId) : CreativeContentEntry{
-			return new CreativeContentEntry($nextEntryId++, $typeConverter->coreItemStackToNet($this->session->getProtocolId(), $item));
-		}, $this->player->isSpectator() ? [] : CreativeInventory::getInstance()->getAll())));
+		if($this->session->getProtocolId() >= ProtocolInfo::PROTOCOL_1_16_0){
+			$nextEntryId = 1;
+			$this->session->sendDataPacket(CreativeContentPacket::create(array_map(function(Item $item) use($typeConverter, &$nextEntryId) : CreativeContentEntry{
+				return new CreativeContentEntry($nextEntryId++, $typeConverter->coreItemStackToNet($this->session->getProtocolId(), $item));
+			}, $this->player->isSpectator() ? [] : CreativeInventory::getInstance()->getAll())));
+		}else{
+			$this->session->sendDataPacket(InventoryContentPacket::create(ContainerIds::CREATIVE, array_map(function(Item $item) use ($typeConverter) : ItemStackWrapper{
+				return ItemStackWrapper::legacy($typeConverter->coreItemStackToNet($this->session->getProtocolId(), $item));
+			}, $this->player->isSpectator() ? [] : CreativeInventory::getInstance()->getAll())));
+		}
 	}
 }

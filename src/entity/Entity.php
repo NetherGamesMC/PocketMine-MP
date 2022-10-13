@@ -49,6 +49,8 @@ use pocketmine\network\mcpe\convert\GlobalItemTypeDictionary;
 use pocketmine\network\mcpe\convert\RuntimeBlockMapping;
 use pocketmine\network\mcpe\protocol\AddActorPacket;
 use pocketmine\network\mcpe\protocol\MoveActorAbsolutePacket;
+use pocketmine\network\mcpe\protocol\MovePlayerPacket;
+use pocketmine\network\mcpe\protocol\ProtocolInfo;
 use pocketmine\network\mcpe\protocol\SetActorMotionPacket;
 use pocketmine\network\mcpe\protocol\types\entity\Attribute as NetworkAttribute;
 use pocketmine\network\mcpe\protocol\types\entity\EntityMetadataCollection;
@@ -66,7 +68,9 @@ use pocketmine\world\sound\MappingSound;
 use pocketmine\world\sound\Sound;
 use pocketmine\world\World;
 use function abs;
+use function array_filter;
 use function array_map;
+use function array_diff;
 use function assert;
 use function cos;
 use function count;
@@ -781,7 +785,10 @@ abstract class Entity{
 				$this->spawnTo($player);
 			}
 		}else{
-			$this->server->broadcastPackets($this->hasSpawned, [MoveActorAbsolutePacket::create(
+			$spawnedPlayers = array_filter($this->hasSpawned, fn(Player $player) => $player->getNetworkSession()->getProtocolId() >= ProtocolInfo::PROTOCOL_1_16_0);
+			$legacySpawnedPlayers = array_diff($this->hasSpawned, $spawnedPlayers);
+
+			$this->server->broadcastPackets($spawnedPlayers, [MoveActorAbsolutePacket::create(
 				$this->id,
 				$this->getOffsetPosition($this->location),
 				$this->location->pitch,
@@ -791,6 +798,17 @@ abstract class Entity{
 					//TODO: if the above hack for #4394 gets removed, we should be setting FLAG_TELEPORT here
 					($this->onGround ? MoveActorAbsolutePacket::FLAG_GROUND : 0)
 				)
+			)]);
+			$this->server->broadcastPackets($legacySpawnedPlayers, [MovePlayerPacket::simple(
+				$this->id,
+				$this->getOffsetPosition($this->location),
+				$this->location->pitch,
+				$this->location->yaw,
+				$this->location->yaw,
+				MovePlayerPacket::MODE_NORMAL,
+				$this->onGround,
+				0, //TODO: riding entity ID
+				0 //TODO: tick
 			)]);
 		}
 	}

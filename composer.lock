@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "21e24e863d08448c2f678e390799f408",
+    "content-hash": "ade1db154d7bf4426ac20978f62b2c8e",
     "packages": [
         {
             "name": "adhocore/json-comment",
@@ -198,16 +198,16 @@
         },
         {
             "name": "nethergamesmc/bedrock-data",
-            "version": "dev-protocol/1_16",
+            "version": "dev-protocol/1_14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Flonja/BedrockData.git",
-                "reference": "a77ed52242ad72c1dadb0ee224634e70c4589e58"
+                "reference": "dfffe10b7fa60cdb6607bb1fe52a71299d432a85"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Flonja/BedrockData/zipball/a77ed52242ad72c1dadb0ee224634e70c4589e58",
-                "reference": "a77ed52242ad72c1dadb0ee224634e70c4589e58",
+                "url": "https://api.github.com/repos/Flonja/BedrockData/zipball/dfffe10b7fa60cdb6607bb1fe52a71299d432a85",
+                "reference": "dfffe10b7fa60cdb6607bb1fe52a71299d432a85",
                 "shasum": ""
             },
             "type": "library",
@@ -216,22 +216,22 @@
             ],
             "description": "Blobs of data generated from Minecraft: Bedrock Edition, used by PocketMine-MP",
             "support": {
-                "source": "https://github.com/Flonja/BedrockData/tree/protocol/1_16"
+                "source": "https://github.com/Flonja/BedrockData/tree/protocol/1_14"
             },
-            "time": "2022-10-12T20:20:19+00:00"
+            "time": "2022-10-13T14:15:01+00:00"
         },
         {
             "name": "nethergamesmc/bedrock-protocol",
-            "version": "dev-protocol/1_16",
+            "version": "dev-protocol/1_14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Flonja/BedrockProtocol.git",
-                "reference": "a658ea5a5f2f086b2731d2dfb96425dba113d882"
+                "reference": "f15a40f6c9504d76297f4757312d9a31c764dff4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Flonja/BedrockProtocol/zipball/a658ea5a5f2f086b2731d2dfb96425dba113d882",
-                "reference": "a658ea5a5f2f086b2731d2dfb96425dba113d882",
+                "url": "https://api.github.com/repos/Flonja/BedrockProtocol/zipball/f15a40f6c9504d76297f4757312d9a31c764dff4",
+                "reference": "f15a40f6c9504d76297f4757312d9a31c764dff4",
                 "shasum": ""
             },
             "require": {
@@ -271,9 +271,9 @@
             ],
             "description": "An implementation of the Minecraft: Bedrock Edition protocol in PHP",
             "support": {
-                "source": "https://github.com/Flonja/BedrockProtocol/tree/protocol/1_16"
+                "source": "https://github.com/Flonja/BedrockProtocol/tree/protocol/1_14"
             },
-            "time": "2022-10-12T20:29:05+00:00"
+            "time": "2022-10-13T17:23:58+00:00"
         },
         {
             "name": "netresearch/jsonmapper",
