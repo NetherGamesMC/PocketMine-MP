@@ -54,9 +54,7 @@ final class GlobalItemTypeDictionary{
 			ProtocolInfo::PROTOCOL_1_17_10 => "-1.17.10",
 			ProtocolInfo::PROTOCOL_1_17_0 => "-1.17.0",
 			ProtocolInfo::PROTOCOL_1_16_220 => "-1.16.100",
-		];
-		$legacyProtocols = [
-			ProtocolInfo::PROTOCOL_1_16_20,
+			ProtocolInfo::PROTOCOL_1_16_20 => "-1.16.0",
 		];
 
 		$dictionaries = [];
@@ -74,14 +72,6 @@ final class GlobalItemTypeDictionary{
 					throw new AssumptionFailedError("Invalid item list format");
 				}
 				$params[] = new ItemTypeEntry($name, $entry["runtime_id"], $entry["component_based"]);
-			}
-
-			$dictionaries[$protocolId] = new ItemTypeDictionary($params);
-		}
-		foreach($legacyProtocols as $protocolId) {
-			$params = [];
-			foreach(LegacyItemIdToStringIdMap::getInstance()->getLegacyToStringMap() as $id => $name){
-				$params[] = new ItemTypeEntry($name, $id, false);
 			}
 
 			$dictionaries[$protocolId] = new ItemTypeDictionary($params);
