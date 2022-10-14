@@ -56,6 +56,7 @@ final class GlobalItemTypeDictionary{
 			ProtocolInfo::PROTOCOL_1_16_220 => "-1.16.100",
 			ProtocolInfo::PROTOCOL_1_16_20 => "-1.16.0",
 			ProtocolInfo::PROTOCOL_1_14_60 => "-1.14.0",
+			ProtocolInfo::PROTOCOL_1_13_0 => "-1.13.0",
 		];
 
 		$dictionaries = [];
