@@ -27,11 +27,12 @@ use pocketmine\utils\SingletonTrait;
 use pocketmine\utils\Utils;
 use function function_exists;
 use function libdeflate_deflate_compress;
+use function libdeflate_zlib_compress;
 use function strlen;
 use function zlib_decode;
 use function zlib_encode;
-use const ZLIB_ENCODING_RAW;
 use const ZLIB_ENCODING_DEFLATE;
+use const ZLIB_ENCODING_RAW;
 
 final class ZlibCompressor implements Compressor{
 	use SingletonTrait;
