@@ -114,7 +114,11 @@ final class RuntimeBlockMapping{
 			ProtocolInfo::PROTOCOL_1_13_0 => [
 				self::CANONICAL_BLOCK_STATES_PATH => '-1.13.0',
 				self::R12_TO_CURRENT_BLOCK_MAP_PATH => '-1.13.0',
-			]
+			],
+			//ProtocolInfo::PROTOCOL_1_12_0 => [ // I tried my best, I'm pretty it's broken
+			//	self::CANONICAL_BLOCK_STATES_PATH => '-1.12.0',
+			//	self::R12_TO_CURRENT_BLOCK_MAP_PATH => '-1.12.0',
+			//]
 		];
 
 		$canonicalBlockStatesFiles = [];
@@ -136,6 +140,12 @@ final class RuntimeBlockMapping{
 	 * @param string[] $r12ToCurrentBlockMapFiles
 	 */
 	private function __construct(array $canonicalBlockStatesFiles, array $r12ToCurrentBlockMapFiles){
+		foreach(LegacyR12BlockStates::getInstance()->getLegacyVersions() as $legacyVersion) {
+			foreach(LegacyR12BlockStates::getInstance()->getBlockPaletteEntries($legacyVersion) as $k => $entry) {
+				$this->registerMapping($legacyVersion, $k, $entry->getId(), $entry->getMetadata());
+			}
+		}
+
 		foreach($canonicalBlockStatesFiles as $mappingProtocol => $canonicalBlockStatesFile){
 			$stream = PacketSerializer::decoder(
 				Utils::assumeNotFalse(file_get_contents($canonicalBlockStatesFile), "Missing required resource file"),

@@ -23,11 +23,13 @@ declare(strict_types=1);
 
 namespace pocketmine\network\mcpe\handler;
 
+use pocketmine\block\BlockLegacyIds;
 use pocketmine\data\bedrock\LegacyBlockIdToStringIdMap;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\network\mcpe\cache\CraftingDataCache;
 use pocketmine\network\mcpe\cache\StaticPacketCache;
 use pocketmine\network\mcpe\convert\GlobalItemTypeDictionary;
+use pocketmine\network\mcpe\convert\LegacyR12BlockStates;
 use pocketmine\network\mcpe\convert\RuntimeBlockMapping;
 use pocketmine\network\mcpe\convert\TypeConverter;
 use pocketmine\network\mcpe\InventoryManager;
@@ -49,6 +51,7 @@ use pocketmine\network\mcpe\protocol\types\SpawnSettings;
 use pocketmine\player\Player;
 use pocketmine\Server;
 use Ramsey\Uuid\Uuid;
+use function in_array;
 
 /**
  * Handler used for the pre-spawn phase of the session.
@@ -65,6 +68,7 @@ class PreSpawnPacketHandler extends ChunkRequestPacketHandler{
 
 	public function setUp() : void{
 		$dictionaryProtocol = GlobalItemTypeDictionary::getDictionaryProtocol($this->session->getProtocolId());
+		$legacyBlockMap = LegacyBlockIdToStringIdMap::getInstance();
 		$location = $this->player->getLocation();
 
 		$this->session->getLogger()->debug("Preparing StartGamePacket");
@@ -86,15 +90,17 @@ class PreSpawnPacketHandler extends ChunkRequestPacketHandler{
 		$levelSettings->experiments = new Experiments([], false);
 
 		$blockStates = [];
-		if($this->session->getProtocolId() < ProtocolInfo::PROTOCOL_1_16_100) {
+		if($this->session->getProtocolId() < ProtocolInfo::PROTOCOL_1_16_100
+			&& !in_array($this->session->getProtocolId(), LegacyR12BlockStates::getInstance()->getLegacyVersions(), true)) {
 			$knownStates = RuntimeBlockMapping::getInstance()->getBedrockKnownStates($dictionaryProtocol);
 
 			foreach($knownStates as $knownState) {
 				$name = $knownState->getString("name");
+				$id = $legacyBlockMap->stringToLegacy($name) ?? BlockLegacyIds::AIR;
 
 				$state = CompoundTag::create();
 				$state->setTag("block", $knownState);
-				$state->setShort("id", LegacyBlockIdToStringIdMap::getInstance()->stringToLegacy($name) ?? 0);
+				$state->setShort("id", $id);
 				$blockStates[] = new BlockPaletteEntry($name, new CacheableNbt($state));
 			}
 		}
@@ -121,6 +127,7 @@ class PreSpawnPacketHandler extends ChunkRequestPacketHandler{
 			Uuid::fromString(Uuid::NIL),
 			false,
 			$blockStates,
+			LegacyR12BlockStates::getInstance()->getBlockPaletteEntries(LegacyR12BlockStates::getLegacyProtocol($this->session->getProtocolId())),
 			0,
 			GlobalItemTypeDictionary::getInstance()->getDictionary($dictionaryProtocol)->getEntries(),
 		));

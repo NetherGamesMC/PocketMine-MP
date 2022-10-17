@@ -172,8 +172,47 @@ class InGamePacketHandler extends ChunkRequestPacketHandler{
 	}
 
 	public function handleMovePlayer(MovePlayerPacket $packet) : bool{
-		//The client sends this every time it lands on the ground, even when using PlayerAuthInputPacket.
-		//Silence the debug spam that this causes.
+		if($this->session->getProtocolId() >= ProtocolInfo::PROTOCOL_1_13_0) {
+			//The client sends this every time it lands on the ground, even when using PlayerAuthInputPacket.
+			//Silence the debug spam that this causes.
+			return true;
+		}
+
+		$rawPos = $packet->position;
+		$rawYaw = $packet->yaw;
+		$rawPitch = $packet->pitch;
+		foreach([$rawPos->x, $rawPos->y, $rawPos->z, $rawYaw, $packet->headYaw, $rawPitch] as $float){
+			if(is_infinite($float) || is_nan($float)){
+				$this->session->getLogger()->debug("Invalid movement received, contains NAN/INF components");
+				return false;
+			}
+		}
+
+		$hasMoved = $this->lastPlayerAuthInputPosition === null || !$this->lastPlayerAuthInputPosition->equals($rawPos);
+		$newPos = $rawPos->round(4)->subtract(0, 1.62, 0);
+
+		if($this->forceMoveSync && $hasMoved){
+			$curPos = $this->player->getLocation();
+
+			if($newPos->distanceSquared($curPos) > 1){  //Tolerate up to 1 block to avoid problems with client-sided physics when spawning in blocks
+				$this->session->getLogger()->debug("Got outdated pre-teleport movement, received " . $newPos . ", expected " . $curPos);
+				//Still getting movements from before teleport, ignore them
+				return false;
+			}
+
+			// Once we get a movement within a reasonable distance, treat it as a teleport ACK and remove position lock
+			$this->forceMoveSync = false;
+		}
+
+		$yaw = fmod($rawYaw, 360);
+		$pitch = fmod($rawPitch, 360);
+		if($yaw < 0){
+			$yaw += 360;
+		}
+
+		$this->lastPlayerAuthInputPosition = $rawPos;
+		$this->player->setRotation($yaw, $pitch);
+		$this->player->handleMovement($newPos);
 		return true;
 	}
 

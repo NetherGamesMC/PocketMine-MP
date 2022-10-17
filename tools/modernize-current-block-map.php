@@ -32,38 +32,23 @@ use pocketmine\network\mcpe\convert\R12ToCurrentBlockMapEntry;
 use pocketmine\network\mcpe\protocol\serializer\NetworkNbtSerializer;
 use pocketmine\network\mcpe\protocol\serializer\PacketSerializer;
 use pocketmine\network\mcpe\protocol\serializer\PacketSerializerContext;
+use pocketmine\utils\BinaryStream;
 use pocketmine\utils\Utils;
 use Webmozart\PathUtil\Path;
 use function defined;
 use function dirname;
 use function file_get_contents;
 use function file_put_contents;
+use function strlen;
 use function usort;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
 /**
- * @param string[] $argv
+ * @return R12ToCurrentBlockMapEntry[]
  */
-function main(array $argv) : int{
-	if(!isset($argv[1])){
-		echo "Usage: " . PHP_BINARY . " " . __FILE__ . " <path to 'r12_to_current_block_map.nbt' file>\n";
-		return 1;
-	}
-	$file = $argv[1];
-	$reader = PacketSerializer::decoder(
-		Utils::assumeNotFalse(file_get_contents($file), "Missing required resource file"),
-		0,
-		new PacketSerializerContext(GlobalItemTypeDictionary::getInstance()->getDictionary(GlobalItemTypeDictionary::getDictionaryProtocol(0)))
-	);
-	$reader->setProtocolId(0);
-
-	$writer = PacketSerializer::encoder(
-		new PacketSerializerContext(GlobalItemTypeDictionary::getInstance()->getDictionary(GlobalItemTypeDictionary::getDictionaryProtocol(0)))
-	);
-	$writer->setProtocolId(0);
-
-	$entriesRoot = $reader->getNbtRoot();
+function readOldFormat(PacketSerializer $in) : array{
+	$entriesRoot = $in->getNbtRoot();
 	$entries = $entriesRoot->getTag();
 	if(!($entries instanceof ListTag)) {
 		throw new NbtDataException("Expected TAG_List NBT root");
@@ -82,18 +67,47 @@ function main(array $argv) : int{
 
 		$newEntries[] = new R12ToCurrentBlockMapEntry($old->getString("name"), $old->getShort("val"), $new);
 	}
+	return $newEntries;
+}
 
-	usort($newEntries, fn(R12ToCurrentBlockMapEntry $a, R12ToCurrentBlockMapEntry $b) => $a <=> $b);
-
+/**
+ * @param R12ToCurrentBlockMapEntry[] $blockMapEntries
+ */
+function writeNewFormat(array $blockMapEntries) : string{
+	$stream = new BinaryStream();
 	$nbtWriter = new NetworkNbtSerializer();
-	foreach($newEntries as $entry){
-		$writer->putString($entry->getId());
-		$writer->putLShort($entry->getMeta());
-		$writer->put($nbtWriter->write(new TreeRoot($entry->getBlockState())));
+	foreach($blockMapEntries as $entry){
+		$stream->putShort(strlen($entry->getId()));
+		$stream->put($entry->getId());
+
+		$stream->putLShort($entry->getMeta());
+		$stream->put($nbtWriter->write(new TreeRoot($entry->getBlockState())));
 	}
 
+	return $stream->getBuffer();
+}
+
+/**
+ * @param string[] $argv
+ */
+function main(array $argv) : int{
+	if(!isset($argv[1])){
+		echo "Usage: " . PHP_BINARY . " " . __FILE__ . " <path to 'r12_to_current_block_map.nbt' file>\n";
+		return 1;
+	}
+	$file = $argv[1];
+	$reader = PacketSerializer::decoder(
+		Utils::assumeNotFalse(file_get_contents($file), "Missing required resource file"),
+		0,
+		new PacketSerializerContext(GlobalItemTypeDictionary::getInstance()->getDictionary(GlobalItemTypeDictionary::getDictionaryProtocol(0)))
+	);
+	$reader->setProtocolId(0);
+
+	$newEntries = readOldFormat($reader);
+	usort($newEntries, fn(R12ToCurrentBlockMapEntry $a, R12ToCurrentBlockMapEntry $b) => $a <=> $b);
+
 	$rootPath = Path::getDirectory($file);
-	file_put_contents(Path::join($rootPath, "r12_to_current_block_map.bin"), $writer->getBuffer());
+	file_put_contents(Path::join($rootPath, "r12_to_current_block_map.bin"), writeNewFormat($newEntries));
 
 	return 0;
 }
