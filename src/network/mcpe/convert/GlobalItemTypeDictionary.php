@@ -89,7 +89,7 @@ final class GlobalItemTypeDictionary{
 
 	public static function getDictionaryProtocol(int $protocolId) : int{
 		if($protocolId >= ProtocolInfo::PROTOCOL_1_19_10){
-			return ProtocolInfo::PROTOCOL_1_19_30;
+			return ProtocolInfo::PROTOCOL_1_19_40;
 		}
 
 		if($protocolId === ProtocolInfo::PROTOCOL_1_16_100){
