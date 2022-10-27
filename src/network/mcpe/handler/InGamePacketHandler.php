@@ -666,7 +666,14 @@ class InGamePacketHandler extends ChunkRequestPacketHandler{
 				return false;
 		}
 
-		$this->player->setUsingItem(false);
+		var_dump($action);
+		// TODO: garbage hack for older versions:
+		// PlayerAuthInputPacket would've accounted for this, but older versions this isn't the case.
+		if($this->session->getProtocolId() >= ProtocolInfo::PROTOCOL_1_16_210){
+			if($action === PlayerAction::STOP_BREAK || PlayerBlockActionWithBlockInfo::isValidActionType($action)){
+				$this->player->setUsingItem(false);
+			}
+		}
 
 		return true;
 	}
