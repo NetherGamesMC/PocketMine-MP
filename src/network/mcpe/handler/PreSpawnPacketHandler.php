@@ -92,7 +92,7 @@ class PreSpawnPacketHandler extends ChunkRequestPacketHandler{
 		$blockStates = [];
 		if($this->session->getProtocolId() < ProtocolInfo::PROTOCOL_1_16_100
 			&& !in_array($this->session->getProtocolId(), LegacyR12BlockStates::getInstance()->getLegacyVersions(), true)) {
-			$knownStates = RuntimeBlockMapping::getInstance()->getBedrockKnownStates($dictionaryProtocol);
+			$knownStates = RuntimeBlockMapping::getInstance()->getBedrockKnownStates(RuntimeBlockMapping::getMappingProtocol($this->session->getProtocolId()));
 
 			foreach($knownStates as $knownState) {
 				$name = $knownState->getString("name");
