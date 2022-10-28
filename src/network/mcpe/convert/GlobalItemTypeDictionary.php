@@ -100,7 +100,7 @@ final class GlobalItemTypeDictionary{
 			return ProtocolInfo::PROTOCOL_1_16_20;
 		}
 
-		if($protocolId >= ProtocolInfo::PROTOCOL_1_14_0){
+		if($protocolId === ProtocolInfo::PROTOCOL_1_14_0){
 			return ProtocolInfo::PROTOCOL_1_14_60;
 		}
 
