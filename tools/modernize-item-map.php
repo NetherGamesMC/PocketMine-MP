@@ -23,7 +23,6 @@ declare(strict_types=1);
 
 namespace pocketmine\tools\modernize_item_map;
 
-use pocketmine\utils\AssumptionFailedError;
 use pocketmine\utils\Utils;
 use Webmozart\PathUtil\Path;
 use function defined;
