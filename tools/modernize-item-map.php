@@ -23,12 +23,14 @@ declare(strict_types=1);
 
 namespace pocketmine\tools\modernize_item_map;
 
+use pocketmine\utils\AssumptionFailedError;
 use pocketmine\utils\Utils;
 use Webmozart\PathUtil\Path;
 use function defined;
 use function dirname;
 use function file_get_contents;
 use function file_put_contents;
+use function is_array;
 use function json_decode;
 use function json_encode;
 use const JSON_PRETTY_PRINT;
@@ -47,6 +49,9 @@ function main(array $argv) : int{
 	$file = $argv[1];
 	$resource = Utils::assumeNotFalse(file_get_contents($file), "Missing required resource file");
 	$contents = json_decode($resource, true, flags: JSON_THROW_ON_ERROR);
+	if(!is_array($contents)){
+		throw new AssumptionFailedError("Invalid format of ID map");
+	}
 	$newContents = [];
 
 	foreach($contents as $itemName => $id) {
