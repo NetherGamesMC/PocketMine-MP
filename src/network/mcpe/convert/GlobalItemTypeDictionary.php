@@ -23,7 +23,6 @@ declare(strict_types=1);
 
 namespace pocketmine\network\mcpe\convert;
 
-use pocketmine\data\bedrock\LegacyItemIdToStringIdMap;
 use pocketmine\network\mcpe\protocol\ProtocolInfo;
 use pocketmine\network\mcpe\protocol\serializer\ItemTypeDictionary;
 use pocketmine\network\mcpe\protocol\types\ItemTypeEntry;

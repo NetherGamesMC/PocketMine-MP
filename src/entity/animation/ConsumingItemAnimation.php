@@ -38,7 +38,6 @@ final class ConsumingItemAnimation extends DictionaryAnimation{
 
 	public function encode() : array{
 		[$netId, $netData] = ItemTranslator::getInstance()->toNetworkId($this->dictionaryProtocol, $this->item->getId(), $this->item->getMeta());
-
 		return [
 			//TODO: need to check the data values
 			ActorEventPacket::create($this->human->getId(), ActorEvent::EATING_ITEM, ($netId << 16) | $netData)
