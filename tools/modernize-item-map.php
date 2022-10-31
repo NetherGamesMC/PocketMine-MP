@@ -23,12 +23,14 @@ declare(strict_types=1);
 
 namespace pocketmine\tools\modernize_item_map;
 
+use pocketmine\utils\AssumptionFailedError;
 use pocketmine\utils\Utils;
 use Webmozart\PathUtil\Path;
 use function defined;
 use function dirname;
 use function file_get_contents;
 use function file_put_contents;
+use function is_array;
 use function json_decode;
 use function json_encode;
 use const JSON_PRETTY_PRINT;
