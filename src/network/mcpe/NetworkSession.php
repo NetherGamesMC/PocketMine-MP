@@ -978,12 +978,8 @@ class NetworkSession{
 	public function syncActorData(Entity $entity, array $properties) : void{
 		//TODO: HACK! as of 1.18.10, the client responds differently to the same data ordered in different orders - for
 		//example, sending HEIGHT in the list before FLAGS when unsetting the SWIMMING flag results in a hitbox glitch
-
-		// TODO: shift properties according to protocol
-		$props = EntityMetadataProperties::convertProps($this->getProtocolId(), $properties);
-
-		ksort($props, SORT_NUMERIC);
-		$this->sendDataPacket(SetActorDataPacket::create($entity->getId(), $props, new PropertySyncData([], []), 0));
+		ksort($properties, SORT_NUMERIC);
+		$this->sendDataPacket(SetActorDataPacket::create($entity->getId(), $properties, new PropertySyncData([], []), 0));
 	}
 
 	public function onEntityEffectAdded(Living $entity, EffectInstance $effect, bool $replacesOldEffect) : void{

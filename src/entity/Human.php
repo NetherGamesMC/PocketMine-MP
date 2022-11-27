@@ -487,7 +487,7 @@ class Human extends Living implements ProjectileSource, InventoryHolder{
 			$this->location->yaw, //TODO: head yaw
 			ItemStackWrapper::legacy(TypeConverter::getInstance()->coreItemStackToNet($player->getNetworkSession()->getProtocolId(), $this->getInventory()->getItemInHand())),
 			GameMode::SURVIVAL,
-			EntityMetadataProperties::convertProps($player->getNetworkSession()->getProtocolId(), $this->getAllNetworkData()),
+			$this->getAllNetworkData(),
 			new PropertySyncData([], []),
 			UpdateAbilitiesPacket::create(CommandPermissions::NORMAL, PlayerPermissions::VISITOR, $this->getId() /* TODO: this should be unique ID */, [
 				new UpdateAbilitiesPacketLayer(
