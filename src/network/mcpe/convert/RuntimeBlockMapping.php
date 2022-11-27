@@ -115,10 +115,6 @@ final class RuntimeBlockMapping{
 				self::CANONICAL_BLOCK_STATES_PATH => '-1.13.0',
 				self::R12_TO_CURRENT_BLOCK_MAP_PATH => '-1.13.0',
 			],
-			//ProtocolInfo::PROTOCOL_1_12_0 => [ // I tried my best, I'm pretty it's broken
-			//	self::CANONICAL_BLOCK_STATES_PATH => '-1.12.0',
-			//	self::R12_TO_CURRENT_BLOCK_MAP_PATH => '-1.12.0',
-			//]
 		];
 
 		$canonicalBlockStatesFiles = [];
