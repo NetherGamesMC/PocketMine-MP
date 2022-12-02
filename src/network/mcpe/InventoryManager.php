@@ -330,7 +330,7 @@ class InventoryManager{
 				$this->remove($id);
 				$this->player->removeCurrentWindow();
 			}
-		}else if($this->session->getProtocolId() <= ProtocolInfo::PROTOCOL_1_14_60 && $id === 255){
+		}elseif($this->session->getProtocolId() <= ProtocolInfo::PROTOCOL_1_14_60 && $id === 255){
 			// 1.14.60 and lower reserve windowId 255 for some reason
 			return;
 		}else{
