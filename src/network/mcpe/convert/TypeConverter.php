@@ -311,6 +311,7 @@ class TypeConverter{
 						throw new TypeConversionException("Unexpected creative action type $action->inventorySlot");
 
 				}
+			case NetworkInventoryAction::SOURCE_CRAFT_SLOT:
 			case NetworkInventoryAction::SOURCE_TODO:
 				//These are used to balance a transaction that involves special actions, like crafting, enchanting, etc.
 				//The vanilla server just accepted these without verifying them. We don't need to care about them since
