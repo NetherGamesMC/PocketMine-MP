@@ -46,6 +46,7 @@ use function file_put_contents;
 use function is_numeric;
 use function strlen;
 use function usort;
+use const PHP_BINARY;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 

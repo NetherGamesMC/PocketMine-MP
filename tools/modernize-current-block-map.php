@@ -41,6 +41,7 @@ use function file_get_contents;
 use function file_put_contents;
 use function strlen;
 use function usort;
+use const PHP_BINARY;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
