@@ -565,6 +565,29 @@
             },
             "time": "2022-11-25T14:24:34+00:00"
         },
+		        {
+            "name": "pocketmine/locale-data",
+            "version": "2.11.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pmmp/Language.git",
+                "reference": "4b33d8fa53eda53d9662a7478806ebae2e4a5c53"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pmmp/Language/zipball/4b33d8fa53eda53d9662a7478806ebae2e4a5c53",
+                "reference": "4b33d8fa53eda53d9662a7478806ebae2e4a5c53",
+                "shasum": ""
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "description": "Language resources used by PocketMine-MP",
+            "support": {
+                "issues": "https://github.com/pmmp/Language/issues",
+                "source": "https://github.com/pmmp/Language/tree/2.11.0"
+            },
+            "time": "2022-11-25T14:24:34+00:00"
+        },
         {
             "name": "pocketmine/log",
             "version": "0.4.0",
