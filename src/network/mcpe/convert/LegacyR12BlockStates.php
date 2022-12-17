@@ -38,13 +38,13 @@ use function json_decode;
 final class LegacyR12BlockStates{
 	use SingletonTrait;
 
-	private static function make() : self{
-		$protocolPaths = [
-			ProtocolInfo::PROTOCOL_1_12_0 => "-1.12.0",
-		];
+	private const PATHS = [
+		ProtocolInfo::PROTOCOL_1_12_0 => "-1.12.0",
+	];
 
+	private static function make() : self{
 		$legacyBlockStates = [];
-		foreach ($protocolPaths as $protocolId => $path){
+		foreach (self::PATHS as $protocolId => $path){
 			$stringToLegacyIdMap = json_decode(Utils::assumeNotFalse(file_get_contents(Path::join(\pocketmine\BEDROCK_DATA_PATH, "block_id_map" . $path . ".json")), "Missing required resource file"), true);
 			if(!is_array($stringToLegacyIdMap)){
 				throw new AssumptionFailedError("Invalid format of ID map");
@@ -105,8 +105,8 @@ final class LegacyR12BlockStates{
 	 * @internal
 	 * @return int[]
 	 */
-	public function getLegacyVersions() : array{
-		return array_keys($this->blockPalette);
+	public static function getLegacyVersions() : array{
+		return array_keys(self::PATHS);
 	}
 
 	/**

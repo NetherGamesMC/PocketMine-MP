@@ -32,10 +32,14 @@ use pocketmine\network\mcpe\protocol\serializer\NetworkNbtSerializer;
 use pocketmine\network\mcpe\protocol\serializer\PacketSerializer;
 use pocketmine\network\mcpe\protocol\serializer\PacketSerializerContext;
 use pocketmine\player\Player;
+use pocketmine\Server;
 use pocketmine\utils\SingletonTrait;
 use pocketmine\utils\Utils;
 use Symfony\Component\Filesystem\Path;
+use function array_filter;
+use function array_keys;
 use function file_get_contents;
+use function in_array;
 
 /**
  * @internal
@@ -45,6 +49,72 @@ final class RuntimeBlockMapping{
 
 	public const CANONICAL_BLOCK_STATES_PATH = 0;
 	public const R12_TO_CURRENT_BLOCK_MAP_PATH = 1;
+	private const PATHS = [
+		ProtocolInfo::CURRENT_PROTOCOL => [
+			self::CANONICAL_BLOCK_STATES_PATH => '',
+			self::R12_TO_CURRENT_BLOCK_MAP_PATH => '',
+		],
+		ProtocolInfo::PROTOCOL_1_19_40 => [
+			self::CANONICAL_BLOCK_STATES_PATH => '-1.19.40',
+			self::R12_TO_CURRENT_BLOCK_MAP_PATH => '',
+		],
+		ProtocolInfo::PROTOCOL_1_19_10 => [
+			self::CANONICAL_BLOCK_STATES_PATH => '-1.19.10',
+			self::R12_TO_CURRENT_BLOCK_MAP_PATH => '',
+		],
+		ProtocolInfo::PROTOCOL_1_18_30 => [
+			self::CANONICAL_BLOCK_STATES_PATH => '-1.18.30',
+			self::R12_TO_CURRENT_BLOCK_MAP_PATH => '-1.18.30',
+		],
+		ProtocolInfo::PROTOCOL_1_18_10 => [
+			self::CANONICAL_BLOCK_STATES_PATH => '-1.18.10',
+			self::R12_TO_CURRENT_BLOCK_MAP_PATH => '-1.18.10',
+		],
+		ProtocolInfo::PROTOCOL_1_18_0 => [
+			self::CANONICAL_BLOCK_STATES_PATH => '-1.18.0',
+			self::R12_TO_CURRENT_BLOCK_MAP_PATH => '-1.18.0',
+		],
+		ProtocolInfo::PROTOCOL_1_17_40 => [ // 1.18.0 has negative chunk hacks
+			self::CANONICAL_BLOCK_STATES_PATH => '-1.18.0',
+			self::R12_TO_CURRENT_BLOCK_MAP_PATH => '-1.18.0',
+		],
+		ProtocolInfo::PROTOCOL_1_17_30 => [
+			self::CANONICAL_BLOCK_STATES_PATH => '-1.17.30',
+			self::R12_TO_CURRENT_BLOCK_MAP_PATH => '-1.18.0',
+		],
+		ProtocolInfo::PROTOCOL_1_17_10 => [
+			self::CANONICAL_BLOCK_STATES_PATH => '-1.17.10',
+			self::R12_TO_CURRENT_BLOCK_MAP_PATH => '-1.17.10',
+		],
+		ProtocolInfo::PROTOCOL_1_17_0 => [
+			self::CANONICAL_BLOCK_STATES_PATH => '-1.17.0',
+			self::R12_TO_CURRENT_BLOCK_MAP_PATH => '-1.17.10',
+		],
+		ProtocolInfo::PROTOCOL_1_16_220 => [
+			self::CANONICAL_BLOCK_STATES_PATH => '-1.16.210',
+			self::R12_TO_CURRENT_BLOCK_MAP_PATH => '-1.16.210',
+		],
+		ProtocolInfo::PROTOCOL_1_16_200 => [
+			self::CANONICAL_BLOCK_STATES_PATH => '-1.16.100',
+			self::R12_TO_CURRENT_BLOCK_MAP_PATH => '-1.16.20',
+		],
+		ProtocolInfo::PROTOCOL_1_16_20 => [
+			self::CANONICAL_BLOCK_STATES_PATH => '-1.16.20',
+			self::R12_TO_CURRENT_BLOCK_MAP_PATH => '-1.16.20',
+		],
+		ProtocolInfo::PROTOCOL_1_16_0 => [
+			self::CANONICAL_BLOCK_STATES_PATH => '-1.16.0',
+			self::R12_TO_CURRENT_BLOCK_MAP_PATH => '-1.16.0',
+		],
+		ProtocolInfo::PROTOCOL_1_14_60 => [
+			self::CANONICAL_BLOCK_STATES_PATH => '-1.14.0',
+			self::R12_TO_CURRENT_BLOCK_MAP_PATH => '-1.14.0',
+		],
+		ProtocolInfo::PROTOCOL_1_13_0 => [
+			self::CANONICAL_BLOCK_STATES_PATH => '-1.13.0',
+			self::R12_TO_CURRENT_BLOCK_MAP_PATH => '-1.13.0',
+		],
+	];
 
 	/** @var int[][] */
 	private array $legacyToRuntimeMap = [];
@@ -54,113 +124,57 @@ final class RuntimeBlockMapping{
 	private array $bedrockKnownStates = [];
 
 	private static function make() : self{
-		$protocolPaths = [
-			ProtocolInfo::CURRENT_PROTOCOL => [
-				self::CANONICAL_BLOCK_STATES_PATH => '',
-				self::R12_TO_CURRENT_BLOCK_MAP_PATH => '',
-			],
-			ProtocolInfo::PROTOCOL_1_19_40 => [
-				self::CANONICAL_BLOCK_STATES_PATH => '-1.19.40',
-				self::R12_TO_CURRENT_BLOCK_MAP_PATH => '',
-			],
-			ProtocolInfo::PROTOCOL_1_19_10 => [
-				self::CANONICAL_BLOCK_STATES_PATH => '-1.19.10',
-				self::R12_TO_CURRENT_BLOCK_MAP_PATH => '',
-			],
-			ProtocolInfo::PROTOCOL_1_18_30 => [
-				self::CANONICAL_BLOCK_STATES_PATH => '-1.18.30',
-				self::R12_TO_CURRENT_BLOCK_MAP_PATH => '-1.18.30',
-			],
-			ProtocolInfo::PROTOCOL_1_18_10 => [
-				self::CANONICAL_BLOCK_STATES_PATH => '-1.18.10',
-				self::R12_TO_CURRENT_BLOCK_MAP_PATH => '-1.18.10',
-			],
-			ProtocolInfo::PROTOCOL_1_18_0 => [
-				self::CANONICAL_BLOCK_STATES_PATH => '-1.18.0',
-				self::R12_TO_CURRENT_BLOCK_MAP_PATH => '-1.18.0',
-			],
-			ProtocolInfo::PROTOCOL_1_17_40 => [ // 1.18.0 has negative chunk hacks
-				self::CANONICAL_BLOCK_STATES_PATH => '-1.18.0',
-				self::R12_TO_CURRENT_BLOCK_MAP_PATH => '-1.18.0',
-			],
-			ProtocolInfo::PROTOCOL_1_17_30 => [
-				self::CANONICAL_BLOCK_STATES_PATH => '-1.17.30',
-				self::R12_TO_CURRENT_BLOCK_MAP_PATH => '-1.18.0',
-			],
-			ProtocolInfo::PROTOCOL_1_17_10 => [
-				self::CANONICAL_BLOCK_STATES_PATH => '-1.17.10',
-				self::R12_TO_CURRENT_BLOCK_MAP_PATH => '-1.17.10',
-			],
-			ProtocolInfo::PROTOCOL_1_17_0 => [
-				self::CANONICAL_BLOCK_STATES_PATH => '-1.17.0',
-				self::R12_TO_CURRENT_BLOCK_MAP_PATH => '-1.17.10',
-			],
-			ProtocolInfo::PROTOCOL_1_16_220 => [
-				self::CANONICAL_BLOCK_STATES_PATH => '-1.16.210',
-				self::R12_TO_CURRENT_BLOCK_MAP_PATH => '-1.16.210',
-			],
-			ProtocolInfo::PROTOCOL_1_16_200 => [
-				self::CANONICAL_BLOCK_STATES_PATH => '-1.16.100',
-				self::R12_TO_CURRENT_BLOCK_MAP_PATH => '-1.16.20',
-			],
-			ProtocolInfo::PROTOCOL_1_16_20 => [
-				self::CANONICAL_BLOCK_STATES_PATH => '-1.16.20',
-				self::R12_TO_CURRENT_BLOCK_MAP_PATH => '-1.16.20',
-			],
-			ProtocolInfo::PROTOCOL_1_16_0 => [
-				self::CANONICAL_BLOCK_STATES_PATH => '-1.16.0',
-				self::R12_TO_CURRENT_BLOCK_MAP_PATH => '-1.16.0',
-			],
-			ProtocolInfo::PROTOCOL_1_14_60 => [
-				self::CANONICAL_BLOCK_STATES_PATH => '-1.14.0',
-				self::R12_TO_CURRENT_BLOCK_MAP_PATH => '-1.14.0',
-			],
-			ProtocolInfo::PROTOCOL_1_13_0 => [
-				self::CANONICAL_BLOCK_STATES_PATH => '-1.13.0',
-				self::R12_TO_CURRENT_BLOCK_MAP_PATH => '-1.13.0',
-			],
-		];
-
 		$canonicalBlockStatesFiles = [];
 		$r12ToCurrentBlockMapFiles = [];
 
-		foreach($protocolPaths as $protocol => $paths){
+		foreach(self::PATHS as $protocol => $paths){
 			$canonicalBlockStatesFiles[$protocol] = Path::join(\pocketmine\BEDROCK_DATA_PATH, "canonical_block_states" . $paths[self::CANONICAL_BLOCK_STATES_PATH] . ".nbt");
 			$r12ToCurrentBlockMapFiles[$protocol] = Path::join(\pocketmine\BEDROCK_DATA_PATH, "r12_to_current_block_map" . $paths[self::R12_TO_CURRENT_BLOCK_MAP_PATH] . ".bin");
 		}
 
+		$minimalProtocol = Server::getInstance()->getConfigGroup()->getPropertyInt("protocol-support.min-accepted-protocol", ProtocolInfo::PROTOCOL_1_17_0);
 		return new self(
+			array_filter(array_keys(self::PATHS), fn(int $protocolId) => $protocolId >= $minimalProtocol),
 			$canonicalBlockStatesFiles,
 			$r12ToCurrentBlockMapFiles
 		);
 	}
 
 	/**
+	 * @param int[]    $protocols
 	 * @param string[] $canonicalBlockStatesFiles
 	 * @param string[] $r12ToCurrentBlockMapFiles
 	 */
-	private function __construct(array $canonicalBlockStatesFiles, array $r12ToCurrentBlockMapFiles){
-		foreach(LegacyR12BlockStates::getInstance()->getLegacyVersions() as $legacyVersion) {
-			foreach(LegacyR12BlockStates::getInstance()->getBlockPaletteEntries($legacyVersion) as $k => $entry) {
-				$this->registerMapping($legacyVersion, $k, $entry->getId(), $entry->getMetadata());
-			}
+	private function __construct(array $protocols, array $canonicalBlockStatesFiles, array $r12ToCurrentBlockMapFiles){
+		foreach($protocols as $mappingProtocol){
+			$this->initialize($mappingProtocol, $canonicalBlockStatesFiles[$mappingProtocol], $r12ToCurrentBlockMapFiles[$mappingProtocol]);
+		}
+	}
+
+	private function initialize(int $mappingProtocol, string $canonicalBlockStatesFile, string $r12ToCurrentBlockMapFile) : void{
+		if(isset($this->bedrockKnownStates[$mappingProtocol])) {
+			return;
 		}
 
-		foreach($canonicalBlockStatesFiles as $mappingProtocol => $canonicalBlockStatesFile){
-			$stream = PacketSerializer::decoder(
-				Utils::assumeNotFalse(file_get_contents($canonicalBlockStatesFile), "Missing required resource file"),
-				0,
-				new PacketSerializerContext(GlobalItemTypeDictionary::getInstance()->getDictionary(GlobalItemTypeDictionary::getDictionaryProtocol($mappingProtocol)))
-			);
-			$list = [];
-			while(!$stream->feof()){
-				$list[] = $stream->getNbtCompoundRoot();
+		if(in_array($mappingProtocol, LegacyR12BlockStates::getLegacyVersions(), true)) {
+			foreach(LegacyR12BlockStates::getInstance()->getBlockPaletteEntries($mappingProtocol) as $k => $entry) {
+				$this->registerMapping($mappingProtocol, $k, $entry->getId(), $entry->getMetadata());
 			}
-			$this->bedrockKnownStates[$mappingProtocol] = $list;
+			return;
 		}
-		foreach($r12ToCurrentBlockMapFiles as $mappingProtocol => $r12ToCurrentBlockMapFile){
-			$this->setupLegacyMappings($mappingProtocol, $r12ToCurrentBlockMapFile);
+
+		$stream = PacketSerializer::decoder(
+			Utils::assumeNotFalse(file_get_contents($canonicalBlockStatesFile), "Missing required resource file"),
+			0,
+			new PacketSerializerContext(GlobalItemTypeDictionary::getInstance()->getDictionary(GlobalItemTypeDictionary::getDictionaryProtocol($mappingProtocol)))
+		);
+		$list = [];
+		while(!$stream->feof()){
+			$list[] = $stream->getNbtCompoundRoot();
 		}
+		$this->bedrockKnownStates[$mappingProtocol] = $list;
+
+		$this->setupLegacyMappings($mappingProtocol, $r12ToCurrentBlockMapFile);
 	}
 
 	public static function getMappingProtocol(int $protocolId) : int{
@@ -264,10 +278,14 @@ final class RuntimeBlockMapping{
 	}
 
 	public function toRuntimeId(int $internalStateId, int $mappingProtocol = ProtocolInfo::CURRENT_PROTOCOL) : int{
+		$this->initialize($mappingProtocol, self::PATHS[$mappingProtocol][self::CANONICAL_BLOCK_STATES_PATH], self::PATHS[$mappingProtocol][self::R12_TO_CURRENT_BLOCK_MAP_PATH]);
+
 		return $this->legacyToRuntimeMap[$internalStateId][$mappingProtocol] ?? $this->legacyToRuntimeMap[BlockLegacyIds::INFO_UPDATE << Block::INTERNAL_METADATA_BITS][$mappingProtocol];
 	}
 
 	public function fromRuntimeId(int $runtimeId, int $mappingProtocol = ProtocolInfo::CURRENT_PROTOCOL) : int{
+		$this->initialize($mappingProtocol, self::PATHS[$mappingProtocol][self::CANONICAL_BLOCK_STATES_PATH], self::PATHS[$mappingProtocol][self::R12_TO_CURRENT_BLOCK_MAP_PATH]);
+
 		return $this->runtimeToLegacyMap[$runtimeId][$mappingProtocol];
 	}
 
@@ -280,6 +298,8 @@ final class RuntimeBlockMapping{
 	 * @return CompoundTag[]
 	 */
 	public function getBedrockKnownStates(int $mappingProtocol = ProtocolInfo::CURRENT_PROTOCOL) : array{
+		$this->initialize($mappingProtocol, self::PATHS[$mappingProtocol][self::CANONICAL_BLOCK_STATES_PATH], self::PATHS[$mappingProtocol][self::R12_TO_CURRENT_BLOCK_MAP_PATH]);
+
 		return $this->bedrockKnownStates[$mappingProtocol];
 	}
 }
