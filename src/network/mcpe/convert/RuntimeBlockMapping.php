@@ -124,34 +124,20 @@ final class RuntimeBlockMapping{
 	private array $bedrockKnownStates = [];
 
 	private static function make() : self{
-		$canonicalBlockStatesFiles = [];
-		$r12ToCurrentBlockMapFiles = [];
-
-		foreach(self::PATHS as $protocol => $paths){
-			$canonicalBlockStatesFiles[$protocol] = Path::join(\pocketmine\BEDROCK_DATA_PATH, "canonical_block_states" . $paths[self::CANONICAL_BLOCK_STATES_PATH] . ".nbt");
-			$r12ToCurrentBlockMapFiles[$protocol] = Path::join(\pocketmine\BEDROCK_DATA_PATH, "r12_to_current_block_map" . $paths[self::R12_TO_CURRENT_BLOCK_MAP_PATH] . ".bin");
-		}
-
 		$minimalProtocol = Server::getInstance()->getConfigGroup()->getPropertyInt("protocol-support.min-accepted-protocol", ProtocolInfo::PROTOCOL_1_17_0);
-		return new self(
-			array_filter(array_keys(self::PATHS), fn(int $protocolId) => $protocolId >= $minimalProtocol),
-			$canonicalBlockStatesFiles,
-			$r12ToCurrentBlockMapFiles
-		);
+		return new self(array_filter(array_keys(self::PATHS), fn(int $protocolId) => $protocolId >= $minimalProtocol));
 	}
 
 	/**
 	 * @param int[]    $protocols
-	 * @param string[] $canonicalBlockStatesFiles
-	 * @param string[] $r12ToCurrentBlockMapFiles
 	 */
-	private function __construct(array $protocols, array $canonicalBlockStatesFiles, array $r12ToCurrentBlockMapFiles){
+	private function __construct(array $protocols){
 		foreach($protocols as $mappingProtocol){
-			$this->initialize($mappingProtocol, $canonicalBlockStatesFiles[$mappingProtocol], $r12ToCurrentBlockMapFiles[$mappingProtocol]);
+			$this->initialize($mappingProtocol);
 		}
 	}
 
-	private function initialize(int $mappingProtocol, string $canonicalBlockStatesFile, string $r12ToCurrentBlockMapFile) : void{
+	private function initialize(int $mappingProtocol) : void{
 		if(isset($this->bedrockKnownStates[$mappingProtocol])) {
 			return;
 		}
@@ -163,6 +149,7 @@ final class RuntimeBlockMapping{
 			return;
 		}
 
+		$canonicalBlockStatesFile = Path::join(\pocketmine\BEDROCK_DATA_PATH, "canonical_block_states" . self::PATHS[$mappingProtocol][self::CANONICAL_BLOCK_STATES_PATH] . ".nbt");
 		$stream = PacketSerializer::decoder(
 			Utils::assumeNotFalse(file_get_contents($canonicalBlockStatesFile), "Missing required resource file"),
 			0,
@@ -174,6 +161,7 @@ final class RuntimeBlockMapping{
 		}
 		$this->bedrockKnownStates[$mappingProtocol] = $list;
 
+		$r12ToCurrentBlockMapFile = Path::join(\pocketmine\BEDROCK_DATA_PATH, "r12_to_current_block_map" . self::PATHS[$mappingProtocol][self::R12_TO_CURRENT_BLOCK_MAP_PATH] . ".bin");
 		$this->setupLegacyMappings($mappingProtocol, $r12ToCurrentBlockMapFile);
 	}
 
@@ -278,13 +266,13 @@ final class RuntimeBlockMapping{
 	}
 
 	public function toRuntimeId(int $internalStateId, int $mappingProtocol = ProtocolInfo::CURRENT_PROTOCOL) : int{
-		$this->initialize($mappingProtocol, self::PATHS[$mappingProtocol][self::CANONICAL_BLOCK_STATES_PATH], self::PATHS[$mappingProtocol][self::R12_TO_CURRENT_BLOCK_MAP_PATH]);
+		$this->initialize($mappingProtocol);
 
 		return $this->legacyToRuntimeMap[$internalStateId][$mappingProtocol] ?? $this->legacyToRuntimeMap[BlockLegacyIds::INFO_UPDATE << Block::INTERNAL_METADATA_BITS][$mappingProtocol];
 	}
 
 	public function fromRuntimeId(int $runtimeId, int $mappingProtocol = ProtocolInfo::CURRENT_PROTOCOL) : int{
-		$this->initialize($mappingProtocol, self::PATHS[$mappingProtocol][self::CANONICAL_BLOCK_STATES_PATH], self::PATHS[$mappingProtocol][self::R12_TO_CURRENT_BLOCK_MAP_PATH]);
+		$this->initialize($mappingProtocol);
 
 		return $this->runtimeToLegacyMap[$runtimeId][$mappingProtocol];
 	}
