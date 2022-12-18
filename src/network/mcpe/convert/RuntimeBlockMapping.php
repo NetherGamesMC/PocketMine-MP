@@ -32,12 +32,9 @@ use pocketmine\network\mcpe\protocol\serializer\NetworkNbtSerializer;
 use pocketmine\network\mcpe\protocol\serializer\PacketSerializer;
 use pocketmine\network\mcpe\protocol\serializer\PacketSerializerContext;
 use pocketmine\player\Player;
-use pocketmine\Server;
 use pocketmine\utils\SingletonTrait;
 use pocketmine\utils\Utils;
 use Symfony\Component\Filesystem\Path;
-use function array_filter;
-use function array_keys;
 use function file_get_contents;
 use function in_array;
 
@@ -49,7 +46,7 @@ final class RuntimeBlockMapping{
 
 	public const CANONICAL_BLOCK_STATES_PATH = 0;
 	public const R12_TO_CURRENT_BLOCK_MAP_PATH = 1;
-	private const PATHS = [
+	public const PATHS = [
 		ProtocolInfo::CURRENT_PROTOCOL => [
 			self::CANONICAL_BLOCK_STATES_PATH => '',
 			self::R12_TO_CURRENT_BLOCK_MAP_PATH => '',
@@ -123,15 +120,10 @@ final class RuntimeBlockMapping{
 	/** @var CompoundTag[][] */
 	private array $bedrockKnownStates = [];
 
-	private static function make() : self{
-		$minimalProtocol = Server::getInstance()->getConfigGroup()->getPropertyInt("protocol-support.min-accepted-protocol", ProtocolInfo::PROTOCOL_1_17_0);
-		return new self(array_filter(array_keys(self::PATHS), fn(int $protocolId) => $protocolId >= $minimalProtocol));
-	}
-
 	/**
-	 * @param int[]    $protocols
+	 * @param int[] $protocols
 	 */
-	private function __construct(array $protocols){
+	public function __construct(array $protocols){
 		foreach($protocols as $mappingProtocol){
 			$this->initialize($mappingProtocol);
 		}

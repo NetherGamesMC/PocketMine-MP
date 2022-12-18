@@ -27,13 +27,10 @@ use pocketmine\network\mcpe\protocol\ProtocolInfo;
 use pocketmine\network\mcpe\protocol\serializer\ItemTypeDictionary;
 use pocketmine\network\mcpe\protocol\types\ItemTypeEntry;
 use pocketmine\player\Player;
-use pocketmine\Server;
 use pocketmine\utils\AssumptionFailedError;
 use pocketmine\utils\SingletonTrait;
 use pocketmine\utils\Utils;
 use Symfony\Component\Filesystem\Path;
-use function array_filter;
-use function array_keys;
 use function file_get_contents;
 use function is_array;
 use function is_bool;
@@ -47,7 +44,7 @@ final class GlobalItemTypeDictionary{
 	/** @var ItemTypeDictionary[] */
 	private array $dictionaries;
 
-	private const PATHS = [
+	public const PATHS = [
 		ProtocolInfo::CURRENT_PROTOCOL => "",
 		ProtocolInfo::PROTOCOL_1_19_40 => "-1.19.40",
 		ProtocolInfo::PROTOCOL_1_19_0 => "-1.19.0",
@@ -65,15 +62,10 @@ final class GlobalItemTypeDictionary{
 		ProtocolInfo::PROTOCOL_1_12_0 => "-1.12.0",
 	];
 
-	private static function make() : self{
-		$minimalProtocol = Server::getInstance()->getConfigGroup()->getPropertyInt("protocol-support.min-accepted-protocol", ProtocolInfo::PROTOCOL_1_17_0);
-		return new self(array_filter(array_keys(self::PATHS), fn(int $protocolId) => $protocolId >= $minimalProtocol));
-	}
-
 	/**
 	 * @param int[] $protocols
 	 */
-	private function __construct(array $protocols){
+	public function __construct(array $protocols){
 		foreach ($protocols as $protocolId){
 			$this->initialize($protocolId);
 		}
