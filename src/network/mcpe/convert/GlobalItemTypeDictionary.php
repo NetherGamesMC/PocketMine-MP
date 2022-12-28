@@ -31,6 +31,8 @@ use pocketmine\utils\AssumptionFailedError;
 use pocketmine\utils\SingletonTrait;
 use pocketmine\utils\Utils;
 use Symfony\Component\Filesystem\Path;
+use function array_filter;
+use function array_keys;
 use function file_get_contents;
 use function is_array;
 use function is_bool;
@@ -44,7 +46,7 @@ final class GlobalItemTypeDictionary{
 	/** @var ItemTypeDictionary[] */
 	private array $dictionaries;
 
-	public const PATHS = [
+	private const PATHS = [
 		ProtocolInfo::CURRENT_PROTOCOL => "",
 		ProtocolInfo::PROTOCOL_1_19_40 => "-1.19.40",
 		ProtocolInfo::PROTOCOL_1_19_0 => "-1.19.0",
@@ -62,12 +64,12 @@ final class GlobalItemTypeDictionary{
 		ProtocolInfo::PROTOCOL_1_12_0 => "-1.12.0",
 	];
 
-	/**
-	 * @param int[] $protocols
-	 */
-	public function __construct(array $protocols){
-		foreach ($protocols as $protocolId){
-			$this->initialize($protocolId);
+	public function __construct(){
+		$minimalProtocol = Utils::getMinimalProtocol();
+		$protocols = array_filter(array_keys(GlobalItemTypeDictionary::PATHS), fn(int $protocolId) => $protocolId >= $minimalProtocol);
+
+		foreach($protocols as $mappingProtocol){
+			$this->initialize($mappingProtocol);
 		}
 	}
 

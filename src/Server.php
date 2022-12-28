@@ -57,8 +57,6 @@ use pocketmine\network\mcpe\compression\CompressBatchPromise;
 use pocketmine\network\mcpe\compression\CompressBatchTask;
 use pocketmine\network\mcpe\compression\Compressor;
 use pocketmine\network\mcpe\compression\ZlibCompressor;
-use pocketmine\network\mcpe\convert\GlobalItemTypeDictionary;
-use pocketmine\network\mcpe\convert\RuntimeBlockMapping;
 use pocketmine\network\mcpe\encryption\EncryptionContext;
 use pocketmine\network\mcpe\NetworkSession;
 use pocketmine\network\mcpe\PacketBroadcaster;
@@ -118,8 +116,6 @@ use pocketmine\world\WorldCreationOptions;
 use pocketmine\world\WorldManager;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Filesystem\Path;
-use function array_filter;
-use function array_keys;
 use function array_sum;
 use function base64_encode;
 use function cli_set_process_title;
@@ -922,12 +918,6 @@ class Server{
 				$netCompressionLevel = 6;
 			}
 			ZlibCompressor::setInstance(new ZlibCompressor($netCompressionLevel, $netCompressionThreshold, ZlibCompressor::DEFAULT_MAX_DECOMPRESSION_SIZE));
-
-			$minimalProtocol = $this->configGroup->getPropertyInt("protocol-support.min-accepted-protocol", ProtocolInfo::PROTOCOL_1_17_0);
-			GlobalItemTypeDictionary::setInstance(new GlobalItemTypeDictionary(
-				array_filter(array_keys(GlobalItemTypeDictionary::PATHS), fn(int $protocolId) => $protocolId >= $minimalProtocol)));
-			RuntimeBlockMapping::setInstance(new RuntimeBlockMapping(
-				array_filter(array_keys(RuntimeBlockMapping::PATHS), fn(int $protocolId) => $protocolId >= $minimalProtocol)));
 
 			$this->networkCompressionAsync = $this->configGroup->getPropertyBool("network.async-compression", true);
 

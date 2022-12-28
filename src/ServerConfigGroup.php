@@ -144,4 +144,11 @@ final class ServerConfigGroup{
 			$this->nethergamesYml->save();
 		}
 	}
+
+	/**
+	 * @internal
+	 */
+	public function getNetherGamesConfig() : Config{
+		return $this->nethergamesYml;
+	}
 }

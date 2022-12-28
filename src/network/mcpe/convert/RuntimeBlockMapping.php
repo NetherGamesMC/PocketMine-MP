@@ -35,8 +35,11 @@ use pocketmine\player\Player;
 use pocketmine\utils\SingletonTrait;
 use pocketmine\utils\Utils;
 use Symfony\Component\Filesystem\Path;
+use function array_filter;
+use function array_keys;
 use function file_get_contents;
 use function in_array;
+use function var_dump;
 
 /**
  * @internal
@@ -46,7 +49,7 @@ final class RuntimeBlockMapping{
 
 	public const CANONICAL_BLOCK_STATES_PATH = 0;
 	public const R12_TO_CURRENT_BLOCK_MAP_PATH = 1;
-	public const PATHS = [
+	private const PATHS = [
 		ProtocolInfo::CURRENT_PROTOCOL => [
 			self::CANONICAL_BLOCK_STATES_PATH => '',
 			self::R12_TO_CURRENT_BLOCK_MAP_PATH => '',
@@ -120,10 +123,13 @@ final class RuntimeBlockMapping{
 	/** @var CompoundTag[][] */
 	private array $bedrockKnownStates = [];
 
-	/**
-	 * @param int[] $protocols
-	 */
-	public function __construct(array $protocols){
+	public function __construct(){
+		$minimalProtocol = Utils::getMinimalProtocol();
+		$protocols = array_keys(RuntimeBlockMapping::PATHS);
+		$protocols[] = ProtocolInfo::PROTOCOL_1_12_0;
+
+		$protocols = array_filter($protocols, fn(int $protocolId) => $protocolId >= $minimalProtocol);
+		var_dump($protocols);
 		foreach($protocols as $mappingProtocol){
 			$this->initialize($mappingProtocol);
 		}
