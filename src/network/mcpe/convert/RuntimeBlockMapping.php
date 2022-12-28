@@ -39,7 +39,6 @@ use function array_filter;
 use function array_keys;
 use function file_get_contents;
 use function in_array;
-use function var_dump;
 
 /**
  * @internal
@@ -129,7 +128,6 @@ final class RuntimeBlockMapping{
 		$protocols[] = ProtocolInfo::PROTOCOL_1_12_0;
 
 		$protocols = array_filter($protocols, fn(int $protocolId) => $protocolId >= $minimalProtocol);
-		var_dump($protocols);
 		foreach($protocols as $mappingProtocol){
 			$this->initialize($mappingProtocol);
 		}
