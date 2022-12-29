@@ -282,7 +282,7 @@ final class RuntimeBlockMapping{
 	 * @return CompoundTag[]
 	 */
 	public function getBedrockKnownStates(int $mappingProtocol = ProtocolInfo::CURRENT_PROTOCOL) : array{
-		$this->initialize($mappingProtocol, self::PATHS[$mappingProtocol][self::CANONICAL_BLOCK_STATES_PATH], self::PATHS[$mappingProtocol][self::R12_TO_CURRENT_BLOCK_MAP_PATH]);
+		$this->initialize($mappingProtocol);
 
 		return $this->bedrockKnownStates[$mappingProtocol];
 	}
