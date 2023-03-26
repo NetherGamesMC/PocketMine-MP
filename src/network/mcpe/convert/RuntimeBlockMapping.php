@@ -171,7 +171,8 @@ final class RuntimeBlockMapping{
 			ProtocolInfo::PROTOCOL_1_19_30,
 			ProtocolInfo::PROTOCOL_1_19_21,
 			ProtocolInfo::PROTOCOL_1_19_20 => ProtocolInfo::PROTOCOL_1_19_40,
-
+            ProtocolInfo::PROTOCOL_1_19_0 => ProtocolInfo::PROTOCOL_1_19_10,
+			
 			default => $protocolId
 		};
 	}
