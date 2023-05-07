@@ -55,6 +55,7 @@ final class ItemTranslator{
 		ProtocolInfo::PROTOCOL_1_19_63 => "-1.19.63",
 		ProtocolInfo::PROTOCOL_1_19_50 => "-1.19.50",
 		ProtocolInfo::PROTOCOL_1_19_40 => "-1.19.40",
+        ProtocolInfo::PROTOCOL_1_19_10 => "-1.19.0",
 		ProtocolInfo::PROTOCOL_1_19_0 => "-1.19.0",
 		ProtocolInfo::PROTOCOL_1_18_30 => "-1.18.30",
 		ProtocolInfo::PROTOCOL_1_18_10 => "-1.18.10",
