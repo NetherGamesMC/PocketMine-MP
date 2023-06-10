@@ -256,11 +256,11 @@ final class RuntimeBlockMapping{
 	}
 
 	public function toRuntimeId(int $internalStateId, int $mappingProtocol = ProtocolInfo::CURRENT_PROTOCOL) : int{
-		return $this->legacyToRuntimeMap[$internalStateId][$mappingProtocol] ?? $this->legacyToRuntimeMap[BlockLegacyIds::INFO_UPDATE << Block::INTERNAL_METADATA_BITS][$mappingProtocol];
+		return $this->legacyToRuntimeMap[$internalStateId][self::getMappingProtocol($mappingProtocol)] ?? $this->legacyToRuntimeMap[BlockLegacyIds::INFO_UPDATE << Block::INTERNAL_METADATA_BITS][self::getMappingProtocol($mappingProtocol)];
 	}
 
 	public function fromRuntimeId(int $runtimeId, int $mappingProtocol = ProtocolInfo::CURRENT_PROTOCOL) : int{
-		return $this->runtimeToLegacyMap[$runtimeId][$mappingProtocol];
+		return $this->runtimeToLegacyMap[$runtimeId][self::getMappingProtocol($mappingProtocol)];
 	}
 
 	private function registerMapping(int $mappingProtocol, int $staticRuntimeId, int $legacyId, int $legacyMeta) : void{
