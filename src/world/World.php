@@ -26,6 +26,10 @@ declare(strict_types=1);
  */
 namespace pocketmine\world;
 
+use DaveRandom\CallbackValidator\BuiltInTypes;
+use DaveRandom\CallbackValidator\CallbackType;
+use DaveRandom\CallbackValidator\ParameterType;
+use DaveRandom\CallbackValidator\ReturnType;
 use pocketmine\block\Air;
 use pocketmine\block\Block;
 use pocketmine\block\BlockTypeIds;
@@ -83,6 +87,7 @@ use pocketmine\ServerConfigGroup;
 use pocketmine\utils\AssumptionFailedError;
 use pocketmine\utils\Limits;
 use pocketmine\utils\ReversePriorityQueue;
+use pocketmine\utils\Utils;
 use pocketmine\world\biome\Biome;
 use pocketmine\world\biome\BiomeRegistry;
 use pocketmine\world\format\Chunk;
@@ -143,6 +148,7 @@ use const PHP_INT_MIN;
 
 /**
  * @phpstan-type ChunkPosHash int
+ * @phpstan-type TypeConverterHash int|null
  * @phpstan-type BlockPosHash int
  * @phpstan-type ChunkBlockPosHash int
  */
@@ -253,8 +259,8 @@ class World implements ChunkManager{
 	private array $playerChunkListeners = [];
 
 	/**
-	 * @var ClientboundPacket[][]
-	 * @phpstan-var array<ChunkPosHash, list<ClientboundPacket>>
+	 * @var ClientboundPacket[][] chunkHash => [typeConverterHash => ClientboundPacket[]]
+	 * @phpstan-var array<ChunkPosHash, array<TypeConverterHash, list<ClientboundPacket>>>
 	 */
 	private array $packetBuffersByChunk = [];
 
@@ -701,10 +707,16 @@ class World implements ChunkManager{
 
 		$players = $ev->getRecipients();
 		if($sound instanceof BlockSound){
-			TypeConverter::broadcastByTypeConverter($players, function(TypeConverter $typeConverter) use ($sound, $pos) : array{
+			$closure = function(TypeConverter $typeConverter) use ($sound, $pos) : array{
 				$sound->setBlockTranslator($typeConverter->getBlockTranslator());
 				return $sound->encode($pos);
-			});
+			};
+
+			if($players === $this->getViewersForPosition($pos)){
+				$this->broadcastPacketToViewersByTypeConverter($pos, $closure);
+			}else{
+				TypeConverter::broadcastByTypeConverter($this->filterViewersForPosition($pos, $players), $closure);
+			}
 		}else{
 			$pk = $sound->encode($pos);
 
@@ -735,7 +747,7 @@ class World implements ChunkManager{
 
 		$players = $ev->getRecipients();
 		if($particle instanceof BlockParticle || $particle instanceof ItemParticle){
-			TypeConverter::broadcastByTypeConverter($players, function(TypeConverter $typeConverter) use ($particle, $pos) : array{
+			$closure = function(TypeConverter $typeConverter) use ($particle, $pos) : array{
 				if($particle instanceof ItemParticle){
 					$particle->setItemTranslator($typeConverter->getItemTranslator());
 				}else{
@@ -743,7 +755,13 @@ class World implements ChunkManager{
 				}
 
 				return $particle->encode($pos);
-			});
+			};
+
+			if($players === $this->getViewersForPosition($pos)){
+				$this->broadcastPacketToViewersByTypeConverter($pos, $closure);
+			}else{
+				TypeConverter::broadcastByTypeConverter($this->filterViewersForPosition($pos, $players), $closure);
+			}
 		}else{
 			$pk = $particle->encode($pos);
 
@@ -807,11 +825,35 @@ class World implements ChunkManager{
 		$this->broadcastPacketToPlayersUsingChunk($pos->getFloorX() >> Chunk::COORD_BIT_SIZE, $pos->getFloorZ() >> Chunk::COORD_BIT_SIZE, $packet);
 	}
 
-	private function broadcastPacketToPlayersUsingChunk(int $chunkX, int $chunkZ, ClientboundPacket $packet) : void{
-		if(!isset($this->packetBuffersByChunk[$index = World::chunkHash($chunkX, $chunkZ)])){
-			$this->packetBuffersByChunk[$index] = [$packet];
+	/**
+	 * Broadcasts packets to every player who has the target position within their view distance.
+	 * @phpstan-param \Closure(TypeConverter) : ClientboundPacket[] $closure
+	 */
+	public function broadcastPacketToViewersByTypeConverter(Vector3 $pos, \Closure $closure) : void{
+		Utils::validateCallableSignature(new CallbackType(
+			new ReturnType(BuiltInTypes::ARRAY, ReturnType::COVARIANT),
+			new ParameterType('typeConverter', TypeConverter::class),
+		), $closure);
+
+		[$typeConverters, ] = TypeConverter::sortByConverter($this->getViewersForPosition($pos));
+
+		foreach($typeConverters as $typeConverter){
+			/** @var ClientboundPacket[] $packets */
+			$packets = $closure($typeConverter);
+			foreach($packets as $packet){
+				$this->broadcastPacketToPlayersUsingChunk($pos->getFloorX() >> Chunk::COORD_BIT_SIZE, $pos->getFloorZ() >> Chunk::COORD_BIT_SIZE, $packet, $typeConverter);
+			}
+		}
+	}
+
+	private function broadcastPacketToPlayersUsingChunk(int $chunkX, int $chunkZ, ClientboundPacket $packet, ?TypeConverter $typeConverter = null) : void{
+		/** @phpstan-var int|null $typeConverterId */
+		$typeConverterId = $typeConverter === null ? null : spl_object_id($typeConverter);
+
+		if(!isset($this->packetBuffersByChunk[$index = World::chunkHash($chunkX, $chunkZ)][$typeConverterId])){
+			$this->packetBuffersByChunk[$index][$typeConverterId] = [$packet];
 		}else{
-			$this->packetBuffersByChunk[$index][] = $packet;
+			$this->packetBuffersByChunk[$index][$typeConverterId][] = $packet;
 		}
 	}
 
@@ -1033,9 +1075,12 @@ class World implements ChunkManager{
 							$p->onChunkChanged($chunkX, $chunkZ, $chunk);
 						}
 					}else{
-						TypeConverter::broadcastByTypeConverter($this->getChunkPlayers($chunkX, $chunkZ), function(TypeConverter $typeConverter) use ($blocks) : array{
-							return $this->createBlockUpdatePackets($typeConverter, $blocks);
-						});
+						[$typeConverters, ] = TypeConverter::sortByConverter($this->getChunkPlayers($chunkX, $chunkZ));
+						foreach($typeConverters as $typeConverter){
+							foreach($this->createBlockUpdatePackets($typeConverter, $blocks) as $packet){
+								$this->broadcastPacketToPlayersUsingChunk($chunkX, $chunkZ, $packet);
+							}
+						}
 					}
 				}
 			}
@@ -1050,9 +1095,15 @@ class World implements ChunkManager{
 
 		foreach($this->packetBuffersByChunk as $index => $entries){
 			World::getXZ($index, $chunkX, $chunkZ);
-			$chunkPlayers = $this->getChunkPlayers($chunkX, $chunkZ);
-			if(count($chunkPlayers) > 0){
-				NetworkBroadcastUtils::broadcastPackets($chunkPlayers, $entries);
+			$universalPackets = $entries[null] ?? [];
+			[$typeConverters, $converterRecipients] = TypeConverter::sortByConverter($this->getChunkPlayers($chunkX, $chunkZ));
+
+			foreach($typeConverters as $key => $typeConverter){
+				$packets = ($entries[$key] ?? []) + $universalPackets;
+
+				if(count($packets) > 0){
+					NetworkBroadcastUtils::broadcastPackets($converterRecipients[$key], $packets);
+				}
 			}
 		}
 

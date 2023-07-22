@@ -34,7 +34,6 @@ use pocketmine\math\AxisAlignedBB;
 use pocketmine\math\Facing;
 use pocketmine\math\RayTraceResult;
 use pocketmine\math\Vector3;
-use pocketmine\network\mcpe\convert\TypeConverter;
 use pocketmine\player\Player;
 use pocketmine\world\BlockTransaction;
 use pocketmine\world\sound\BellRingSound;
@@ -155,8 +154,7 @@ final class Bell extends Transparent{
 		$world->addSound($this->position, new BellRingSound());
 		$tile = $world->getTile($this->position);
 		if($tile instanceof TileBell){
-			$players = $world->getViewersForPosition($this->position);
-			TypeConverter::broadcastByTypeConverter($players, fn($typeConverter) : array => [$tile->createFakeUpdatePacket($faceHit, $typeConverter)]);
+			$world->broadcastPacketToViewersByTypeConverter($this->position, fn($typeConverter) : array => [$tile->createFakeUpdatePacket($faceHit, $typeConverter)]);
 		}
 	}
 
