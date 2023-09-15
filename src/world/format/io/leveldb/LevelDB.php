@@ -314,7 +314,7 @@ class LevelDB extends BaseWorldProvider implements WritableWorldProvider{
 		}
 		if(!$stream->feof()){
 			//maybe bad output produced by a third-party conversion tool like Chunker
-			$logger->error("Unexpected trailing data after 3D biomes data");
+			//$logger->error("Unexpected trailing data after 3D biomes data");
 		}
 
 		return $result;
