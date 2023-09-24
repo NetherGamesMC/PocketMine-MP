@@ -335,7 +335,7 @@ JIT_WARNING
 
 			$logger->info("Stopping other threads");
 
-			$killer = new ServerKiller(8);
+			$killer = new ServerKiller(120);
 			$killer->start();
 			usleep(10000); //Fixes ServerKiller not being able to start on single-core machines
 
