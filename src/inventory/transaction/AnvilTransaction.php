@@ -27,6 +27,7 @@ use pocketmine\block\Anvil;
 use pocketmine\block\Block;
 use pocketmine\item\Durable;
 use pocketmine\item\EnchantedBook;
+use pocketmine\item\enchantment\AvailableEnchantmentRegistry;
 use pocketmine\item\enchantment\EnchantmentInstance;
 use pocketmine\item\enchantment\EnchantmentTransfer;
 use pocketmine\item\enchantment\IncompatibleEnchantMap;
@@ -195,10 +196,10 @@ class AnvilTransaction extends InventoryTransaction{
 	public function execute() : void{
 		try{
 			parent::execute();
-		}catch(TransactionException){
+		}catch(TransactionException $e){
 			$networkSession = $this->source->getNetworkSession();
 			$networkSession->getEntityEventBroadcaster()->syncAttributes([$networkSession], $this->source, $this->source->getAttributeMap()->getAll());
-			return;
+			throw $e;
 		}
 		$this->source->getXpManager()->subtractXpLevels($this->getXPCost());
 		$this->holder->getPosition()->getWorld()->addSound($this->holder->getPosition(), new AnvilUseSound());
@@ -212,13 +213,12 @@ class AnvilTransaction extends InventoryTransaction{
 	 */
 	public static function getApplicableEnchants(Item $target, Item $source) : array{
 		$applicableEnchants = [];
-		$itemFlag = ItemRepairUtils::getItemFlagFor($target);
+		$availableEnchantment = AvailableEnchantmentRegistry::getInstance();
 
 		foreach($source->getEnchantments() as $enchantment){
 			$enchantmentType = $enchantment->getType();
 			if(
-				!$enchantmentType->hasPrimaryItemType($itemFlag) &&
-				!$enchantmentType->hasSecondaryItemType($itemFlag) &&
+				!$availableEnchantment->isAvailableForItem($enchantmentType, $target) &&
 				!$target instanceof EnchantedBook // enchanted books let in any compatible
 			){
 				continue;

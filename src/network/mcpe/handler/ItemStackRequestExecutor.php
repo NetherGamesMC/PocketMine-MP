@@ -320,7 +320,7 @@ class ItemStackRequestExecutor{
 	 * @throws ItemStackRequestProcessException
 	 */
 	private function assertDoingCrafting() : void{
-		if(!$this->specialTransaction instanceof CraftingTransaction && !$this->specialTransaction instanceof EnchantingTransaction){
+		if(!$this->specialTransaction instanceof CraftingTransaction && !$this->specialTransaction instanceof EnchantTransaction && !$this->specialTransaction instanceof AnvilTransaction){
 			if($this->specialTransaction === null){
 				throw new ItemStackRequestProcessException("Expected CraftRecipe or CraftRecipeAuto action to precede this action");
 			}else{
@@ -378,6 +378,21 @@ class ItemStackRequestExecutor{
 			}
 		}elseif($action instanceof CraftRecipeAutoStackRequestAction){
 			$this->beginCrafting($action->getRecipeId(), $action->getRepetitions());
+		}elseif($action instanceof CraftRecipeOptionalStackRequestAction){
+			$window = $this->player->getCurrentWindow();
+			if($window instanceof AnvilInventory){
+				$filterStrings = $this->request->getFilterStrings();
+				$filterStringIndex = $action->getFilterStringIndex();
+
+				$this->specialTransaction = new AnvilTransaction(
+					$this->player,
+					$this->player->getWorld()->getBlock($window->getHolder()),
+					$window->getItem(AnvilInventory::SLOT_INPUT),
+					$window->getItem(AnvilInventory::SLOT_MATERIAL),
+					$filterStringIndex >= 0 ? ($filterStrings[$filterStringIndex] ?? null) : null, []
+				);
+				$this->setNextCreatedItem($this->specialTransaction->getResult());
+			}
 		}elseif($action instanceof CraftRecipeOptionalStackRequestAction){
 			$filterStrings = $this->request->getFilterStrings();
 			$filterStringIndex = $action->getFilterStringIndex();
