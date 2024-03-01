@@ -85,14 +85,14 @@ class CachedChunk{
 	/**
 	 * @phpstan-param DimensionIds::* $dimensionId
 	 */
-	public function compressPackets(int $chunkX, int $chunkZ, int $dimensionId, string $chunkData, Compressor $compressor, PacketSerializerContext $encoderContext, int $protocolId) : void{
+	public function compressPackets(int $chunkX, int $chunkZ, int $dimensionId, string $chunkData, Compressor $compressor, int $protocolId) : void{
 		$protocolAddition = $protocolId >= ProtocolInfo::PROTOCOL_1_20_60 ? chr($compressor->getNetworkId()) : '';
 		$stream = new BinaryStream();
-		PacketBatch::encodePackets($stream, $encoderContext, [$this->createPacket($chunkX, $chunkZ, $dimensionId, $chunkData)]);
+		PacketBatch::encodePackets($stream, $protocolId, [$this->createPacket($chunkX, $chunkZ, $dimensionId, $chunkData)]);
 		$this->packet = $protocolAddition . $compressor->compress($stream->getBuffer());
 
 		$stream = new BinaryStream();
-		PacketBatch::encodePackets($stream, $encoderContext, [$this->createCachablePacket($chunkX, $chunkZ, $dimensionId, $chunkData)]);
+		PacketBatch::encodePackets($stream, $protocolId, [$this->createCachablePacket($chunkX, $chunkZ, $dimensionId, $chunkData)]);
 		$this->cachablePacket = $protocolAddition . $compressor->compress($stream->getBuffer());
 	}
 
