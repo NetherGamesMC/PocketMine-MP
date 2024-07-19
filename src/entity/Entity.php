@@ -67,6 +67,7 @@ use pocketmine\world\format\Chunk;
 use pocketmine\world\Position;
 use pocketmine\world\sound\Sound;
 use pocketmine\world\World;
+use pocketmine\YmlServerProperties;
 use function abs;
 use function array_map;
 use function assert;
@@ -656,7 +657,10 @@ abstract class Entity{
 		}
 		$this->checkBlockIntersectionsNextTick = true;
 
-		if($this->location->y <= 0 && $this->isAlive()){
+		$cfg = $this->server->getConfigGroup();
+		$minY = $cfg->getPropertyInt(YmlServerProperties::LEVEL_SETTINGS_MIN_Y, 0);
+
+		if($this->location->y <= $minY && $this->isAlive()){
 			$ev = new EntityDamageEvent($this, EntityDamageEvent::CAUSE_VOID, 10);
 			$this->attack($ev);
 			$hasUpdate = true;
