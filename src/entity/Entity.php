@@ -657,10 +657,7 @@ abstract class Entity{
 		}
 		$this->checkBlockIntersectionsNextTick = true;
 
-		$cfg = $this->server->getConfigGroup();
-		$minY = $cfg->getPropertyInt(YmlServerProperties::LEVEL_SETTINGS_MIN_Y, 0);
-
-		if($this->location->y <= $minY && $this->isAlive()){
+		if($this->location->y <= $this->getWorld()->getMinVoidY() && $this->isAlive()){
 			$ev = new EntityDamageEvent($this, EntityDamageEvent::CAUSE_VOID, 10);
 			$this->attack($ev);
 			$hasUpdate = true;

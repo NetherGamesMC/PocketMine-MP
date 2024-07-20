@@ -227,6 +227,7 @@ class World implements ChunkManager{
 
 	private int $minY;
 	private int $maxY;
+    private int $minVoidY;
 
 	/**
 	 * @var ChunkTicker[][] chunkHash => [spl_object_id => ChunkTicker]
@@ -499,10 +500,13 @@ class World implements ChunkManager{
 		$this->displayName = $this->provider->getWorldData()->getName();
 		$this->logger = new \PrefixedLogger($server->getLogger(), "World: $this->displayName");
 
+        $cfg = $this->server->getConfigGroup();
+
 		$this->minY = $this->provider->getWorldMinY();
 		$this->maxY = $this->provider->getWorldMaxY();
+        $this->minVoidY = $cfg->getPropertyInt(YmlServerProperties::LEVEL_SETTINGS_MIN_Y, 0);
 
-		$this->server->getLogger()->info($this->server->getLanguage()->translate(KnownTranslationFactory::pocketmine_level_preparing($this->displayName)));
+        $this->server->getLogger()->info($this->server->getLanguage()->translate(KnownTranslationFactory::pocketmine_level_preparing($this->displayName)));
 		$generator = GeneratorManager::getInstance()->getGenerator($this->provider->getWorldData()->getGenerator()) ??
 			throw new AssumptionFailedError("WorldManager should already have checked that the generator exists");
 		$generator->validateGeneratorOptions($this->provider->getWorldData()->getGeneratorOptions());
@@ -529,7 +533,6 @@ class World implements ChunkManager{
 
 		$this->time = $this->provider->getWorldData()->getTime();
 
-		$cfg = $this->server->getConfigGroup();
 		$this->chunkTickRadius = min($this->server->getViewDistance(), max(0, $cfg->getPropertyInt(YmlServerProperties::CHUNK_TICKING_TICK_RADIUS, 4)));
 		if($cfg->getPropertyInt("chunk-ticking.per-tick", 40) <= 0){
 			//TODO: this needs l10n
@@ -3276,6 +3279,13 @@ class World implements ChunkManager{
 	public function getMinY() : int{
 		return $this->minY;
 	}
+
+    /**
+     * Returns the minimal Y level which an entity takes damage upon
+     */
+    public function getMinVoidY() : int{
+        return $this->minVoidY;
+    }
 
 	public function getMaxY() : int{
 		return $this->maxY;
