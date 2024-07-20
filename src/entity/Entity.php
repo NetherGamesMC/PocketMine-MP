@@ -67,7 +67,6 @@ use pocketmine\world\format\Chunk;
 use pocketmine\world\Position;
 use pocketmine\world\sound\Sound;
 use pocketmine\world\World;
-use pocketmine\YmlServerProperties;
 use function abs;
 use function array_map;
 use function assert;
