@@ -3286,7 +3286,7 @@ class World implements ChunkManager{
 
 	/**
 	 * Returns the minimal Y level which an entity takes damage upon
-	*/
+	 */
 	public function getDamageY() : int{
 		return $this->damageY;
 	}
