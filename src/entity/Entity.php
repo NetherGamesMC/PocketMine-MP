@@ -656,7 +656,7 @@ abstract class Entity{
 		}
 		$this->checkBlockIntersectionsNextTick = true;
 
-		if($this->location->y <= $this->getWorld()->getMinVoidY() && $this->isAlive()){
+		if($this->location->y <= $this->getWorld()->getDamageY() && $this->isAlive()){
 			$ev = new EntityDamageEvent($this, EntityDamageEvent::CAUSE_VOID, 10);
 			$this->attack($ev);
 			$hasUpdate = true;

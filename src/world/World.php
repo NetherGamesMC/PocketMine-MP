@@ -227,7 +227,7 @@ class World implements ChunkManager{
 
 	private int $minY;
 	private int $maxY;
-    private int $minVoidY;
+    private int $damageY;
 
 	/**
 	 * @var ChunkTicker[][] chunkHash => [spl_object_id => ChunkTicker]
@@ -504,9 +504,9 @@ class World implements ChunkManager{
 
 		$this->minY = $this->provider->getWorldMinY();
 		$this->maxY = $this->provider->getWorldMaxY();
-        $this->minVoidY = $cfg->getPropertyInt(YmlServerProperties::LEVEL_SETTINGS_MIN_Y, 0);
+        $this->damageY = $cfg->getPropertyInt(YmlServerProperties::LEVEL_SETTINGS_MIN_Y, 0);
 
-        $this->server->getLogger()->info($this->server->getLanguage()->translate(KnownTranslationFactory::pocketmine_level_preparing($this->displayName)));
+		$this->server->getLogger()->info($this->server->getLanguage()->translate(KnownTranslationFactory::pocketmine_level_preparing($this->displayName)));
 		$generator = GeneratorManager::getInstance()->getGenerator($this->provider->getWorldData()->getGenerator()) ??
 			throw new AssumptionFailedError("WorldManager should already have checked that the generator exists");
 		$generator->validateGeneratorOptions($this->provider->getWorldData()->getGeneratorOptions());
@@ -3283,8 +3283,8 @@ class World implements ChunkManager{
     /**
      * Returns the minimal Y level which an entity takes damage upon
      */
-    public function getMinVoidY() : int{
-        return $this->minVoidY;
+    public function getDamageY() : int{
+        return $this->damageY;
     }
 
 	public function getMaxY() : int{
