@@ -851,7 +851,6 @@ class NetworkSession{
 	 * Instructs the remote client to connect to a different server.
 	 */
 	public function transfer(string $ip, int $port, Translatable|string|null $reason = null, bool $reloadWorld = false) : void{
-		$this->flushChunkCache();
 		$reason ??= KnownTranslationFactory::pocketmine_disconnect_transfer();
 		$this->tryDisconnect(function() use ($ip, $port, $reason, $reloadWorld) : void{
 			$this->sendDataPacket(TransferPacket::create($ip, $port, $reloadWorld), true);
