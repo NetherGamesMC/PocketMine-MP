@@ -2019,7 +2019,7 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer{
 		return true;
 	}
 
-	public function emote(string $emoteId, int $emoteLengthTicks) : void{
+	public function emote(string $emoteId) : void{
 		$currentTick = $this->server->getTick();
 		if($currentTick - $this->lastEmoteTick > 5){
 			$this->lastEmoteTick = $currentTick;
@@ -2027,7 +2027,7 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer{
 			$event->call();
 			if(!$event->isCancelled()){
 				$emoteId = $event->getEmoteId();
-				parent::emote($emoteId, $emoteLengthTicks);
+				parent::emote($emoteId);
 			}
 		}
 	}

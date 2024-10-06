@@ -1031,7 +1031,7 @@ class InGamePacketHandler extends ChunkRequestPacketHandler{
 	}
 
 	public function handleEmote(EmotePacket $packet) : bool{
-		$this->player->emote($packet->getEmoteId(), $this->session->getProtocolId() >= ProtocolInfo::PROTOCOL_1_21_30 ? $packet->getEmoteLengthTicks() : 0);
+		$this->player->emote($packet->getEmoteId());
 		return true;
 	}
 }
