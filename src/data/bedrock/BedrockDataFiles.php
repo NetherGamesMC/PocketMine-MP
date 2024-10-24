@@ -100,5 +100,6 @@ final class BedrockDataFiles{
 	public const REQUIRED_ITEM_LIST_1_20_80_JSON = BEDROCK_DATA_PATH . '/required_item_list-1.20.80.json';
 	public const REQUIRED_ITEM_LIST_1_21_2_JSON = BEDROCK_DATA_PATH . '/required_item_list-1.21.2.json';
 	public const REQUIRED_ITEM_LIST_1_21_20_JSON = BEDROCK_DATA_PATH . '/required_item_list-1.21.20.json';
+	public const REQUIRED_ITEM_LIST_1_21_30_JSON = BEDROCK_DATA_PATH . '/required_item_list-1.21.30.json';
 	public const REQUIRED_ITEM_LIST_JSON = BEDROCK_DATA_PATH . '/required_item_list.json';
 }
