@@ -77,6 +77,20 @@ final class BlockStateDictionary{
 				$this->stateDataToStateIdLookup[$name] = $stateIds;
 			}
 		}
+
+		$standardSkull = $this->stateDataToStateIdLookup[BlockTypeNames::SKELETON_SKULL];
+		foreach([
+			BlockTypeNames::WITHER_SKELETON_SKULL,
+			BlockTypeNames::ZOMBIE_HEAD,
+			BlockTypeNames::PLAYER_HEAD,
+			BlockTypeNames::CREEPER_HEAD,
+			BlockTypeNames::DRAGON_HEAD,
+			BlockTypeNames::PIGLIN_HEAD
+		] as $skull){
+			if(!isset($this->stateDataToStateIdLookup[$skull])){
+				$this->stateDataToStateIdLookup[$skull] = $standardSkull;
+			}
+		}
 	}
 
 	/**

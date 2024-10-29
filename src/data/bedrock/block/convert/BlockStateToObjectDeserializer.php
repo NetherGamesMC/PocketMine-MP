@@ -45,6 +45,7 @@ use pocketmine\block\utils\DripleafState;
 use pocketmine\block\utils\DyeColor;
 use pocketmine\block\utils\FroglightType;
 use pocketmine\block\utils\LeverFacing;
+use pocketmine\block\utils\MobHeadType;
 use pocketmine\block\VanillaBlocks as Blocks;
 use pocketmine\block\Wood;
 use pocketmine\data\bedrock\block\BlockLegacyMetadata;
@@ -85,6 +86,7 @@ final class BlockStateToObjectDeserializer implements BlockStateDeserializer{
 		$this->registerLeavesDeserializers();
 		$this->registerSaplingDeserializers();
 		$this->registerLightDeserializers();
+		$this->registerMobHeadDeserializers();
 		$this->registerSimpleDeserializers();
 		$this->registerDeserializers();
 	}
@@ -531,10 +533,7 @@ final class BlockStateToObjectDeserializer implements BlockStateDeserializer{
 		$this->mapSimple(Ids::CHERRY_PLANKS, fn() => Blocks::CHERRY_PLANKS());
 		$this->mapSlab(Ids::CHERRY_SLAB, Ids::CHERRY_DOUBLE_SLAB, fn() => Blocks::CHERRY_SLAB());
 		$this->mapStairs(Ids::CHERRY_STAIRS, fn() => Blocks::CHERRY_STAIRS());
-		$this->map(Ids::CHERRY_WOOD, function(Reader $in){
-			$in->ignored(StateNames::STRIPPED_BIT); //this is also ignored by vanilla
-			return Helper::decodeLog(Blocks::CHERRY_WOOD(), false, $in);
-		});
+		$this->map(Ids::CHERRY_WOOD, fn(Reader $in) => Helper::decodeLog(Blocks::CHERRY_WOOD(), false, $in));
 		$this->map(Ids::STRIPPED_CHERRY_WOOD, fn(Reader $in) => Helper::decodeLog(Blocks::CHERRY_WOOD(), true, $in));
 
 		$this->map(Ids::CRIMSON_BUTTON, fn(Reader $in) => Helper::decodeButton(Blocks::CRIMSON_BUTTON(), $in));
@@ -591,10 +590,7 @@ final class BlockStateToObjectDeserializer implements BlockStateDeserializer{
 		$this->mapSimple(Ids::MANGROVE_PLANKS, fn() => Blocks::MANGROVE_PLANKS());
 		$this->mapSlab(Ids::MANGROVE_SLAB, Ids::MANGROVE_DOUBLE_SLAB, fn() => Blocks::MANGROVE_SLAB());
 		$this->mapStairs(Ids::MANGROVE_STAIRS, fn() => Blocks::MANGROVE_STAIRS());
-		$this->map(Ids::MANGROVE_WOOD, function(Reader $in){
-			$in->ignored(StateNames::STRIPPED_BIT); //this is also ignored by vanilla
-			return Helper::decodeLog(Blocks::MANGROVE_WOOD(), false, $in);
-		});
+		$this->map(Ids::MANGROVE_WOOD, fn(Reader $in) => Helper::decodeLog(Blocks::MANGROVE_WOOD(), false, $in));
 		$this->map(Ids::STRIPPED_MANGROVE_WOOD, fn(Reader $in) => Helper::decodeLog(Blocks::MANGROVE_WOOD(), true, $in));
 
 		//oak - due to age, many of these don't specify "oak", making for confusing reading
@@ -690,6 +686,20 @@ final class BlockStateToObjectDeserializer implements BlockStateDeserializer{
 		}
 	}
 
+	private function registerMobHeadDeserializers() : void{
+		foreach([
+			Ids::CREEPER_HEAD => MobHeadType::CREEPER,
+			Ids::DRAGON_HEAD => MobHeadType::DRAGON,
+			Ids::PIGLIN_HEAD => MobHeadType::PIGLIN,
+			Ids::PLAYER_HEAD => MobHeadType::PLAYER,
+			Ids::SKELETON_SKULL => MobHeadType::SKELETON,
+			Ids::WITHER_SKELETON_SKULL => MobHeadType::WITHER_SKELETON,
+			Ids::ZOMBIE_HEAD => MobHeadType::ZOMBIE
+		] as $id => $mobHeadType){
+			$this->map($id, fn(Reader $in) => Blocks::MOB_HEAD()->setMobHeadType($mobHeadType)->setFacing($in->readFacingWithoutDown()));
+		}
+	}
+
 	private function registerSimpleDeserializers() : void{
 		$this->mapSimple(Ids::AIR, fn() => Blocks::AIR());
 		$this->mapSimple(Ids::AMETHYST_BLOCK, fn() => Blocks::AMETHYST());
@@ -745,6 +755,7 @@ final class BlockStateToObjectDeserializer implements BlockStateDeserializer{
 		$this->mapSimple(Ids::DIORITE, fn() => Blocks::DIORITE());
 		$this->mapSimple(Ids::DRAGON_EGG, fn() => Blocks::DRAGON_EGG());
 		$this->mapSimple(Ids::DRIED_KELP_BLOCK, fn() => Blocks::DRIED_KELP());
+		$this->mapSimple(Ids::DRIPSTONE_BLOCK, fn() => Blocks::DRIPSTONE_BLOCK());
 		$this->mapSimple(Ids::ELEMENT_0, fn() => Blocks::ELEMENT_ZERO());
 		$this->mapSimple(Ids::ELEMENT_1, fn() => Blocks::ELEMENT_HYDROGEN());
 		$this->mapSimple(Ids::ELEMENT_10, fn() => Blocks::ELEMENT_NEON());
@@ -909,6 +920,8 @@ final class BlockStateToObjectDeserializer implements BlockStateDeserializer{
 		$this->mapSimple(Ids::MOB_SPAWNER, fn() => Blocks::MONSTER_SPAWNER());
 		$this->mapSimple(Ids::MOSSY_COBBLESTONE, fn() => Blocks::MOSSY_COBBLESTONE());
 		$this->mapSimple(Ids::MOSSY_STONE_BRICKS, fn() => Blocks::MOSSY_STONE_BRICKS());
+		$this->mapSimple(Ids::MOSS_BLOCK, fn() => Blocks::MOSS_BLOCK());
+		$this->mapSimple(Ids::MOSS_CARPET, fn() => Blocks::MOSS_CARPET());
 		$this->mapSimple(Ids::MUD, fn() => Blocks::MUD());
 		$this->mapSimple(Ids::MUD_BRICKS, fn() => Blocks::MUD_BRICKS());
 		$this->mapSimple(Ids::MYCELIUM, fn() => Blocks::MYCELIUM());
@@ -1099,6 +1112,11 @@ final class BlockStateToObjectDeserializer implements BlockStateDeserializer{
 		$this->mapSlab(Ids::BRICK_SLAB, Ids::BRICK_DOUBLE_SLAB, fn() => Blocks::BRICK_SLAB());
 		$this->mapStairs(Ids::BRICK_STAIRS, fn() => Blocks::BRICK_STAIRS());
 		$this->map(Ids::BRICK_WALL, fn(Reader $in) => Helper::decodeWall(Blocks::BRICK_WALL(), $in));
+		$this->map(Ids::MUSHROOM_STEM, fn(Reader $in) => match($in->readBoundedInt(StateNames::HUGE_MUSHROOM_BITS, 0, 15)){
+			BlockLegacyMetadata::MUSHROOM_BLOCK_ALL_STEM => Blocks::ALL_SIDED_MUSHROOM_STEM(),
+			BlockLegacyMetadata::MUSHROOM_BLOCK_STEM => Blocks::MUSHROOM_STEM(),
+			default => throw new BlockStateDeserializeException("This state does not exist"),
+		});
 		$this->map(Ids::BROWN_MUSHROOM_BLOCK, fn(Reader $in) => Helper::decodeMushroomBlock(Blocks::BROWN_MUSHROOM_BLOCK(), $in));
 		$this->map(Ids::CACTUS, function(Reader $in) : Block{
 			return Blocks::CACTUS()
@@ -1520,10 +1538,6 @@ final class BlockStateToObjectDeserializer implements BlockStateDeserializer{
 			return Blocks::SEA_PICKLE()
 				->setCount($in->readBoundedInt(StateNames::CLUSTER_COUNT, 0, 3) + 1)
 				->setUnderwater(!$in->readBool(StateNames::DEAD_BIT));
-		});
-		$this->map(Ids::SKULL, function(Reader $in) : Block{
-			return Blocks::MOB_HEAD()
-				->setFacing($in->readFacingWithoutDown());
 		});
 		$this->map(Ids::SMOKER, function(Reader $in) : Block{
 			return Blocks::SMOKER()

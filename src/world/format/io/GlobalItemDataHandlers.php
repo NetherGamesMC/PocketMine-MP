@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace pocketmine\world\format\io;
 
+use pocketmine\data\bedrock\item\BlockItemIdMap;
 use pocketmine\data\bedrock\item\ItemDeserializer;
 use pocketmine\data\bedrock\item\ItemSerializer;
 use pocketmine\data\bedrock\item\upgrade\ItemDataUpgrader;
@@ -54,7 +55,8 @@ final class GlobalItemDataHandlers{
 			new ItemIdMetaUpgrader(ItemIdMetaUpgradeSchemaUtils::loadSchemas(Path::join(BEDROCK_ITEM_UPGRADE_SCHEMA_PATH, 'id_meta_upgrade_schema'), PHP_INT_MAX)),
 			LegacyItemIdToStringIdMap::getInstance(),
 			R12ItemIdToBlockIdMap::getInstance(),
-			GlobalBlockStateHandlers::getUpgrader()
+			GlobalBlockStateHandlers::getUpgrader(),
+			BlockItemIdMap::getInstance(),
 		);
 	}
 }
