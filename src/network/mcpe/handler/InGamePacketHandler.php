@@ -128,7 +128,7 @@ use const JSON_THROW_ON_ERROR;
 /**
  * This handler handles packets related to general gameplay.
  */
-class InGamePacketHandler extends ChunkRequestPacketHandler{
+class InGamePacketHandler extends PacketHandler{
 	private const MAX_FORM_RESPONSE_DEPTH = 2; //modal/simple will be 1, custom forms 2 - they will never contain anything other than string|int|float|bool|null
 
 	protected float $lastRightClickTime = 0.0;
@@ -145,11 +145,9 @@ class InGamePacketHandler extends ChunkRequestPacketHandler{
 
 	public function __construct(
 		private Player $player,
-		NetworkSession $session,
+		private NetworkSession $session,
 		private InventoryManager $inventoryManager
-	){
-		parent::__construct($session);
-	}
+	){}
 
 	public function handleText(TextPacket $packet) : bool{
 		if($packet->type === TextPacket::TYPE_CHAT){

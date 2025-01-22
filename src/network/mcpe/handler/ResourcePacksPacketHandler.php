@@ -51,7 +51,7 @@ use function substr;
  * Handler used for the resource packs sequence phase of the session. This handler takes care of downloading resource
  * packs to the client.
  */
-class ResourcePacksPacketHandler extends ChunkRequestPacketHandler{
+class ResourcePacksPacketHandler extends PacketHandler{
 	private const PACK_CHUNK_SIZE = 256 * 1024; //256KB
 
 	/**
@@ -89,8 +89,6 @@ class ResourcePacksPacketHandler extends ChunkRequestPacketHandler{
 		private bool $mustAccept,
 		private \Closure $completionCallback
 	){
-		parent::__construct($session);
-
 		$this->requestQueue = new \SplQueue();
 		foreach($resourcePackStack as $pack){
 			$this->resourcePacksById[$pack->getPackId()] = $pack;

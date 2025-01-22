@@ -49,15 +49,13 @@ use Ramsey\Uuid\Uuid;
 /**
  * Handler used for the pre-spawn phase of the session.
  */
-class PreSpawnPacketHandler extends ChunkRequestPacketHandler{
+class PreSpawnPacketHandler extends PacketHandler{
 	public function __construct(
 		private Server $server,
 		private Player $player,
-		NetworkSession $session,
+		private NetworkSession $session,
 		private InventoryManager $inventoryManager
-	){
-		parent::__construct($session);
-	}
+	){}
 
 	public function setUp() : void{
 		Timings::$playerNetworkSendPreSpawnGameData->startTiming();

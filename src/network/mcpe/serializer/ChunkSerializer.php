@@ -85,18 +85,18 @@ final class ChunkSerializer{
 	 * @phpstan-param DimensionIds::* $dimensionId
 	 * @return string[]
 	 */
-	public static function serializeSubChunks(Chunk $chunk, int $dimensionId, BlockTranslator $blockTranslator, int $protocolId) : array
+	public static function serializeSubChunks(Chunk $chunk, int $dimensionId, TypeConverter $typeConverter) : array
 	{
-		$stream = PacketSerializer::encoder($protocolId);
+		$stream = PacketSerializer::encoder($typeConverter->getProtocolId());
 		$subChunks = [];
 
 		$subChunkCount = self::getSubChunkCount($chunk, $dimensionId);
 		$writtenCount = 0;
 
-		[$minSubChunkIndex, $maxSubChunkIndex] = self::getDimensionChunkBounds($dimensionId);
+		[$minSubChunkIndex, ] = self::getDimensionChunkBounds($dimensionId);
 		for($y = $minSubChunkIndex; $writtenCount < $subChunkCount; ++$y, ++$writtenCount){
 			$subChunkStream = clone $stream;
-			self::serializeSubChunk($chunk->getSubChunk($y), $blockTranslator, $subChunkStream, false);
+			self::serializeSubChunk($chunk->getSubChunk($y), $typeConverter->getBlockTranslator(), $subChunkStream, false);
 			$subChunks[] = $subChunkStream->getBuffer();
 		}
 
@@ -106,15 +106,15 @@ final class ChunkSerializer{
 	/**
 	 * @phpstan-param DimensionIds::* $dimensionId
 	 */
-	public static function serializeFullChunk(Chunk $chunk, int $dimensionId, TypeConverter $converter, int $protocolId, ?string $tiles = null) : string{
-		$stream = PacketSerializer::encoder($protocolId);
+	public static function serializeFullChunk(Chunk $chunk, int $dimensionId, TypeConverter $typeConverter, ?string $tiles = null) : string{
+		$stream = PacketSerializer::encoder($typeConverter->getProtocolId());
 
-		foreach(self::serializeSubChunks($chunk, $dimensionId, $converter->getBlockTranslator(), $protocolId) as $subChunk){
+		foreach(self::serializeSubChunks($chunk, $dimensionId, $typeConverter) as $subChunk){
 			$stream->put($subChunk);
 		}
 
 		self::serializeBiomes($chunk, $dimensionId, $stream);
-		self::serializeChunkData($chunk, $stream, $converter, $tiles);
+		self::serializeChunkData($chunk, $stream, $typeConverter, $tiles);
 
 		return $stream->getBuffer();
 	}

@@ -112,6 +112,7 @@ use pocketmine\world\particle\Particle;
 use pocketmine\world\particle\ProtocolParticle;
 use pocketmine\world\sound\BlockPlaceSound;
 use pocketmine\world\sound\BlockSound;
+use pocketmine\world\sound\ProtocolSound;
 use pocketmine\world\sound\Sound;
 use pocketmine\world\utils\SubChunkExplorer;
 use pocketmine\YmlServerProperties;
@@ -730,11 +731,18 @@ class World implements ChunkManager{
 			$players = $ev->getRecipients();
 		}
 
-		if($sound instanceof BlockSound){
-			$closure = function(TypeConverter $typeConverter) use ($sound, $pos) : array{
-				$sound->setBlockTranslator($typeConverter->getBlockTranslator());
-				return $sound->encode($pos);
-			};
+		if(($blockSound = ($sound instanceof BlockSound)) || $sound instanceof ProtocolSound){
+			if($blockSound){
+				$closure = function(TypeConverter $typeConverter) use ($sound, $pos) : array{
+					$sound->setBlockTranslator($typeConverter->getBlockTranslator());
+					return $sound->encode($pos);
+				};
+			}else{
+				$closure = function(TypeConverter $typeConverter) use ($sound, $pos) : array{
+					$sound->setProtocolId($typeConverter->getProtocolId());
+					return $sound->encode($pos);
+				};
+			}
 
 			if($players === $this->getViewersForPosition($pos)){
 				$this->broadcastPacketToViewersByTypeConverter($pos, $closure);
