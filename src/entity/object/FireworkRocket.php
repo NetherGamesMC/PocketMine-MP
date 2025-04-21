@@ -75,6 +75,12 @@ class FireworkRocket extends Entity implements Explosive{
 
 	protected function getInitialGravity() : float{ return 0.0; }
 
+	public function attack(EntityDamageEvent $source) : void{
+		if($source->getCause() === EntityDamageEvent::CAUSE_VOID){
+			parent::attack($source);
+		}
+	}
+
 	/**
 	 * Returns maximum number of ticks this will live for.
 	 */
