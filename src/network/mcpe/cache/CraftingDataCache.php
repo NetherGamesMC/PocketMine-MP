@@ -85,16 +85,15 @@ final class CraftingDataCache{
 
 		$noUnlockingRequirement = new RecipeUnlockingRequirement(null);
 		foreach($manager->getCraftingRecipeIndex() as $index => $recipe){
-			try{
-				if($recipe instanceof ShapelessRecipe){
-					$typeTag = match($recipe->getType()){
-						ShapelessRecipeType::CRAFTING => CraftingRecipeBlockName::CRAFTING_TABLE,
-						ShapelessRecipeType::STONECUTTER => CraftingRecipeBlockName::STONECUTTER,
-						ShapelessRecipeType::CARTOGRAPHY => CraftingRecipeBlockName::CARTOGRAPHY_TABLE,
-						ShapelessRecipeType::SMITHING => CraftingRecipeBlockName::SMITHING_TABLE,
-					};
-
-					foreach($itemTagDowngrader->downgradeShapelessRecipe($recipe) as $r){
+			if($recipe instanceof ShapelessRecipe){
+				$typeTag = match($recipe->getType()){
+					ShapelessRecipeType::CRAFTING => CraftingRecipeBlockName::CRAFTING_TABLE,
+					ShapelessRecipeType::STONECUTTER => CraftingRecipeBlockName::STONECUTTER,
+					ShapelessRecipeType::CARTOGRAPHY => CraftingRecipeBlockName::CARTOGRAPHY_TABLE,
+					ShapelessRecipeType::SMITHING => CraftingRecipeBlockName::SMITHING_TABLE,
+				};
+				foreach($itemTagDowngrader->downgradeShapelessRecipe($recipe) as $r){
+					try{
 						$recipesWithTypeIds[] = new ProtocolShapelessRecipe(
 							CraftingDataPacket::ENTRY_SHAPELESS,
 							Binary::writeInt($index),
@@ -106,18 +105,20 @@ final class CraftingDataCache{
 							$noUnlockingRequirement,
 							$index
 						);
+					}catch(\InvalidArgumentException|ItemTypeSerializeException) {
+						continue;
 					}
-				}elseif($recipe instanceof ShapedRecipe){
-					foreach($itemTagDowngrader->downgradeShapedRecipe($recipe) as $r){
+				}
+			}elseif($recipe instanceof ShapedRecipe){
+				foreach($itemTagDowngrader->downgradeShapedRecipe($recipe) as $r){
+					try{
 						$inputs = [];
-
 						for($row = 0, $height = $r->getHeight(); $row < $height; ++$row){
 							for($column = 0, $width = $r->getWidth(); $column < $width; ++$column){
 								$inputs[$row][$column] = $converter->coreRecipeIngredientToNet($r->getIngredient($column, $row));
 							}
 						}
-
-						$recipesWithTypeIds[] = $r = new ProtocolShapedRecipe(
+						$recipesWithTypeIds[] = new ProtocolShapedRecipe(
 							CraftingDataPacket::ENTRY_SHAPED,
 							Binary::writeInt($index),
 							$inputs,
@@ -129,25 +130,25 @@ final class CraftingDataCache{
 							$noUnlockingRequirement,
 							$index
 						);
+					}catch(\InvalidArgumentException|ItemTypeSerializeException) {
+						continue;
 					}
-				}else{
-					//TODO: probably special recipe types
 				}
-			}catch(\InvalidArgumentException|ItemTypeSerializeException) {
-				continue;
+			}else{
+				//TODO: probably special recipe types
 			}
 		}
 
 		foreach(FurnaceType::cases() as $furnaceType){
-			try{
-				$typeTag = match($furnaceType){
-					FurnaceType::FURNACE => FurnaceRecipeBlockName::FURNACE,
-					FurnaceType::BLAST_FURNACE => FurnaceRecipeBlockName::BLAST_FURNACE,
-					FurnaceType::SMOKER => FurnaceRecipeBlockName::SMOKER,
-					FurnaceType::CAMPFIRE => FurnaceRecipeBlockName::CAMPFIRE,
-					FurnaceType::SOUL_CAMPFIRE => FurnaceRecipeBlockName::SOUL_CAMPFIRE
-				};
-				foreach($manager->getFurnaceRecipeManager($furnaceType)->getAll() as $recipe){
+			$typeTag = match($furnaceType){
+				FurnaceType::FURNACE => FurnaceRecipeBlockName::FURNACE,
+				FurnaceType::BLAST_FURNACE => FurnaceRecipeBlockName::BLAST_FURNACE,
+				FurnaceType::SMOKER => FurnaceRecipeBlockName::SMOKER,
+				FurnaceType::CAMPFIRE => FurnaceRecipeBlockName::CAMPFIRE,
+				FurnaceType::SOUL_CAMPFIRE => FurnaceRecipeBlockName::SOUL_CAMPFIRE
+			};
+			foreach($manager->getFurnaceRecipeManager($furnaceType)->getAll() as $recipe){
+				try{
 					$input = $converter->coreRecipeIngredientToNet($recipe->getInput())->getDescriptor();
 					if(!$input instanceof IntIdMetaItemDescriptor){
 						throw new AssumptionFailedError();
@@ -159,9 +160,9 @@ final class CraftingDataCache{
 						$converter->coreItemStackToNet($recipe->getResult()),
 						$typeTag
 					);
+				}catch(\InvalidArgumentException|ItemTypeSerializeException){
+					continue;
 				}
-			}catch(\InvalidArgumentException|ItemTypeSerializeException){
-				continue;
 			}
 		}
 

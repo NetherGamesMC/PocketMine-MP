@@ -35,7 +35,7 @@ use function get_class;
 use function spl_object_id;
 
 abstract class Spawnable extends Tile{
-	/** @phpstan-var array<int, CacheableNbt<\pocketmine\nbt\tag\CompoundTag>|null> */
+	/** @phpstan-var array<int, CacheableNbt<CompoundTag>|null> */
 	private array $spawnCompoundCaches = [];
 
 	/**
@@ -76,7 +76,7 @@ abstract class Spawnable extends Tile{
 	 * Returns encoded NBT (varint, little-endian) used to spawn this tile to clients. Uses cache where possible,
 	 * populates cache if it is null.
 	 *
-	 * @phpstan-return CacheableNbt<\pocketmine\nbt\tag\CompoundTag>
+	 * @phpstan-return CacheableNbt<CompoundTag>
 	 */
 	final public function getSerializedSpawnCompound(TypeConverter $typeConverter) : CacheableNbt{
 		return $this->spawnCompoundCaches[spl_object_id($typeConverter)] ??= new CacheableNbt($this->getSpawnCompound($typeConverter));
