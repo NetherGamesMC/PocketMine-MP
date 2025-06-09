@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "51960a9306a669f0d83bd4a483111329",
+    "content-hash": "3bef804678a8550b6f77c7074b451026",
     "packages": [
         {
             "name": "adhocore/json-comment",
@@ -626,16 +626,16 @@
         },
         {
             "name": "pocketmine/raklib",
-            "version": "1.1.2",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pmmp/RakLib.git",
-                "reference": "4145a31cd812fe8931c3c9c691fcd2ded2f47e7f"
+                "reference": "a28d05216d34dbd00e8aed827a58df6b4c11510b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pmmp/RakLib/zipball/4145a31cd812fe8931c3c9c691fcd2ded2f47e7f",
-                "reference": "4145a31cd812fe8931c3c9c691fcd2ded2f47e7f",
+                "url": "https://api.github.com/repos/pmmp/RakLib/zipball/a28d05216d34dbd00e8aed827a58df6b4c11510b",
+                "reference": "a28d05216d34dbd00e8aed827a58df6b4c11510b",
                 "shasum": ""
             },
             "require": {
@@ -663,9 +663,9 @@
             "description": "A RakNet server implementation written in PHP",
             "support": {
                 "issues": "https://github.com/pmmp/RakLib/issues",
-                "source": "https://github.com/pmmp/RakLib/tree/1.1.2"
+                "source": "https://github.com/pmmp/RakLib/tree/1.2.0"
             },
-            "time": "2025-04-06T03:38:21+00:00"
+            "time": "2025-06-08T17:36:06+00:00"
         },
         {
             "name": "pocketmine/raklib-ipc",
@@ -2816,5 +2816,5 @@
     "platform-overrides": {
         "php": "8.1.0"
     },
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }
