@@ -30,6 +30,7 @@ use pocketmine\entity\Location;
 use pocketmine\entity\Squid;
 use pocketmine\entity\Villager;
 use pocketmine\entity\Zombie;
+use pocketmine\entity\Chicken;
 use pocketmine\inventory\ArmorInventory;
 use pocketmine\item\enchantment\ItemEnchantmentTags as EnchantmentTags;
 use pocketmine\item\ItemIdentifier as IID;
@@ -356,6 +357,7 @@ use function strtolower;
  * @method static Sword WOODEN_SWORD()
  * @method static WritableBook WRITABLE_BOOK()
  * @method static WrittenBook WRITTEN_BOOK()
+ * @method static SpawnEgg CHICKEN_SPAWN_EGG()
  * @method static SpawnEgg ZOMBIE_SPAWN_EGG()
  */
 final class VanillaItems{
@@ -656,6 +658,11 @@ final class VanillaItems{
 				return new Zombie(Location::fromObject($pos, $world, $yaw, $pitch));
 			}
 		});
+		self::register("chicken_spawn_egg", fn(IID $id) => new class($id, "Chicken Spawn Egg") extends SpawnEgg{
+	        protected function createEntity(World $world, Vector3 $pos, float $yaw, float $pitch) : Entity{
+		       return new Chicken(Location::fromObject($pos, $world, $yaw, $pitch));
+	       }
+       });
 		self::register("squid_spawn_egg", fn(IID $id) => new class($id, "Squid Spawn Egg") extends SpawnEgg{
 			protected function createEntity(World $world, Vector3 $pos, float $yaw, float $pitch) : Entity{
 				return new Squid(Location::fromObject($pos, $world, $yaw, $pitch));
