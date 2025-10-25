@@ -2009,15 +2009,24 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 			$type->onPostAttack($this, $entity, $enchantment->getLevel());
 		}
 
-		if($this->isAlive()){
-			//reactive damage like thorns might cause us to be killed by attacking another mob, which
-			//would mean we'd already have dropped the inventory by the time we reached here
-			$returnedItems = [];
-			$heldItem->onAttackEntity($entity, $returnedItems);
-			$this->returnItemsFromAction($oldItem, $heldItem, $returnedItems);
+		  if($this->isAlive()){
+        //reactive damage like thorns might cause us to be killed by attacking another mob, which
+        //would mean we'd already have dropped the inventory by the time we reached here
+        $returnedItems = [];
+        
+        // USE MACE
+        if($heldItem instanceof \pocketmine\item\Mace){
+            \pocketmine\item\Mace::$currentAttacker = $this;  // USE MACE
+        }
+        $heldItem->onAttackEntity($entity, $returnedItems);  // USE MACE
+        if($heldItem instanceof \pocketmine\item\Mace){
+            \pocketmine\item\Mace::$currentAttacker = null;  // USE MACE
+        }
+        
+        $this->returnItemsFromAction($oldItem, $heldItem, $returnedItems);
 
-			$this->hungerManager->exhaust(0.1, PlayerExhaustEvent::CAUSE_ATTACK);
-		}
+        $this->hungerManager->exhaust(0.1, PlayerExhaustEvent::CAUSE_ATTACK);
+    }
 
 		return true;
 	}
