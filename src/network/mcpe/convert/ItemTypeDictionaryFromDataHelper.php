@@ -46,6 +46,7 @@ final class ItemTypeDictionaryFromDataHelper{
 
 	private const PATHS = [
 		ProtocolInfo::CURRENT_PROTOCOL => "",
+		ProtocolInfo::PROTOCOL_1_21_111 => "-1.21.111",
 		ProtocolInfo::PROTOCOL_1_21_100 => "-1.21.100",
 		ProtocolInfo::PROTOCOL_1_21_93 => "-1.21.93",
 		ProtocolInfo::PROTOCOL_1_21_90 => "-1.21.90",
