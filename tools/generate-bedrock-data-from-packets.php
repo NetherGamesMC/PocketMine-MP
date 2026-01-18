@@ -655,4 +655,4 @@ function main(array $argv) : int{
 	return 0;
 }
 
-exit(main($argv));
+exit(main($argv ?? []));
