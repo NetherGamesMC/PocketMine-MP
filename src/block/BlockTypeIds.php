@@ -854,11 +854,8 @@ final class BlockTypeIds{
 	public const BAMBOO_MOSAIC_STAIRS = 10824;
 	public const AZALEA = 10825;
 	public const FLOWERING_AZALEA = 10826;
-	public const MOSS_BLOCK = 10827;
-	public const MOSS_CARPET = 10828;
-	public const DRIPSTONE_BLOCK = 10829;
 
-	public const FIRST_UNUSED_BLOCK_ID = 10830;
+	public const FIRST_UNUSED_BLOCK_ID = 10827;
 
 	private static int $nextDynamicId = self::FIRST_UNUSED_BLOCK_ID;
 

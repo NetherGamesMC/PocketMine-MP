@@ -302,7 +302,6 @@ final class VanillaBlocks{
 	private static DoubleTallGrass $_mDOUBLE_TALLGRASS;
 	private static DragonEgg $_mDRAGON_EGG;
 	private static DriedKelp $_mDRIED_KELP;
-	private static Opaque $_mDRIPSTONE_BLOCK;
 	private static DyedCandle $_mDYED_CANDLE;
 	private static DyedShulkerBox $_mDYED_SHULKER_BOX;
 	private static Element $_mELEMENT_ACTINIUM;
@@ -558,8 +557,6 @@ final class VanillaBlocks{
 	private static Slab $_mMOSSY_STONE_BRICK_SLAB;
 	private static Stair $_mMOSSY_STONE_BRICK_STAIRS;
 	private static Wall $_mMOSSY_STONE_BRICK_WALL;
-	private static Opaque $_mMOSS_BLOCK;
-	private static MossCarpet $_mMOSS_CARPET;
 	private static Opaque $_mMUD;
 	private static SimplePillar $_mMUDDY_MANGROVE_ROOTS;
 	private static Opaque $_mMUD_BRICKS;
@@ -1138,7 +1135,6 @@ final class VanillaBlocks{
 			"double_tallgrass" => fn(DoubleTallGrass $v) => self::$_mDOUBLE_TALLGRASS = $v,
 			"dragon_egg" => fn(DragonEgg $v) => self::$_mDRAGON_EGG = $v,
 			"dried_kelp" => fn(DriedKelp $v) => self::$_mDRIED_KELP = $v,
-			"dripstone_block" => fn(Opaque $v) => self::$_mDRIPSTONE_BLOCK = $v,
 			"dyed_candle" => fn(DyedCandle $v) => self::$_mDYED_CANDLE = $v,
 			"dyed_shulker_box" => fn(DyedShulkerBox $v) => self::$_mDYED_SHULKER_BOX = $v,
 			"element_actinium" => fn(Element $v) => self::$_mELEMENT_ACTINIUM = $v,
@@ -1394,8 +1390,6 @@ final class VanillaBlocks{
 			"mossy_stone_brick_slab" => fn(Slab $v) => self::$_mMOSSY_STONE_BRICK_SLAB = $v,
 			"mossy_stone_brick_stairs" => fn(Stair $v) => self::$_mMOSSY_STONE_BRICK_STAIRS = $v,
 			"mossy_stone_brick_wall" => fn(Wall $v) => self::$_mMOSSY_STONE_BRICK_WALL = $v,
-			"moss_block" => fn(Opaque $v) => self::$_mMOSS_BLOCK = $v,
-			"moss_carpet" => fn(MossCarpet $v) => self::$_mMOSS_CARPET = $v,
 			"mud" => fn(Opaque $v) => self::$_mMUD = $v,
 			"muddy_mangrove_roots" => fn(SimplePillar $v) => self::$_mMUDDY_MANGROVE_ROOTS = $v,
 			"mud_bricks" => fn(Opaque $v) => self::$_mMUD_BRICKS = $v,
@@ -3034,11 +3028,6 @@ final class VanillaBlocks{
 		return clone self::$_mDRIED_KELP;
 	}
 
-	public static function DRIPSTONE_BLOCK() : Opaque{
-		if(!isset(self::$_mDRIPSTONE_BLOCK)){ self::init(); }
-		return clone self::$_mDRIPSTONE_BLOCK;
-	}
-
 	public static function DYED_CANDLE() : DyedCandle{
 		if(!isset(self::$_mDYED_CANDLE)){ self::init(); }
 		return clone self::$_mDYED_CANDLE;
@@ -4312,16 +4301,6 @@ final class VanillaBlocks{
 	public static function MOSSY_STONE_BRICK_WALL() : Wall{
 		if(!isset(self::$_mMOSSY_STONE_BRICK_WALL)){ self::init(); }
 		return clone self::$_mMOSSY_STONE_BRICK_WALL;
-	}
-
-	public static function MOSS_BLOCK() : Opaque{
-		if(!isset(self::$_mMOSS_BLOCK)){ self::init(); }
-		return clone self::$_mMOSS_BLOCK;
-	}
-
-	public static function MOSS_CARPET() : MossCarpet{
-		if(!isset(self::$_mMOSS_CARPET)){ self::init(); }
-		return clone self::$_mMOSS_CARPET;
 	}
 
 	public static function MUD() : Opaque{
