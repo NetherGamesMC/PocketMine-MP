@@ -380,7 +380,7 @@ abstract class Living extends Entity{
 	}
 
 	protected function calculateFallDamage(float $fallDistance) : float{
-		return ceil($fallDistance - 3 - (($jumpBoost = $this->effectManager->get(VanillaEffects::JUMP_BOOST())) !== null ? $jumpBoost->getEffectLevel() : 0));
+		return ceil($fallDistance - 3.5 - (($jumpBoost = $this->effectManager->get(VanillaEffects::JUMP_BOOST())) !== null ? $jumpBoost->getEffectLevel() : 0));
 	}
 
 	protected function onHitGround() : ?float{
