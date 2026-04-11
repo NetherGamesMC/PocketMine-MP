@@ -118,6 +118,7 @@ final class VanillaItemsInputs extends RegistrySource{
 		self::register("bone_meal", fn(IID $id) => new Fertilizer($id, "Bone Meal"));
 		self::register("book", fn(IID $id) => new Book($id, "Book", [EnchantmentTags::ALL]));
 		self::register("bow", fn(IID $id) => new Bow($id, "Bow", [EnchantmentTags::BOW]));
+		self::register("mace", fn(IID $id) => new Mace($id, "Mace", ToolTier::MACE, [EnchantmentTags::MACE]));
 		self::register("bowl", fn(IID $id) => new Bowl($id, "Bowl"));
 		self::register("bread", fn(IID $id) => new Bread($id, "Bread"));
 		self::register("brick", fn(IID $id) => new Item($id, "Brick"));
@@ -326,7 +327,6 @@ final class VanillaItemsInputs extends RegistrySource{
 		self::register("torchflower_seeds", fn(IID $id) => new TorchflowerSeeds($id, "Torchflower Seeds"));
 		self::register("totem", fn(IID $id) => new Totem($id, "Totem of Undying"));
 		self::register("trident", fn(IID $id) => new Trident($id, "Trident"));
-		self::register("mace", fn(IID $id) => new Mace($id, "Mace"));
 		self::registerDelayed("warped_sign", fn(string $name) : ItemBlockWallOrFloor => new ItemBlockWallOrFloor(self::makeIID($name), Blocks::WARPED_SIGN(), Blocks::WARPED_WALL_SIGN()));
 		self::registerDelayed("warped_hanging_sign", fn(string $name) : HangingSign => new HangingSign(self::makeIID($name), "Warped Hanging Sign", Blocks::WARPED_CEILING_CENTER_HANGING_SIGN(), Blocks::WARPED_CEILING_EDGES_HANGING_SIGN(), Blocks::WARPED_WALL_HANGING_SIGN()));
 		self::registerDelayed("water_bucket", fn(string $name) : LiquidBucket => new LiquidBucket(self::makeIID($name), "Water Bucket", Blocks::WATER()));
@@ -410,7 +410,8 @@ final class VanillaItemsInputs extends RegistrySource{
 		self::registerDelayed("iron_leggings", fn($name) : Armor => new Armor(self::makeIID($name), "Iron Leggings", new ArmorTypeInfo(5, 226, ArmorInventory::SLOT_LEGS, material: ArmorMaterials::IRON()), [EnchantmentTags::LEGGINGS]));
 		self::registerDelayed("leather_pants", fn($name) : Armor => new Armor(self::makeIID($name), "Leather Pants", new ArmorTypeInfo(2, 76, ArmorInventory::SLOT_LEGS, material: ArmorMaterials::LEATHER()), [EnchantmentTags::LEGGINGS]));
 		self::registerDelayed("netherite_leggings", fn($name) : Armor => new Armor(self::makeIID($name), "Netherite Leggings", new ArmorTypeInfo(6, 556, ArmorInventory::SLOT_LEGS, 3, true, material: ArmorMaterials::NETHERITE()), [EnchantmentTags::LEGGINGS]));
-		self::register("elytra", fn(IID $id) => new Armor($id, "Elytra", new ArmorTypeInfo(3, 432, ArmorInventory::SLOT_CHEST, 1, false, material: ArmorMaterials::LEATHER()), [EnchantmentTags::CHESTPLATE]));
+		self::registerDelayed("elytra", function(string $name) : Armor {
+    return new Armor(self::makeIID($name), "Elytra", new ArmorTypeInfo(3, 432, ArmorInventory::SLOT_CHEST, 1, false, material: ArmorMaterials::LEATHER()), [EnchantmentTags::CHESTPLATE]);
 	}
 
 	private function registerSmithingTemplates() : void{

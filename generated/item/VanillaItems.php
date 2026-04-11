@@ -362,6 +362,8 @@ final class VanillaItems{
 	private static WritableBook $_mWRITABLE_BOOK;
 	private static WrittenBook $_mWRITTEN_BOOK;
 	private static SpawnEgg $_mZOMBIE_SPAWN_EGG;
+	private static Mace $_mMACE;
+	private static Armor $_mELYTRA;
 
 	/**
 	 * @var Item[]
@@ -720,6 +722,8 @@ final class VanillaItems{
 			"writable_book" => fn(WritableBook $v) => self::$_mWRITABLE_BOOK = $v,
 			"written_book" => fn(WrittenBook $v) => self::$_mWRITTEN_BOOK = $v,
 			"zombie_spawn_egg" => fn(SpawnEgg $v) => self::$_mZOMBIE_SPAWN_EGG = $v,
+			"mace" => fn(Mace $v) => self::$_mMACE = $v,
+			"elytra" => fn(Armor $v) => self::$_mELYTRA = $v,
 		];
 	}
 
@@ -2377,4 +2381,14 @@ final class VanillaItems{
 		if(!isset(self::$_mZOMBIE_SPAWN_EGG)){ self::init(); }
 		return clone self::$_mZOMBIE_SPAWN_EGG;
 	}
+
+	public static function MACE() : Mace{
+       if(!isset(self::$_mMACE)){ self::init(); }
+       return clone self::$_mMACE;
+    }
+
+   public static function ELYTRA() : Armor{
+       if(!isset(self::$_mELYTRA)){ self::init(); }
+       return clone self::$_mELYTRA;
+    }
 }

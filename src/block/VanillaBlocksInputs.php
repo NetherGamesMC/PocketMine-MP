@@ -934,6 +934,10 @@ final class VanillaBlocksInputs extends RegistrySource{
 
 		self::register("gilded_blackstone", fn(BID $id) => new GildedBlackstone($id, "Gilded Blackstone", $blackstoneBreakInfo));
 
+		$mossBreakInfo = new Info(BreakInfo::hoe(0.1));
+        self::register("moss_block", fn(BID $id) => new MossBlock($id, "Moss Block", $mossBreakInfo));
+        self::register("moss_carpet", fn(BID $id) => new MossCarpet($id, "Moss Carpet", $mossBreakInfo));
+
 		$polishedBlackstoneBreakInfo = new Info(BreakInfo::pickaxe(2.0, ToolTier::WOOD, 30.0));
 		$prefix = fn(string $thing) => "Polished Blackstone" . ($thing !== "" ? " $thing" : "");
 		self::register("polished_blackstone", fn(BID $id) => new Opaque($id, $prefix(""), $polishedBlackstoneBreakInfo));

@@ -469,6 +469,8 @@ final class VanillaBlockMappings{
 		$reg->mapSimple(Blocks::NETHER_SPROUTS(), Ids::NETHER_SPROUTS);
 		$reg->mapSimple(Blocks::CRIMSON_NYLIUM(), Ids::CRIMSON_NYLIUM);
 		$reg->mapSimple(Blocks::WARPED_NYLIUM(), Ids::WARPED_NYLIUM);
+		$reg->mapSimple(Blocks::MOSS_BLOCK(), Ids::MOSS_BLOCK);
+        $reg->mapSimple(Blocks::MOSS_CARPET(), Ids::MOSS_CARPET);
 	}
 
 	private static function registerColoredMappings(BlockSerializerDeserializerRegistrar $reg, CommonProperties $commonProperties) : void{

@@ -837,6 +837,8 @@ final class VanillaBlocks{
 	private static Flower $_mWHITE_TULIP;
 	private static WitherRose $_mWITHER_ROSE;
 	private static Wool $_mWOOL;
+	private static MossBlock $_mMOSS_BLOCK;
+    private static MossCarpet $_mMOSS_CARPET;
 
 	/**
 	 * @var Block[]
@@ -1670,6 +1672,8 @@ final class VanillaBlocks{
 			"white_tulip" => fn(Flower $v) => self::$_mWHITE_TULIP = $v,
 			"wither_rose" => fn(WitherRose $v) => self::$_mWITHER_ROSE = $v,
 			"wool" => fn(Wool $v) => self::$_mWOOL = $v,
+			"moss_block" => fn(MossBlock $v) => self::$_mMOSS_BLOCK = $v,
+            "moss_carpet" => fn(MossCarpet $v) => self::$_mMOSS_CARPET = $v,
 		];
 	}
 
@@ -5702,4 +5706,13 @@ final class VanillaBlocks{
 		if(!isset(self::$_mWOOL)){ self::init(); }
 		return clone self::$_mWOOL;
 	}
+	public static function MOSS_BLOCK() : MossBlock{
+    if(!isset(self::$_mMOSS_BLOCK)){ self::init(); }
+    return clone self::$_mMOSS_BLOCK;
+    }
+
+    public static function MOSS_CARPET() : MossCarpet{
+    if(!isset(self::$_mMOSS_CARPET)){ self::init(); }
+    return clone self::$_mMOSS_CARPET;
+    }
 }
