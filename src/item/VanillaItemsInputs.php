@@ -412,6 +412,7 @@ final class VanillaItemsInputs extends RegistrySource{
 		self::registerDelayed("netherite_leggings", fn($name) : Armor => new Armor(self::makeIID($name), "Netherite Leggings", new ArmorTypeInfo(6, 556, ArmorInventory::SLOT_LEGS, 3, true, material: ArmorMaterials::NETHERITE()), [EnchantmentTags::LEGGINGS]));
 		self::registerDelayed("elytra", function(string $name) : Armor {
     return new Armor(self::makeIID($name), "Elytra", new ArmorTypeInfo(3, 432, ArmorInventory::SLOT_CHEST, 1, false, material: ArmorMaterials::LEATHER()), [EnchantmentTags::CHESTPLATE]);
+});
 	}
 
 	private function registerSmithingTemplates() : void{
