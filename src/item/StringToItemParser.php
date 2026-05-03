@@ -395,6 +395,7 @@ final class StringToItemParser extends StringToTParser{
 		$result->registerBlock("diorite_wall", fn() => Blocks::DIORITE_WALL());
 		$result->registerBlock("dirt", fn() => Blocks::DIRT()->setDirtType(DirtType::NORMAL));
 		$result->registerBlock("dirt_with_roots", fn() => Blocks::DIRT()->setDirtType(DirtType::ROOTED));
+		$result->registerBlock("dispenser", fn() => Blocks::DISPENSER());
 		$result->registerBlock("door_block", fn() => Blocks::OAK_DOOR());
 		$result->registerBlock("double_plant", fn() => Blocks::SUNFLOWER());
 		$result->registerBlock("double_red_sandstone_slab", fn() => Blocks::RED_SANDSTONE_SLAB()->setSlabType(SlabType::DOUBLE));
@@ -412,6 +413,7 @@ final class StringToItemParser extends StringToTParser{
 		$result->registerBlock("dragon_egg", fn() => Blocks::DRAGON_EGG());
 		$result->registerBlock("dragon_head", fn() => Blocks::MOB_HEAD()->setMobHeadType(MobHeadType::DRAGON));
 		$result->registerBlock("dried_kelp_block", fn() => Blocks::DRIED_KELP());
+		$result->registerBlock("dropper", fn() => Blocks::DROPPER());
 		$result->registerBlock("dyed_shulker_box", fn() => Blocks::DYED_SHULKER_BOX());
 		$result->registerBlock("element_0", fn() => Blocks::ELEMENT_ZERO());
 		$result->registerBlock("element_1", fn() => Blocks::ELEMENT_HYDROGEN());
@@ -918,6 +920,8 @@ final class StringToItemParser extends StringToTParser{
 		$result->registerBlock("pink_petals", fn() => Blocks::PINK_PETALS());
 		$result->registerBlock("pink_tulip", fn() => Blocks::PINK_TULIP());
 		$result->registerBlock("piglin_head", fn() => Blocks::MOB_HEAD()->setMobHeadType(MobHeadType::PIGLIN));
+		$result->registerBlock("piston", fn() => Blocks::PISTON());
+		$result->registerBlock("piston_head", fn() => Blocks::PISTON_HEAD());
 		$result->registerBlock("pitcher_plant", fn() => Blocks::PITCHER_PLANT());
 		$result->registerBlock("plank", fn() => Blocks::OAK_PLANKS());
 		$result->registerBlock("planks", fn() => Blocks::OAK_PLANKS());
@@ -1097,6 +1101,7 @@ final class StringToItemParser extends StringToTParser{
 		$result->registerBlock("stained_hardened_clay", fn() => Blocks::STAINED_CLAY());
 		$result->registerBlock("stained_hardened_glass", fn() => Blocks::STAINED_HARDENED_GLASS());
 		$result->registerBlock("stained_hardened_glass_pane", fn() => Blocks::STAINED_HARDENED_GLASS_PANE());
+		$result->registerBlock("sticky_piston", fn() => Blocks::STICKY_PISTON());
 		$result->registerBlock("standing_banner", fn() => Blocks::BANNER());
 		$result->registerBlock("standing_sign", fn() => Blocks::OAK_SIGN());
 		$result->registerBlock("still_lava", fn() => Blocks::LAVA()->setStill(true));

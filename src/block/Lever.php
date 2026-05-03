@@ -94,6 +94,9 @@ class Lever extends Flowable{
 		$this->activated = !$this->activated;
 		$world = $this->position->getWorld();
 		$world->setBlock($this->position, $this);
+		foreach(Facing::ALL as $f){
+			$world->getBlock($this->position->getSide($f))->onNearbyBlockChange();
+		}
 		$world->addSound(
 			$this->position->add(0.5, 0.5, 0.5),
 			$this->activated ? new RedstonePowerOnSound() : new RedstonePowerOffSound()

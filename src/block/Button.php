@@ -67,6 +67,7 @@ abstract class Button extends Flowable implements AnyFacing{
 			$this->pressed = true;
 			$world = $this->position->getWorld();
 			$world->setBlock($this->position, $this);
+			$this->notifyRedstoneNeighbors();
 			$world->scheduleDelayedBlockUpdate($this->position, $this->getActivationTime());
 			$world->addSound($this->position->add(0.5, 0.5, 0.5), new RedstonePowerOnSound());
 		}
@@ -79,6 +80,7 @@ abstract class Button extends Flowable implements AnyFacing{
 			$this->pressed = false;
 			$world = $this->position->getWorld();
 			$world->setBlock($this->position, $this);
+			$this->notifyRedstoneNeighbors();
 			$world->addSound($this->position->add(0.5, 0.5, 0.5), new RedstonePowerOffSound());
 		}
 	}
@@ -91,5 +93,12 @@ abstract class Button extends Flowable implements AnyFacing{
 
 	private function canBeSupportedAt(Block $block, int $face) : bool{
 		return $block->getAdjacentSupportType(Facing::opposite($face))->hasCenterSupport();
+	}
+
+	private function notifyRedstoneNeighbors() : void{
+		$world = $this->position->getWorld();
+		foreach(Facing::ALL as $face){
+			$world->getBlock($this->position->getSide($face))->onNearbyBlockChange();
+		}
 	}
 }

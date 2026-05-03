@@ -126,4 +126,47 @@ class TNT extends Opaque{
 			$this->ignite();
 		}
 	}
+
+	public function onNearbyBlockChange() : void{
+		$this->position->getWorld()->scheduleDelayedBlockUpdate($this->position, 1);
+	}
+
+	public function onScheduledUpdate() : void{
+		if($this->isPoweredByNeighbors()){
+			$this->ignite();
+		}
+	}
+
+	private function isPoweredByNeighbors() : bool{
+		foreach($this->getAllSides() as $side){
+			if($side instanceof Redstone){
+				return true;
+			}
+			if($side instanceof Lever && $side->isActivated()){
+				return true;
+			}
+			if($side instanceof Button && $side->isPressed()){
+				return true;
+			}
+			if($side instanceof SimplePressurePlate && $side->isPressed()){
+				return true;
+			}
+			if($side instanceof RedstoneWire && $side->getOutputSignalStrength() > 0){
+				return true;
+			}
+			if($side instanceof RedstoneRepeater){
+				if($side->isPowered()){
+					return true;
+				}
+				continue;
+			}
+			if($side instanceof RedstoneComparator && $side->getOutputSignalStrength() > 0){
+				return true;
+			}
+			if($side instanceof \pocketmine\block\utils\PoweredByRedstone && $side->isPowered()){
+				return true;
+			}
+		}
+		return false;
+	}
 }

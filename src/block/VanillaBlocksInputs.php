@@ -54,6 +54,7 @@ use pocketmine\block\tile\MobHead as TileMobHead;
 use pocketmine\block\tile\MonsterSpawner as TileMonsterSpawner;
 use pocketmine\block\tile\NormalFurnace as TileNormalFurnace;
 use pocketmine\block\tile\Note as TileNote;
+use pocketmine\block\tile\PistonArm as TilePistonArm;
 use pocketmine\block\tile\ShulkerBox as TileShulkerBox;
 use pocketmine\block\tile\Sign as TileSign;
 use pocketmine\block\tile\Smoker as TileSmoker;
@@ -265,6 +266,13 @@ final class VanillaBlocksInputs extends RegistrySource{
 		self::register("hardened_glass_pane", fn(BID $id) => new HardenedGlassPane($id, "Hardened Glass Pane", $hardenedGlassBreakInfo));
 		self::register("hay_bale", fn(BID $id) => new HayBale($id, "Hay Bale", new Info(new BreakInfo(0.5))));
 		self::register("hopper", fn(BID $id) => new Hopper($id, "Hopper", new Info(BreakInfo::pickaxe(3.0, ToolTier::WOOD, 24.0))), TileHopper::class);
+		self::register("dispenser", fn(BID $id) => (new Dispenser($id, "Dispenser", new Info(BreakInfo::pickaxe(3.5, ToolTier::WOOD))))->setFacing(Facing::NORTH), TileDispenser::class);
+		self::register("dropper", fn(BID $id) => (new Dropper($id, "Dropper", new Info(BreakInfo::pickaxe(3.5, ToolTier::WOOD))))->setFacing(Facing::NORTH), TileDropper::class);
+		self::register("piston", fn(BID $id) => (new Piston($id, "Piston", new Info(BreakInfo::pickaxe(2.5, ToolTier::WOOD))))->setFacing(Facing::NORTH), TilePistonArm::class);
+		self::register("sticky_piston", fn(BID $id) => (new StickyPiston($id, "Sticky Piston", new Info(BreakInfo::pickaxe(2.5, ToolTier::WOOD))))->setFacing(Facing::NORTH), TilePistonArm::class);
+		self::register("piston_head", fn(BID $id) => (new PistonHead($id, "Piston Head", new Info(BreakInfo::pickaxe(2.5, ToolTier::WOOD))))->setFacing(Facing::NORTH));
+		self::register("sticky_piston_head", fn(BID $id) => (new StickyPistonHead($id, "Sticky Piston Head", new Info(BreakInfo::pickaxe(2.5, ToolTier::WOOD))))->setFacing(Facing::NORTH));
+		self::register("moving_piston", fn(BID $id) => (new MovingPiston($id, "Moving Piston", new Info(BreakInfo::pickaxe(2.5, ToolTier::WOOD))))->setFacing(Facing::NORTH), TilePistonArm::class);
 		self::register("ice", fn(BID $id) => new Ice($id, "Ice", new Info(BreakInfo::pickaxe(0.5))));
 
 		$updateBlockBreakInfo = new Info(new BreakInfo(1.0));

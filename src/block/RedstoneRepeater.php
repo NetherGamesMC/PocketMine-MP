@@ -88,5 +88,58 @@ class RedstoneRepeater extends Flowable implements PoweredByRedstone, Horizontal
 		return $block->getAdjacentSupportType(Facing::DOWN) !== SupportType::NONE;
 	}
 
-	//TODO: redstone functionality
+	public function onNearbyBlockChange() : void{
+		$this->position->getWorld()->scheduleDelayedBlockUpdate($this->position, $this->delay);
+	}
+
+	public function onScheduledUpdate() : void{
+		$shouldPower = $this->getInputSignal() > 0;
+		if($shouldPower !== $this->powered){
+			$this->powered = $shouldPower;
+			$world = $this->position->getWorld();
+			$world->setBlock($this->position, $this);
+			foreach(Facing::ALL as $face){
+				$world->getBlock($this->position->getSide($face))->onNearbyBlockChange();
+			}
+		}
+	}
+
+	private function getInputSignal() : int{
+		$inputFace = $this->facing;
+		$back = $this->getSide($inputFace);
+		return $this->readSignalFromBlock($back, $inputFace);
+	}
+
+	private function readSignalFromBlock(Block $block, int $faceFromSelf) : int{
+		if($block instanceof Redstone){
+			return 15;
+		}
+		if($block instanceof Lever && $block->isActivated()){
+			return 15;
+		}
+		if($block instanceof Button && $block->isPressed()){
+			return 15;
+		}
+		if($block instanceof SimplePressurePlate && $block->isPressed()){
+			return 15;
+		}
+		if($block instanceof RedstoneWire){
+			return $block->getOutputSignalStrength();
+		}
+		if($block instanceof RedstoneRepeater){
+			$outputFace = Facing::opposite($block->getFacing());
+			return $block->isPowered() && $outputFace === Facing::opposite($faceFromSelf) ? 15 : 0;
+		}
+		if($block instanceof RedstoneComparator){
+			$outputFace = Facing::opposite($block->getFacing());
+			return $outputFace === Facing::opposite($faceFromSelf) ? $block->getOutputSignalStrength() : 0;
+		}
+		if($block instanceof \pocketmine\block\utils\AnalogRedstoneSignalEmitter){
+			return $block->getOutputSignalStrength();
+		}
+		if($block instanceof PoweredByRedstone && $block->isPowered()){
+			return 15;
+		}
+		return 0;
+	}
 }

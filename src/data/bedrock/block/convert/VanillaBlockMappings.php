@@ -47,8 +47,10 @@ use pocketmine\block\CopperLantern;
 use pocketmine\block\DaylightSensor;
 use pocketmine\block\DetectorRail;
 use pocketmine\block\Dirt;
+use pocketmine\block\Dispenser;
 use pocketmine\block\DoublePitcherCrop;
 use pocketmine\block\DoublePlant;
+use pocketmine\block\Dropper;
 use pocketmine\block\EndPortalFrame;
 use pocketmine\block\EndRod;
 use pocketmine\block\Farmland;
@@ -89,6 +91,11 @@ use pocketmine\block\TNT;
 use pocketmine\block\TorchflowerCrop;
 use pocketmine\block\Tripwire;
 use pocketmine\block\TripwireHook;
+use pocketmine\block\MovingPiston;
+use pocketmine\block\Piston;
+use pocketmine\block\PistonHead;
+use pocketmine\block\StickyPiston;
+use pocketmine\block\StickyPistonHead;
 use pocketmine\block\utils\BellAttachmentType;
 use pocketmine\block\utils\BrewingStandSlot;
 use pocketmine\block\utils\ChiseledBookshelfSlot;
@@ -1372,6 +1379,14 @@ final class VanillaBlockMappings{
 		$reg->mapModel(Model::create(Blocks::FROSTED_ICE(), Ids::FROSTED_ICE)->properties([
 			new IntProperty(StateNames::AGE, 0, 3, fn(FrostedIce $b) => $b->getAge(), fn(FrostedIce $b, int $v) => $b->setAge($v))
 		]));
+		$reg->mapModel(Model::create(Blocks::DROPPER(), "minecraft:dropper")->properties([
+			new BoolProperty("triggered_bit", fn(PoweredByRedstone $b) => $b->isPowered(), fn(PoweredByRedstone $b, bool $v) => $b->setPowered($v)),
+			new ValueFromIntProperty(StateNames::FACING_DIRECTION, ValueMappings::getInstance()->facing, fn(Dropper $b) => $b->getFacing(), fn(Dropper $b, int $v) => $b->setFacing($v)),
+		]));
+		$reg->mapModel(Model::create(Blocks::DISPENSER(), "minecraft:dispenser")->properties([
+			new BoolProperty("triggered_bit", fn(PoweredByRedstone $b) => $b->isPowered(), fn(PoweredByRedstone $b, bool $v) => $b->setPowered($v)),
+			new ValueFromIntProperty(StateNames::FACING_DIRECTION, ValueMappings::getInstance()->facing, fn(Dispenser $b) => $b->getFacing(), fn(Dispenser $b, int $v) => $b->setFacing($v)),
+		]));
 
 		//G
 		$reg->mapModel(Model::create(Blocks::GLOWING_ITEM_FRAME(), Ids::GLOW_FRAME)->properties($commonProperties->itemFrameProperties));
@@ -1424,6 +1439,59 @@ final class VanillaBlockMappings{
 			new IntProperty(StateNames::GROWTH, 0, 7, fn(PinkPetals $b) => $b->getCount(), fn(PinkPetals $b, int $v) => $b->setCount(min($v, PinkPetals::MAX_COUNT)), offset: 1),
 			$commonProperties->horizontalFacingCardinal
 		]));
+		$reg->mapModel(Model::create(Blocks::PISTON(), "minecraft:piston")->properties([
+			new ValueFromIntProperty(StateNames::FACING_DIRECTION, ValueMappings::getInstance()->facing, fn(Piston $b) => $b->getFacing(), fn(Piston $b, int $v) => $b->setFacing($v)),
+		]));
+		$reg->mapModel(Model::create(Blocks::STICKY_PISTON(), "minecraft:sticky_piston")->properties([
+			new ValueFromIntProperty(StateNames::FACING_DIRECTION, ValueMappings::getInstance()->facing, fn(StickyPiston $b) => $b->getFacing(), fn(StickyPiston $b, int $v) => $b->setFacing($v)),
+		]));
+		$reg->mapModel(Model::create(Blocks::PISTON_HEAD(), "minecraft:piston_arm_collision")->properties([
+			new IntProperty(
+				StateNames::FACING_DIRECTION,
+				0,
+				5,
+				fn(PistonHead $b) => match($b->getFacing()){
+					Facing::UP => 0,
+					Facing::DOWN => 1,
+					Facing::SOUTH => 2,
+					Facing::NORTH => 3,
+					Facing::EAST => 4,
+					Facing::WEST => 5,
+				},
+				fn(PistonHead $b, int $v) => $b->setFacing(match($v){
+					0 => Facing::UP,
+					1 => Facing::DOWN,
+					2 => Facing::SOUTH,
+					3 => Facing::NORTH,
+					4 => Facing::EAST,
+					5 => Facing::WEST,
+				})
+			),
+		]));
+		$reg->mapModel(Model::create(Blocks::STICKY_PISTON_HEAD(), "minecraft:sticky_piston_arm_collision")->properties([
+			new IntProperty(
+				StateNames::FACING_DIRECTION,
+				0,
+				5,
+				fn(StickyPistonHead $b) => match($b->getFacing()){
+					Facing::UP => 0,
+					Facing::DOWN => 1,
+					Facing::SOUTH => 2,
+					Facing::NORTH => 3,
+					Facing::EAST => 4,
+					Facing::WEST => 5,
+				},
+				fn(StickyPistonHead $b, int $v) => $b->setFacing(match($v){
+					0 => Facing::UP,
+					1 => Facing::DOWN,
+					2 => Facing::SOUTH,
+					3 => Facing::NORTH,
+					4 => Facing::EAST,
+					5 => Facing::WEST,
+				})
+			),
+		]));
+		$reg->mapModel(Model::create(Blocks::MOVING_PISTON(), "minecraft:moving_block")->properties([]));
 		$reg->mapModel(Model::create(Blocks::POWERED_RAIL(), Ids::GOLDEN_RAIL)->properties([
 			new BoolProperty(StateNames::RAIL_DATA_BIT, fn(PoweredRail $b) => $b->isPowered(), fn(PoweredRail $b, bool $v) => $b->setPowered($v)), //TODO: shared with ActivatorRail
 			new IntProperty(StateNames::RAIL_DIRECTION, 0, 5, fn(StraightOnlyRail $b) => $b->getShape(), fn(StraightOnlyRail $b, int $v) => $b->setShape($v)) //TODO: shared with ActivatorRail

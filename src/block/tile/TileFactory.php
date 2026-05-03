@@ -63,6 +63,8 @@ final class TileFactory{
 		$this->register(ChiseledBookshelf::class, ["ChiseledBookshelf", "minecraft:chiseled_bookshelf"]);
 		$this->register(Comparator::class, ["Comparator", "minecraft:comparator"]);
 		$this->register(DaylightSensor::class, ["DaylightDetector", "minecraft:daylight_detector"]);
+		$this->register(Dispenser::class, ["Dispenser", "minecraft:dispenser"]);
+		$this->register(Dropper::class, ["Dropper", "minecraft:dropper"]);
 		$this->register(EnchantTable::class, ["EnchantTable", "minecraft:enchanting_table"]);
 		$this->register(EnderChest::class, ["EnderChest", "minecraft:ender_chest"]);
 		$this->register(FlowerPot::class, ["FlowerPot", "minecraft:flower_pot"]);
@@ -80,19 +82,17 @@ final class TileFactory{
 		$this->register(MobHead::class, ["Skull", "minecraft:skull"]);
 		$this->register(GlowingItemFrame::class, ["GlowItemFrame"]);
 		$this->register(HangingSign::class, ["HangingSign", "minecraft:hanging_sign"]);
+		$this->register(PistonArm::class, ["PistonArm", "minecraft:piston_arm"]);
 
 		//TODO: ChalkboardBlock
 		//TODO: ChemistryTable
 		//TODO: CommandBlock
 		//TODO: Conduit
-		//TODO: Dispenser
-		//TODO: Dropper
 		//TODO: EndGateway
 		//TODO: EndPortal
 		//TODO: JigsawBlock
 		//TODO: MovingBlock
 		//TODO: NetherReactor
-		//TODO: PistonArm
 		//TODO: StructureBlock
 	}
 

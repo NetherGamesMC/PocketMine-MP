@@ -48,4 +48,37 @@ class RedstoneLamp extends Opaque implements PoweredByRedstone, Lightable{
 		$this->powered = $lit;
 		return $this;
 	}
+
+	public function onNearbyBlockChange() : void{
+		$this->position->getWorld()->scheduleDelayedBlockUpdate($this->position, 1);
+	}
+
+	public function onScheduledUpdate() : void{
+		$powered = $this->isPoweredByNeighbors();
+		if($powered !== $this->powered){
+			$this->powered = $powered;
+			$this->position->getWorld()->setBlock($this->position, $this);
+		}
+	}
+
+	private function isPoweredByNeighbors() : bool{
+		foreach($this->getAllSides() as $side){
+			if($side instanceof Redstone){
+				return true;
+			}
+			if($side instanceof RedstoneWire && $side->getOutputSignalStrength() > 0){
+				return true;
+			}
+			if($side instanceof Lever && $side->isActivated()){
+				return true;
+			}
+			if($side instanceof Button && $side->isPressed()){
+				return true;
+			}
+			if($side instanceof SimplePressurePlate && $side->isPressed()){
+				return true;
+			}
+		}
+		return false;
+	}
 }
