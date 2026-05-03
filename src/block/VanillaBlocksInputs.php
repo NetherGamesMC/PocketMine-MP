@@ -41,6 +41,8 @@ use pocketmine\block\tile\Chest as TileChest;
 use pocketmine\block\tile\ChiseledBookshelf as TileChiseledBookshelf;
 use pocketmine\block\tile\Comparator as TileComparator;
 use pocketmine\block\tile\DaylightSensor as TileDaylightSensor;
+use pocketmine\block\tile\Dispenser as TileDispenser;
+use pocketmine\block\tile\Dropper as TileDropper;
 use pocketmine\block\tile\EnchantTable as TileEnchantingTable;
 use pocketmine\block\tile\EnderChest as TileEnderChest;
 use pocketmine\block\tile\FlowerPot as TileFlowerPot;

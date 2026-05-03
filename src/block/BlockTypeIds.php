@@ -169,8 +169,10 @@ final class BlockTypeIds{
 	public const DIORITE_STAIRS = 10126;
 	public const DIORITE_WALL = 10127;
 	public const DIRT = 10128;
+	public const DISPENSER = 10508;
 	public const DOUBLE_TALLGRASS = 10129;
 	public const DRAGON_EGG = 10130;
+	public const DROPPER = 10509;
 	public const DRIED_KELP = 10131;
 	public const DYED_SHULKER_BOX = 10132;
 	public const ELEMENT_ACTINIUM = 10133;
@@ -433,7 +435,9 @@ final class BlockTypeIds{
 	public const PEONY = 10392;
 
 	public const PINK_TULIP = 10394;
+	public const PISTON = 10506;
 	public const PODZOL = 10395;
+	public const PISTON_HEAD = 10829;
 	public const POLISHED_ANDESITE = 10396;
 	public const POLISHED_ANDESITE_SLAB = 10397;
 	public const POLISHED_ANDESITE_STAIRS = 10398;
@@ -534,6 +538,7 @@ final class BlockTypeIds{
 	public const STAINED_GLASS_PANE = 10493;
 	public const STAINED_HARDENED_GLASS = 10494;
 	public const STAINED_HARDENED_GLASS_PANE = 10495;
+	public const STICKY_PISTON = 10507;
 	public const STONE = 10496;
 	public const STONE_BRICK_SLAB = 10497;
 	public const STONE_BRICK_STAIRS = 10498;
@@ -854,7 +859,7 @@ final class BlockTypeIds{
 	public const BAMBOO_MOSAIC_STAIRS = 10824;
 	public const AZALEA = 10825;
 	public const FLOWERING_AZALEA = 10826;
-    public const MOSS_BLOCK = 10827;
+	public const MOSS_BLOCK = 10827;
 	public const MOSS_CARPET = 10828;
 	public const MOVING_PISTON = 10830;
 	public const STICKY_PISTON_HEAD = 10831;
