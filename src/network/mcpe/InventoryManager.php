@@ -28,6 +28,8 @@ use pocketmine\block\inventory\BlockInventory;
 use pocketmine\block\inventory\BrewingStandInventory;
 use pocketmine\block\inventory\CartographyTableInventory;
 use pocketmine\block\inventory\CraftingTableInventory;
+use pocketmine\block\inventory\DispenserInventory;
+use pocketmine\block\inventory\DropperInventory;
 use pocketmine\block\inventory\EnchantInventory;
 use pocketmine\block\inventory\FurnaceInventory;
 use pocketmine\block\inventory\HopperInventory;
@@ -384,6 +386,8 @@ class InventoryManager{
 				$inv instanceof StonecutterInventory => WindowTypes::STONECUTTER,
 				$inv instanceof CartographyTableInventory => WindowTypes::CARTOGRAPHY,
 				$inv instanceof SmithingTableInventory => WindowTypes::SMITHING_TABLE,
+				$inv instanceof DropperInventory => WindowTypes::DROPPER,
+				$inv instanceof DispenserInventory => WindowTypes::DISPENSER,
 				default => WindowTypes::CONTAINER
 			};
 			return [ContainerOpenPacket::blockInv($id, $windowType, $blockPosition)];
