@@ -218,9 +218,9 @@ class ResourcePacksPacketHandler extends PacketHandler{
 				}, $this->resourcePackStack);
 
 				//we support chemistry blocks by default, the client should already have these installed
-				foreach(self::CHEMISTRY_RESOURCE_PACKS as [$uuid, $version]){
-					$stack[] = new ResourcePackStackEntry($uuid, $version, "");
-				}
+				//foreach(self::CHEMISTRY_RESOURCE_PACKS as [$uuid, $version]){
+				//	$stack[] = new ResourcePackStackEntry($uuid, $version, "");
+				//}
 
 				//we don't force here, because it doesn't have user-facing effects
 				//but it does have an annoying side-effect when true: it makes
