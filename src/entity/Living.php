@@ -592,11 +592,24 @@ abstract class Living extends Entity{
 			}elseif($source instanceof EntityDamageByEntityEvent){
 				$e = $source->getDamager();
 				if($e !== null){
-					$deltaX = $this->location->x - $e->location->x;
-					$deltaZ = $this->location->z - $e->location->z;
-					$this->knockBack($deltaX, $deltaZ, $source->getKnockBack(), $source->getVerticalKnockBackLimit());
-				}
-			}
+                // Knockback Displacement
+                    if($e instanceof Player){
+                        $direction = $e->getDirectionVector();
+                        $deltaX = $direction->x;
+                        $deltaZ = $direction->z;
+
+                        if(($deltaX * $deltaX + $deltaZ * $deltaZ) < 0.0001){
+                            $deltaX = $this->location->x - $e->location->x;
+                            $deltaZ = $this->location->z - $e->location->z;
+                        }
+                    }else{
+                        $deltaX = $this->location->x - $e->location->x;
+                        $deltaZ = $this->location->z - $e->location->z;
+                    }
+
+                    $this->knockBack($deltaX, $deltaZ, $source->getKnockBack(), $source->getVerticalKnockBackLimit());
+                }
+            }
 
 			if($this->isAlive()){
 				$this->doHitAnimation();
