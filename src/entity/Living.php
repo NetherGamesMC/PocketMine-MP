@@ -589,27 +589,40 @@ abstract class Living extends Entity{
 					$motion = $e->getMotion();
 					$this->knockBack($motion->x, $motion->z, $source->getKnockBack(), $source->getVerticalKnockBackLimit());
 				}
+		    // Knockback Displacement
 			}elseif($source instanceof EntityDamageByEntityEvent){
-				$e = $source->getDamager();
-				if($e !== null){
-                // Knockback Displacement
-                    if($e instanceof Player){
-                        $direction = $e->getDirectionVector();
-                        $deltaX = $direction->x;
-                        $deltaZ = $direction->z;
+    $e = $source->getDamager();
+    if($e !== null){
+        // Original
+        $originalDeltaX = $this->location->x - $e->location->x;
+        $originalDeltaZ = $this->location->z - $e->location->z;
 
-                        if(($deltaX * $deltaX + $deltaZ * $deltaZ) < 0.0001){
-                            $deltaX = $this->location->x - $e->location->x;
-                            $deltaZ = $this->location->z - $e->location->z;
-                        }
-                    }else{
-                        $deltaX = $this->location->x - $e->location->x;
-                        $deltaZ = $this->location->z - $e->location->z;
-                    }
+        $deltaX = $originalDeltaX;
+        $deltaZ = $originalDeltaZ;
 
-                    $this->knockBack($deltaX, $deltaZ, $source->getKnockBack(), $source->getVerticalKnockBackLimit());
+        if($e instanceof Player){
+            // Knockback Displacement
+            $direction = $e->getDirectionVector();
+            $lookDeltaX = $direction->x;
+            $lookDeltaZ = $direction->z;
+
+            $lookLength = sqrt($lookDeltaX * $lookDeltaX + $lookDeltaZ * $lookDeltaZ);
+            $originalLength = sqrt($originalDeltaX * $originalDeltaX + $originalDeltaZ * $originalDeltaZ);
+
+            if($lookLength >= 0.0001 && $originalLength >= 0.0001){
+                $cosAngle = (($lookDeltaX * $originalDeltaX) + ($lookDeltaZ * $originalDeltaZ)) / ($lookLength * $originalLength);
+
+                // If > 130° 时，cosAngle < cos(130°)，use original
+                if($cosAngle >= cos(deg2rad(130.0))){
+                    $deltaX = $lookDeltaX;
+                    $deltaZ = $lookDeltaZ;
                 }
             }
+        }
+
+        $this->knockBack($deltaX, $deltaZ, $source->getKnockBack(), $source->getVerticalKnockBackLimit());
+    }
+}
 
 			if($this->isAlive()){
 				$this->doHitAnimation();
