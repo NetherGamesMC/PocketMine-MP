@@ -26,13 +26,17 @@ namespace pocketmine\network\mcpe\cache;
 use pmmp\encoding\BE;
 use pocketmine\crafting\CraftingManager;
 use pocketmine\crafting\FurnaceType;
+use pocketmine\crafting\MetaWildcardRecipeIngredient;
 use pocketmine\crafting\ShapedRecipe;
 use pocketmine\crafting\ShapelessRecipe;
 use pocketmine\crafting\ShapelessRecipeType;
+use pocketmine\crafting\TagWildcardRecipeIngredient;
 use pocketmine\data\bedrock\item\ItemTypeSerializeException;
 use pocketmine\data\bedrock\ItemTagDowngrader;
+use pocketmine\data\bedrock\ItemTagToIdMap;
 use pocketmine\network\mcpe\convert\TypeConverter;
 use pocketmine\network\mcpe\protocol\CraftingDataPacket;
+use pocketmine\network\mcpe\protocol\ProtocolInfo;
 use pocketmine\network\mcpe\protocol\types\recipe\CraftingRecipeBlockName;
 use pocketmine\network\mcpe\protocol\types\recipe\FurnaceRecipe as ProtocolFurnaceRecipe;
 use pocketmine\network\mcpe\protocol\types\recipe\FurnaceRecipeBlockName;
@@ -157,17 +161,52 @@ final class CraftingDataCache{
 			};
 			foreach($manager->getFurnaceRecipeManager($furnaceType)->getAll() as $recipe){
 				try{
-					$input = $converter->coreRecipeIngredientToNet($recipe->getInput())->getDescriptor();
-					if(!$input instanceof IntIdMetaItemDescriptor){
-						throw new AssumptionFailedError();
+					if($this->getProtocolId() >= ProtocolInfo::PROTOCOL_1_26_20){
+						$recipeNetId = ($recipeNetId ?? self::RECIPE_ID_OFFSET) + 1;
+						$recipesWithTypeIds[] = new ProtocolShapelessRecipe(
+							CraftingDataPacket::ENTRY_SHAPELESS,
+							BE::packUnsignedInt($recipeNetId), //TODO: this should probably be changed to something human-readable
+							[$converter->coreRecipeIngredientToNet($recipe->getInput())],
+							[$converter->coreItemStackToNet($recipe->getResult())],
+							$nullUUID,
+							$typeTag,
+							50,
+							$noUnlockingRequirement,
+							$recipeNetId
+						);
+					}else{
+						$input = $recipe->getInput();
+
+						if($input instanceof TagWildcardRecipeIngredient){
+							foreach(ItemTagToIdMap::getInstance($this->getProtocolId())->getIdsForTag($input->getTagName()) as $itemId){
+								$input = $converter->coreRecipeIngredientToNet(new MetaWildcardRecipeIngredient($itemId))->getDescriptor();
+								if(!$input instanceof IntIdMetaItemDescriptor){
+									throw new AssumptionFailedError();
+								}
+
+								$recipesWithTypeIds[] = new ProtocolFurnaceRecipe(
+									CraftingDataPacket::ENTRY_FURNACE_DATA,
+									$input->getId(),
+									$input->getMeta(),
+									$converter->coreItemStackToNet($recipe->getResult()),
+									$typeTag
+								);
+							}
+						}else{
+							$input = $converter->coreRecipeIngredientToNet($input)->getDescriptor();
+							if(!$input instanceof IntIdMetaItemDescriptor){
+								throw new AssumptionFailedError();
+							}
+
+							$recipesWithTypeIds[] = new ProtocolFurnaceRecipe(
+								CraftingDataPacket::ENTRY_FURNACE_DATA,
+								$input->getId(),
+								$input->getMeta(),
+								$converter->coreItemStackToNet($recipe->getResult()),
+								$typeTag
+							);
+						}
 					}
-					$recipesWithTypeIds[] = new ProtocolFurnaceRecipe(
-						CraftingDataPacket::ENTRY_FURNACE_DATA,
-						$input->getId(),
-						$input->getMeta(),
-						$converter->coreItemStackToNet($recipe->getResult()),
-						$typeTag
-					);
 				}catch(\InvalidArgumentException|ItemTypeSerializeException){
 					continue;
 				}
