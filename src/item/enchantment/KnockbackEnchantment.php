@@ -2,11 +2,11 @@
 
 /*
  *
- *  ____            _        _   __  __ _                  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
+ * ____ _ _ __ __ _ __ __ ____
+ * | _ \ ___ ___| | _____| |_| \/ (_)_ __ ___ | \/ | _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
+ * | __/ (_) | (__| < __/ |_| | | | | | | | __/_____| | | | __/
+ * |_| \___/ \___|_|\_\___|\__|_| |_|_|_| |_|\___| |_| |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -25,6 +25,7 @@ namespace pocketmine\item\enchantment;
 
 use pocketmine\entity\Entity;
 use pocketmine\entity\Living;
+use pocketmine\player\Player;
 
 class KnockbackEnchantment extends MeleeWeaponEnchantment{
 
@@ -38,8 +39,13 @@ class KnockbackEnchantment extends MeleeWeaponEnchantment{
 
 	public function onPostAttack(Entity $attacker, Entity $victim, int $enchantmentLevel) : void{
 		if($victim instanceof Living){
-			$diff = $victim->getPosition()->subtractVector($attacker->getPosition());
-			$victim->knockBack($diff->x, $diff->z, $enchantmentLevel * 0.5);
+			if($attacker instanceof Player){
+				$plane = $attacker->getDirectionPlane();
+				$victim->knockBack($plane->x, $plane->y, $enchantmentLevel * 0.5);
+			}else{
+				$diff = $victim->getPosition()->subtractVector($attacker->getPosition());
+				$victim->knockBack($diff->x, $diff->z, $enchantmentLevel * 0.5);
+			}
 		}
 	}
 }
