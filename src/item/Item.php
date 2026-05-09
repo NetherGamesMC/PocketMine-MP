@@ -52,6 +52,7 @@ use pocketmine\world\BlockTransaction;
 use pocketmine\world\format\io\GlobalItemDataHandlers;
 use pocketmine\event\block\BlockCanBuildEvent;
 use pocketmine\world\World;
+use pocketmine\world\ChunkManager;
 use function base64_decode;
 use function base64_encode;
 use function count;
@@ -503,33 +504,19 @@ class Item implements \JsonSerializable{
 	$item = clone $this;
 	$blockReplaceClone = clone $blockReplace;
 	$blockClickedClone = clone $blockClicked;
-	$blockPlaceClone = clone $blockPlace;
 
-	$transaction->addValidator(function($chunkManager, int $x, int $y, int $z) use ($world, $player, $blockPlaceClone, $blockReplaceClone, $blockClickedClone, $item) : bool{
-		/*
-		 * BlockTransaction validator signature uses ChunkManager.
-		 * Entity lookup only exists on World, so if this transaction ever uses another ChunkManager,
-		 * do not block placement from this validator.
-		 */
-		if(!$world instanceof World){
+	$transaction->addValidator(function(ChunkManager $chunkManager, int $x, int $y, int $z) use ($transaction, $player, $blockReplaceClone, $blockClickedClone, $item) : bool{
+		if(!$chunkManager instanceof World){
 			return true;
 		}
 
-		$placedBlock = clone $blockPlaceClone;
-		$placedBlock->position($world, $x, $y, $z);
+		$placedBlock = clone $transaction->fetchBlockAt($x, $y, $z);
+		$placedBlock->position($chunkManager, $x, $y, $z);
 
 		$collidingEntities = [];
 
 		foreach($placedBlock->getCollisionBoxes() as $bb){
-			foreach($world->getCollidingEntities($bb) as $entity){
-				if($player !== null && $entity === $player){
-					/*
-					 * 保持原 PMMP 行为更安全：不要在核心层允许玩家把方块塞进自己身体。
-					 * 如果你以后要做 clutch/self-place，再单独写另一个机制。
-					 */
-					return false;
-				}
-
+			foreach($chunkManager->getNearbyEntities($bb) as $entity){
 				if(!$entity->canBeCollidedWith()){
 					continue;
 				}
