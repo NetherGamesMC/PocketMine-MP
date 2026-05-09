@@ -593,34 +593,45 @@ abstract class Living extends Entity{
 			}elseif($source instanceof EntityDamageByEntityEvent){
     $e = $source->getDamager();
     if($e !== null){
-        // Original
-        $originalDeltaX = $this->location->x - $e->location->x;
-        $originalDeltaZ = $this->location->z - $e->location->z;
+        // Base knockback: keep vanilla PMMP relative-position direction.
+        $deltaX = $this->location->x - $e->location->x;
+        $deltaZ = $this->location->z - $e->location->z;
 
-        $deltaX = $originalDeltaX;
-        $deltaZ = $originalDeltaZ;
+        $this->knockBack(
+            $deltaX,
+            $deltaZ,
+            $source->getKnockBack(),
+            $source->getVerticalKnockBackLimit()
+        );
 
+        // Extra knockback: Java style sprint + Knockback enchant bonus uses attacker yaw.
         if($e instanceof Player){
-            // Knockback Displacement
-            $direction = $e->getDirectionVector();
-            $lookDeltaX = $direction->x;
-            $lookDeltaZ = $direction->z;
+            $extraLevel = $e->getInventory()->getItemInHand()->getEnchantmentLevel(VanillaEnchantments::KNOCKBACK());
 
-            $lookLength = sqrt($lookDeltaX * $lookDeltaX + $lookDeltaZ * $lookDeltaZ);
-            $originalLength = sqrt($originalDeltaX * $originalDeltaX + $originalDeltaZ * $originalDeltaZ);
+            if($e->isSprinting()){
+                ++$extraLevel;
+            }
 
-            if($lookLength >= 0.0001 && $originalLength >= 0.0001){
-                $cosAngle = (($lookDeltaX * $originalDeltaX) + ($lookDeltaZ * $originalDeltaZ)) / ($lookLength * $originalLength);
+            if($extraLevel > 0){
+                // horizontal yaw only; not affected by pitch
+                $plane = $e->getDirectionPlane();
 
-                // If > 130° 时，cosAngle < cos(130°)，use original
-                if($cosAngle >= cos(deg2rad(130.0))){
-                    $deltaX = $lookDeltaX;
-                    $deltaZ = $lookDeltaZ;
+                $extraHorizontal = 0.5;
+                $extraVertical = 0.1;
+
+                $verticalLimit = $source->getVerticalKnockBackLimit() ?? $source->getKnockBack();
+
+                $motionX = $this->motion->x + ($plane->x * $extraLevel * $extraHorizontal);
+                $motionY = $this->motion->y + $extraVertical;
+                $motionZ = $this->motion->z + ($plane->y * $extraLevel * $extraHorizontal);
+
+                if($motionY > $verticalLimit){
+                    $motionY = $verticalLimit;
                 }
+
+                $this->setMotion(new Vector3($motionX, $motionY, $motionZ));
             }
         }
-
-        $this->knockBack($deltaX, $deltaZ, $source->getKnockBack(), $source->getVerticalKnockBackLimit());
     }
 }
 
