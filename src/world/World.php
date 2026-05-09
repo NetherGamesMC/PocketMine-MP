@@ -119,6 +119,7 @@ use pocketmine\world\sound\ProtocolSound;
 use pocketmine\world\sound\Sound;
 use pocketmine\world\utils\SubChunkExplorer;
 use pocketmine\YmlServerProperties;
+use pocketmine\event\block\BlockCanBuildEvent;
 use function abs;
 use function array_filter;
 use function array_key_exists;
@@ -2415,13 +2416,34 @@ class World implements ChunkManager{
 		}
 
 		foreach($tx->getBlocks() as [$x, $y, $z, $block]){
-			$block->position($this, $x, $y, $z);
-			foreach($block->getCollisionBoxes() as $collisionBox){
-				if(count($this->getCollidingEntities($collisionBox)) > 0){
-					return false;  //Entity in block
-				}
-			}
-		}
+    $block->position($this, $x, $y, $z);
+
+    $collidingEntities = [];
+
+    foreach($block->getCollisionBoxes() as $collisionBox){
+        foreach($this->getCollidingEntities($collisionBox) as $entity){
+            $collidingEntities[$entity->getId()] = $entity;
+        }
+    }
+
+    if(count($collidingEntities) > 0){
+        $canBuildEvent = new BlockCanBuildEvent(
+            $player,
+            $block,
+            $this->getBlockAt($x, $y, $z),
+            $blockClicked,
+            $item,
+            false,
+            BlockCanBuildEvent::REASON_ENTITY_COLLISION,
+            array_values($collidingEntities)
+        );
+        $canBuildEvent->call();
+
+        if(!$canBuildEvent->isBuildable()){
+            return false; //Entity in block
+        }
+    }
+}
 
 		if($player !== null){
 			$ev = new BlockPlaceEvent($player, $tx, $blockClicked, $item);
