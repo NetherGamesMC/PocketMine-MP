@@ -50,6 +50,8 @@ use pocketmine\player\Player;
 use pocketmine\utils\Utils;
 use pocketmine\world\BlockTransaction;
 use pocketmine\world\format\io\GlobalItemDataHandlers;
+use pocketmine\event\block\BlockCanBuildEvent;
+use pocketmine\world\World;
 use function base64_decode;
 use function base64_encode;
 use function count;
@@ -483,14 +485,80 @@ class Item implements \JsonSerializable{
 	}
 
 	protected final function tryPlacementTransaction(Block $blockPlace, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, ?Player $player) : ?BlockTransaction{
-		$position = $blockReplace->getPosition();
-		$blockPlace->position($position->getWorld(), $position->getFloorX(), $position->getFloorY(), $position->getFloorZ());
-		if(!$blockPlace->canBePlacedAt($blockReplace, $clickVector, $face, $blockReplace->getPosition()->equals($blockClicked->getPosition()))){
-			return null;
-		}
-		$transaction = new BlockTransaction($position->getWorld());
-		return $blockPlace->place($transaction, $this, $blockReplace, $blockClicked, $face, $clickVector, $player) ? $transaction : null;
+	$position = $blockReplace->getPosition();
+	$world = $position->getWorld();
+
+	$blockPlace->position($world, $position->getFloorX(), $position->getFloorY(), $position->getFloorZ());
+
+	if(!$blockPlace->canBePlacedAt($blockReplace, $clickVector, $face, $blockReplace->getPosition()->equals($blockClicked->getPosition()))){
+		return null;
 	}
+
+	$transaction = new BlockTransaction($world);
+
+	if(!$blockPlace->place($transaction, $this, $blockReplace, $blockClicked, $face, $clickVector, $player)){
+		return null;
+	}
+
+	$item = clone $this;
+	$blockReplaceClone = clone $blockReplace;
+	$blockClickedClone = clone $blockClicked;
+	$blockPlaceClone = clone $blockPlace;
+
+	$transaction->addValidator(function($chunkManager, int $x, int $y, int $z) use ($world, $player, $blockPlaceClone, $blockReplaceClone, $blockClickedClone, $item) : bool{
+		/*
+		 * BlockTransaction validator signature uses ChunkManager.
+		 * Entity lookup only exists on World, so if this transaction ever uses another ChunkManager,
+		 * do not block placement from this validator.
+		 */
+		if(!$world instanceof World){
+			return true;
+		}
+
+		$placedBlock = clone $blockPlaceClone;
+		$placedBlock->position($world, $x, $y, $z);
+
+		$collidingEntities = [];
+
+		foreach($placedBlock->getCollisionBoxes() as $bb){
+			foreach($world->getCollidingEntities($bb) as $entity){
+				if($player !== null && $entity === $player){
+					/*
+					 * 保持原 PMMP 行为更安全：不要在核心层允许玩家把方块塞进自己身体。
+					 * 如果你以后要做 clutch/self-place，再单独写另一个机制。
+					 */
+					return false;
+				}
+
+				if(!$entity->canBeCollidedWith()){
+					continue;
+				}
+
+				$collidingEntities[$entity->getId()] = $entity;
+			}
+		}
+
+		if(count($collidingEntities) === 0){
+			return true;
+		}
+
+		$event = new BlockCanBuildEvent(
+			$player,
+			$placedBlock,
+			$blockReplaceClone,
+			$blockClickedClone,
+			$item,
+			false,
+			BlockCanBuildEvent::REASON_ENTITY_COLLISION,
+			array_values($collidingEntities)
+		);
+		$event->call();
+
+		return $event->isBuildable();
+	});
+
+	return $transaction;
+}
 
 	public function getPlacementTransaction(Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, ?Player $player = null) : ?BlockTransaction{
 		return $this->tryPlacementTransaction($this->getBlock($face), $blockReplace, $blockClicked, $face, $clickVector, $player);
