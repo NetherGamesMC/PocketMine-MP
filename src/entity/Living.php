@@ -626,6 +626,7 @@ if($e instanceof Player && $e->isSprinting()){
 }
 
 $this->knockBack($deltaX, $deltaZ, $source->getKnockBack(), $source->getVerticalKnockBackLimit());
+	}
 }
 
 			if($this->isAlive()){
