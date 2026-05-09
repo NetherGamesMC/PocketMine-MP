@@ -593,45 +593,18 @@ abstract class Living extends Entity{
 			}elseif($source instanceof EntityDamageByEntityEvent){
     $e = $source->getDamager();
     if($e !== null){
-        // Base knockback: keep vanilla PMMP relative-position direction.
+        // Normal Knockback
         $deltaX = $this->location->x - $e->location->x;
         $deltaZ = $this->location->z - $e->location->z;
 
-        $this->knockBack(
-            $deltaX,
-            $deltaZ,
-            $source->getKnockBack(),
-            $source->getVerticalKnockBackLimit()
-        );
-
-        // Extra knockback: Java style sprint + Knockback enchant bonus uses attacker yaw.
-        if($e instanceof Player){
-            $extraLevel = $e->getInventory()->getItemInHand()->getEnchantmentLevel(VanillaEnchantments::KNOCKBACK());
-
-            if($e->isSprinting()){
-                ++$extraLevel;
-            }
-
-            if($extraLevel > 0){
-                // horizontal yaw only; not affected by pitch
-                $plane = $e->getDirectionPlane();
-
-                $extraHorizontal = 0.5;
-                $extraVertical = 0.1;
-
-                $verticalLimit = $source->getVerticalKnockBackLimit() ?? $source->getKnockBack();
-
-                $motionX = $this->motion->x + ($plane->x * $extraLevel * $extraHorizontal);
-                $motionY = $this->motion->y + $extraVertical;
-                $motionZ = $this->motion->z + ($plane->y * $extraLevel * $extraHorizontal);
-
-                if($motionY > $verticalLimit){
-                    $motionY = $verticalLimit;
-                }
-
-                $this->setMotion(new Vector3($motionX, $motionY, $motionZ));
-            }
+        // Sprinting Knockback
+        if($e instanceof Player && $e->isSprinting()){
+            $plane = $e->getDirectionPlane(); // 只取水平 yaw，不受 pitch 影响
+            $deltaX = $plane->x;
+            $deltaZ = $plane->y;
         }
+
+        $this->knockBack($deltaX, $deltaZ, $source->getKnockBack(), $source->getVerticalKnockBackLimit());
     }
 }
 
