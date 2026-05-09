@@ -594,18 +594,38 @@ abstract class Living extends Entity{
     $e = $source->getDamager();
     if($e !== null){
         // Normal Knockback
-        $deltaX = $this->location->x - $e->location->x;
-        $deltaZ = $this->location->z - $e->location->z;
+$originalDeltaX = $this->location->x - $e->location->x;
+$originalDeltaZ = $this->location->z - $e->location->z;
 
-        // Sprinting Knockback
-        if($e instanceof Player && $e->isSprinting()){
-            $plane = $e->getDirectionPlane(); // 只取水平 yaw，不受 pitch 影响
-            $deltaX = $plane->x;
-            $deltaZ = $plane->y;
+$deltaX = $originalDeltaX;
+$deltaZ = $originalDeltaZ;
+
+// Sprinting Knockback
+// 只有变更后方向与原版击退方向夹角在 30° 到 110° 之间，才使用攻击者水平视角方向。
+// 夹角 < 30° 或 > 110° 时，保留原版相对位置击退。
+if($e instanceof Player && $e->isSprinting()){
+    $plane = $e->getDirectionPlane(); // 只取水平 yaw，不受 pitch 影响
+
+    $lookDeltaX = $plane->x;
+    $lookDeltaZ = $plane->y;
+
+    $originalLength = sqrt($originalDeltaX * $originalDeltaX + $originalDeltaZ * $originalDeltaZ);
+    $lookLength = sqrt($lookDeltaX * $lookDeltaX + $lookDeltaZ * $lookDeltaZ);
+
+    if($originalLength >= 0.0001 && $lookLength >= 0.0001){
+        $cosAngle = (($lookDeltaX * $originalDeltaX) + ($lookDeltaZ * $originalDeltaZ)) / ($lookLength * $originalLength);
+        $cosAngle = max(-1.0, min(1.0, $cosAngle)); // 防止浮点误差导致 acos() NaN
+
+        $angle = rad2deg(acos($cosAngle));
+
+        if($angle >= 30.0 && $angle <= 110.0){
+            $deltaX = $lookDeltaX;
+            $deltaZ = $lookDeltaZ;
         }
-
-        $this->knockBack($deltaX, $deltaZ, $source->getKnockBack(), $source->getVerticalKnockBackLimit());
     }
+}
+
+$this->knockBack($deltaX, $deltaZ, $source->getKnockBack(), $source->getVerticalKnockBackLimit());
 }
 
 			if($this->isAlive()){
