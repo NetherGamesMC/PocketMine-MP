@@ -41,7 +41,7 @@ final class ConsumingItemAnimation extends ItemAnimation{
 		[$netId, $netData] = $this->toNetworkId();
 		return [
 			//TODO: need to check the data values
-			ActorEventPacket::create($this->entity->getId(), ActorEvent::EATING_ITEM, ($netId << 16) | $netData)
+			ActorEventPacket::create($this->entity->getId(), ActorEvent::EATING_ITEM, ($netId << 16) | $netData, null)
 		];
 	}
 }

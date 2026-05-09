@@ -527,7 +527,7 @@ class InventoryManager{
 				$netSlot,
 				new FullContainerName($this->lastInventoryNetworkId),
 				0,
-				new ItemStackWrapper(0, ItemStack::null()),
+				null,
 				new ItemStackWrapper(0, ItemStack::null())
 			));
 		}
@@ -537,7 +537,7 @@ class InventoryManager{
 			$netSlot,
 			new FullContainerName($this->lastInventoryNetworkId),
 			0,
-			new ItemStackWrapper(0, ItemStack::null()),
+			null,
 			$itemStackWrapper
 		));
 	}
