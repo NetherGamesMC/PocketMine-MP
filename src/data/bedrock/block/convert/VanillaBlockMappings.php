@@ -356,6 +356,7 @@ final class VanillaBlockMappings{
 		$reg->mapSimple(Blocks::GRASS(), Ids::GRASS_BLOCK);
 		$reg->mapSimple(Blocks::GRASS_PATH(), Ids::GRASS_PATH);
 		$reg->mapSimple(Blocks::GRAVEL(), Ids::GRAVEL);
+		$reg->mapSimple(Blocks::MOSS_BLOCK(), Ids::MOSS_BLOCK);
 		$reg->mapSimple(Blocks::HANGING_ROOTS(), Ids::HANGING_ROOTS);
 		$reg->mapSimple(Blocks::HARDENED_CLAY(), Ids::HARDENED_CLAY);
 		$reg->mapSimple(Blocks::HARDENED_GLASS(), Ids::HARD_GLASS);
