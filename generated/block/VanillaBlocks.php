@@ -557,6 +557,7 @@ final class VanillaBlocks{
 	private static Slab $_mMOSSY_STONE_BRICK_SLAB;
 	private static Stair $_mMOSSY_STONE_BRICK_STAIRS;
 	private static Wall $_mMOSSY_STONE_BRICK_WALL;
+	private static Opaque $_mMOSS_BLOCK;
 	private static Opaque $_mMUD;
 	private static SimplePillar $_mMUDDY_MANGROVE_ROOTS;
 	private static Opaque $_mMUD_BRICKS;
@@ -1390,6 +1391,7 @@ final class VanillaBlocks{
 			"mossy_stone_brick_slab" => fn(Slab $v) => self::$_mMOSSY_STONE_BRICK_SLAB = $v,
 			"mossy_stone_brick_stairs" => fn(Stair $v) => self::$_mMOSSY_STONE_BRICK_STAIRS = $v,
 			"mossy_stone_brick_wall" => fn(Wall $v) => self::$_mMOSSY_STONE_BRICK_WALL = $v,
+			"moss_block" => fn(Opaque $v) => self::$_mMOSS_BLOCK = $v,
 			"mud" => fn(Opaque $v) => self::$_mMUD = $v,
 			"muddy_mangrove_roots" => fn(SimplePillar $v) => self::$_mMUDDY_MANGROVE_ROOTS = $v,
 			"mud_bricks" => fn(Opaque $v) => self::$_mMUD_BRICKS = $v,
@@ -4301,6 +4303,11 @@ final class VanillaBlocks{
 	public static function MOSSY_STONE_BRICK_WALL() : Wall{
 		if(!isset(self::$_mMOSSY_STONE_BRICK_WALL)){ self::init(); }
 		return clone self::$_mMOSSY_STONE_BRICK_WALL;
+	}
+
+	public static function MOSS_BLOCK() : Opaque{
+		if(!isset(self::$_mMOSS_BLOCK)){ self::init(); }
+		return clone self::$_mMOSS_BLOCK;
 	}
 
 	public static function MUD() : Opaque{
