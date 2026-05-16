@@ -68,6 +68,7 @@ use pocketmine\block\MobHead;
 use pocketmine\block\NetherPortal;
 use pocketmine\block\NetherVines;
 use pocketmine\block\NetherWartPlant;
+use pocketmine\block\Observer;
 use pocketmine\block\PinkPetals;
 use pocketmine\block\PitcherCrop;
 use pocketmine\block\PoweredRail;
@@ -715,9 +716,21 @@ final class VanillaBlockMappings{
 			])
 		);
 		$reg->mapModel(Model::create(Blocks::OBSERVER(), Ids::OBSERVER)->properties([
-	        $commonProperties->anyFacingClassic,
-	        new DummyProperty(StateNames::POWERED_BIT, false)
-        ]));
+			new ValueFromStringProperty(
+				StateNames::MC_FACING_DIRECTION,
+				IntFromRawStateMap::string([
+					Facing::DOWN => StringValues::MC_FACING_DIRECTION_DOWN,
+					Facing::UP => StringValues::MC_FACING_DIRECTION_UP,
+					Facing::NORTH => StringValues::MC_FACING_DIRECTION_NORTH,
+					Facing::SOUTH => StringValues::MC_FACING_DIRECTION_SOUTH,
+					Facing::WEST => StringValues::MC_FACING_DIRECTION_WEST,
+					Facing::EAST => StringValues::MC_FACING_DIRECTION_EAST,
+				]),
+				fn(Observer $b) => $b->getFacing(),
+				fn(Observer $b, int $v) => $b->setFacing($v)
+			),
+			new DummyProperty(StateNames::POWERED_BIT, false)
+		]));
 		$reg->mapModel(Model::create(Blocks::GRINDSTONE(), Ids::GRINDSTONE)->properties([
 			new DummyProperty(StateNames::ATTACHMENT, "standing"),
 			new DummyProperty("direction", 0)

@@ -27,6 +27,7 @@ use pocketmine\crafting\CraftingManagerFromDataHelper;
 use pocketmine\data\bedrock\BedrockDataFiles;
 use pocketmine\inventory\json\CreativeGroupData;
 use pocketmine\item\Item;
+use pocketmine\item\VanillaItems as Items;
 use pocketmine\lang\Translatable;
 use pocketmine\utils\DestructorCallbackTrait;
 use pocketmine\utils\ObjectSet;
@@ -76,6 +77,14 @@ final class CreativeInventory{
 					$this->add($item, $categoryEnum, $group);
 				}
 			}
+		}
+
+		// Keep newly wired vanilla items visible even if the bundled BedrockData creative JSON omits them.
+		if(!$this->contains(Items::KELP())){
+			$this->add(Items::KELP(), CreativeCategory::NATURE);
+		}
+		if(!$this->contains(Items::OBSERVER())){
+			$this->add(Items::OBSERVER(), CreativeCategory::ITEMS);
 		}
 	}
 
