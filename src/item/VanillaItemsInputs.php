@@ -255,6 +255,7 @@ final class VanillaItemsInputs extends RegistrySource{
 		self::registerDelayed("oak_sign", fn(string $name) : ItemBlockWallOrFloor => new ItemBlockWallOrFloor(self::makeIID($name), Blocks::OAK_SIGN(), Blocks::OAK_WALL_SIGN()));
 		self::registerDelayed("oak_hanging_sign", fn(string $name) : HangingSign => new HangingSign(self::makeIID($name), "Oak Hanging Sign", Blocks::OAK_CEILING_CENTER_HANGING_SIGN(), Blocks::OAK_CEILING_EDGES_HANGING_SIGN(), Blocks::OAK_WALL_HANGING_SIGN()));
 		self::registerDelayed("ominous_banner", fn(string $name) : ItemBlockWallOrFloor => new ItemBlockWallOrFloor(self::makeIID($name), Blocks::OMINOUS_BANNER(), Blocks::OMINOUS_WALL_BANNER()));
+		self::registerDelayed("observer", fn() : Item => Blocks::OBSERVER()->asItem());
 		self::register("painting", fn(IID $id) => new PaintingItem($id, "Painting"));
 		self::registerDelayed("pale_oak_sign", fn(string $name) : ItemBlockWallOrFloor => new ItemBlockWallOrFloor(self::makeIID($name), Blocks::PALE_OAK_SIGN(), Blocks::PALE_OAK_WALL_SIGN()));
 		self::registerDelayed("pale_oak_hanging_sign", fn(string $name) : HangingSign => new HangingSign(self::makeIID($name), "Pale Oak Hanging Sign", Blocks::PALE_OAK_CEILING_CENTER_HANGING_SIGN(), Blocks::PALE_OAK_CEILING_EDGES_HANGING_SIGN(), Blocks::PALE_OAK_WALL_HANGING_SIGN()));

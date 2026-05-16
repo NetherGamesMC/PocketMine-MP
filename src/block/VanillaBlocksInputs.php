@@ -259,6 +259,9 @@ final class VanillaBlocksInputs extends RegistrySource{
 		self::register("gravel", fn(BID $id) => new Gravel($id, "Gravel", new Info(BreakInfo::shovel(0.6))));
 		// MOSS_BLOCK
         self::register("moss_block", fn(BID $id) => new Opaque($id, "Moss Block", new Info(BreakInfo::hoe(0.1))));
+		self::register("moss_carpet", fn(BID $id) => new MossCarpet($id, "Moss Carpet", new Info(BreakInfo::instant())));
+        self::register("seagrass", fn(BID $id) => new Seagrass($id, "Seagrass", new Info(BreakInfo::instant())));
+        self::register("observer", fn(BID $id) => new Observer($id, "Observer", new Info(BreakInfo::pickaxe(3.0, ToolTier::WOOD))));
 
 		self::register("hardened_clay", fn(BID $id) => new HardenedClay($id, "Hardened Clay", new Info(BreakInfo::pickaxe(1.25, ToolTier::WOOD, 21.0))));
 

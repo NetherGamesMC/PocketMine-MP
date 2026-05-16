@@ -79,6 +79,8 @@ use pocketmine\block\RedstoneTorch;
 use pocketmine\block\RespawnAnchor;
 use pocketmine\block\Sapling;
 use pocketmine\block\SeaPickle;
+use pocketmine\block\Seagrass;
+use pocketmine\block\utils\SeagrassType;
 use pocketmine\block\SmallDripleaf;
 use pocketmine\block\SnowLayer;
 use pocketmine\block\Sponge;
@@ -357,6 +359,7 @@ final class VanillaBlockMappings{
 		$reg->mapSimple(Blocks::GRASS_PATH(), Ids::GRASS_PATH);
 		$reg->mapSimple(Blocks::GRAVEL(), Ids::GRAVEL);
 		$reg->mapSimple(Blocks::MOSS_BLOCK(), Ids::MOSS_BLOCK);
+		$reg->mapSimple(Blocks::MOSS_CARPET(), Ids::MOSS_CARPET);
 		$reg->mapSimple(Blocks::HANGING_ROOTS(), Ids::HANGING_ROOTS);
 		$reg->mapSimple(Blocks::HARDENED_CLAY(), Ids::HARDENED_CLAY);
 		$reg->mapSimple(Blocks::HARDENED_GLASS(), Ids::HARD_GLASS);
@@ -614,6 +617,21 @@ final class VanillaBlockMappings{
 			//TODO: this property can have values 0-7, but only 0-1 are valid
 			new IntProperty(StateNames::GROWTH, 0, 7, fn(TorchflowerCrop $b) => $b->isReady() ? 1 : 0, fn(TorchflowerCrop $b, int $v) => $b->setReady($v !== 0))
 		]));
+		$reg->mapModel(Model::create(Blocks::SEAGRASS(), Ids::SEAGRASS)->properties([
+	    new ValueFromStringProperty(
+		StateNames::SEA_GRASS_TYPE,
+		EnumFromRawStateMap::string(
+			SeagrassType::class,
+			fn(SeagrassType $case) => match($case){
+				SeagrassType::DEFAULT => StringValues::SEA_GRASS_TYPE_DEFAULT,
+				SeagrassType::DOUBLE_BOT => StringValues::SEA_GRASS_TYPE_DOUBLE_BOT,
+				SeagrassType::DOUBLE_TOP => StringValues::SEA_GRASS_TYPE_DOUBLE_TOP,
+			}
+		),
+		fn(Seagrass $block) => $block->getSeagrassType(),
+		fn(Seagrass $block, SeagrassType $type) => $block->setSeagrassType($type)
+	)
+]));
 	}
 
 	private static function registerCoralMappings(BlockSerializerDeserializerRegistrar $reg, CommonProperties $commonProperties) : void{
@@ -692,6 +710,10 @@ final class VanillaBlockMappings{
 				new DummyProperty(StateNames::POWERED_BIT, false) //TODO
 			])
 		);
+		$reg->mapModel(Model::create(Blocks::OBSERVER(), Ids::OBSERVER)->properties([
+	        $commonProperties->anyFacingClassic,
+	        new DummyProperty(StateNames::POWERED_BIT, false)
+        ]));
 	}
 
 	private static function registerFlattenedEnumMappings(BlockSerializerDeserializerRegistrar $reg, CommonProperties $commonProperties) : void{
