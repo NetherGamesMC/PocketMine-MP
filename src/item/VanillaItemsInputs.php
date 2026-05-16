@@ -171,6 +171,7 @@ final class VanillaItemsInputs extends RegistrySource{
 		self::register("coal", fn(IID $id) => new Coal($id, "Coal"));
 		self::register("cocoa_beans", fn(IID $id) => new CocoaBeans($id, "Cocoa Beans"));
 		self::register("compass", fn(IID $id) => new Compass($id, "Compass", [EnchantmentTags::COMPASS]));
+		self::registerDelayed("conduit", fn() : Item => Blocks::CONDUIT()->asItem());
 		self::register("cooked_chicken", fn(IID $id) => new CookedChicken($id, "Cooked Chicken"));
 		self::register("cooked_fish", fn(IID $id) => new CookedFish($id, "Cooked Fish"));
 		self::register("cooked_mutton", fn(IID $id) => new CookedMutton($id, "Cooked Mutton"));
@@ -218,6 +219,7 @@ final class VanillaItemsInputs extends RegistrySource{
 		self::register("gold_nugget", fn(IID $id) => new Item($id, "Gold Nugget"));
 		self::register("golden_apple", fn(IID $id) => new GoldenApple($id, "Golden Apple"));
 		self::register("golden_carrot", fn(IID $id) => new GoldenCarrot($id, "Golden Carrot"));
+		self::registerDelayed("grindstone", fn() : Item => Blocks::GRINDSTONE()->asItem());
 		self::register("gunpowder", fn(IID $id) => new Item($id, "Gunpowder"));
 		self::register("heart_of_the_sea", fn(IID $id) => new Item($id, "Heart of the Sea"));
 		self::register("honey_bottle", fn(IID $id) => new HoneyBottle($id, "Honey Bottle"));
@@ -228,6 +230,7 @@ final class VanillaItemsInputs extends RegistrySource{
 		self::register("iron_nugget", fn(IID $id) => new Item($id, "Iron Nugget"));
 		self::registerDelayed("jungle_sign", fn(string $name) : ItemBlockWallOrFloor => new ItemBlockWallOrFloor(self::makeIID($name), Blocks::JUNGLE_SIGN(), Blocks::JUNGLE_WALL_SIGN()));
 		self::registerDelayed("jungle_hanging_sign", fn(string $name) : HangingSign => new HangingSign(self::makeIID($name), "Jungle Hanging Sign", Blocks::JUNGLE_CEILING_CENTER_HANGING_SIGN(), Blocks::JUNGLE_CEILING_EDGES_HANGING_SIGN(), Blocks::JUNGLE_WALL_HANGING_SIGN()));
+		self::registerDelayed("kelp", fn() : Item => Blocks::KELP()->asItem());
 		self::register("lapis_lazuli", fn(IID $id) => new Item($id, "Lapis Lazuli"));
 		self::registerDelayed("lava_bucket", fn(string $name) : LiquidBucket => new LiquidBucket(self::makeIID($name), "Lava Bucket", Blocks::LAVA()));
 		self::register("leather", fn(IID $id) => new Item($id, "Leather"));

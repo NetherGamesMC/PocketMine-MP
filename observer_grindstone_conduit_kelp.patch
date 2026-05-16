@@ -1,0 +1,123 @@
+--- a/src/block/BlockTypeIds.php
++++ b/src/block/BlockTypeIds.php
+@@ -858,8 +858,11 @@
+     public const MOSS_CARPET = 10828;
+     public const SEAGRASS = 10829;
+     public const OBSERVER = 10830;
+-
+-    public const FIRST_UNUSED_BLOCK_ID = 10831;
++    public const GRINDSTONE = 10831;
++    public const CONDUIT = 10832;
++    public const KELP = 10833;
++
++    public const FIRST_UNUSED_BLOCK_ID = 10834;
+ 
+ 	private static int $nextDynamicId = self::FIRST_UNUSED_BLOCK_ID;
+ 
+--- a/src/block/VanillaBlocksInputs.php
++++ b/src/block/VanillaBlocksInputs.php
+@@ -192,6 +192,7 @@
+ 
+ 		self::register("cobweb", fn(BID $id) => new Cobweb($id, "Cobweb", new Info(new BreakInfo(4.0, ToolType::SWORD | ToolType::SHEARS, 1))));
+ 		self::register("cocoa_pod", fn(BID $id) => new CocoaBlock($id, "Cocoa Block", new Info(BreakInfo::axe(0.2, null, 15.0))));
++		self::register("conduit", fn(BID $id) => new Opaque($id, "Conduit", new Info(BreakInfo::pickaxe(3.0, ToolTier::WOOD))));
+ 		self::register("coral_block", fn(BID $id) => new CoralBlock($id, "Coral Block", new Info(BreakInfo::pickaxe(1.5, ToolTier::WOOD, 30.0))));
+ 		self::register("daylight_sensor", fn(BID $id) => new DaylightSensor($id, "Daylight Sensor", new Info(BreakInfo::axe(0.2))), TileDaylightSensor::class);
+ 		self::register("dead_bush", fn(BID $id) => new DeadBush($id, "Dead Bush", new Info(BreakInfo::instant(ToolType::SHEARS, 1), [Tags::POTTABLE_PLANTS])));
+@@ -257,11 +258,11 @@
+ 		self::register("grass", fn(BID $id) => new Grass($id, "Grass", new Info(BreakInfo::shovel(0.6), [Tags::DIRT])));
+ 		self::register("grass_path", fn(BID $id) => new GrassPath($id, "Grass Path", new Info(BreakInfo::shovel(0.65))));
+ 		self::register("gravel", fn(BID $id) => new Gravel($id, "Gravel", new Info(BreakInfo::shovel(0.6))));
++		self::register("grindstone", fn(BID $id) => new Opaque($id, "Grindstone", new Info(BreakInfo::pickaxe(2.0, ToolTier::WOOD))));
+ 		// MOSS_BLOCK
+         self::register("moss_block", fn(BID $id) => new Opaque($id, "Moss Block", new Info(BreakInfo::hoe(0.1))));
+ 		self::register("moss_carpet", fn(BID $id) => new MossCarpet($id, "Moss Carpet", new Info(BreakInfo::instant())));
+         self::register("seagrass", fn(BID $id) => new Seagrass($id, "Seagrass", new Info(BreakInfo::instant())));
+-        self::register("observer", fn(BID $id) => new Observer($id, "Observer", new Info(BreakInfo::pickaxe(3.0, ToolTier::WOOD))));
+ 
+ 		self::register("hardened_clay", fn(BID $id) => new HardenedClay($id, "Hardened Clay", new Info(BreakInfo::pickaxe(1.25, ToolTier::WOOD, 21.0))));
+ 
+@@ -290,6 +291,7 @@
+ 		self::register("glowing_item_frame", fn(BID $id) => new ItemFrame($id, "Glow Item Frame", $itemFrameInfo), TileGlowingItemFrame::class);
+ 
+ 		self::register("jukebox", fn(BID $id) => new Jukebox($id, "Jukebox", new Info(BreakInfo::axe(2.0, blastResistance: 30.0))), TileJukebox::class);
++		self::register("kelp", fn(BID $id) => new Kelp($id, "Kelp", new Info(BreakInfo::instant())));
+ 		self::register("ladder", fn(BID $id) => new Ladder($id, "Ladder", new Info(BreakInfo::axe(0.4))));
+ 
+ 		$lanternBreakInfo = new Info(BreakInfo::pickaxe(3.5));
+@@ -322,6 +324,7 @@
+ 		self::register("nether_wart", fn(BID $id) => new NetherWartPlant($id, "Nether Wart", new Info(BreakInfo::instant())));
+ 		self::register("netherrack", fn(BID $id) => new Netherrack($id, "Netherrack", new Info(BreakInfo::pickaxe(0.4, ToolTier::WOOD))));
+ 		self::register("note_block", fn(BID $id) => new Note($id, "Note Block", new Info(BreakInfo::axe(0.8))), TileNote::class);
++		self::register("observer", fn(BID $id) => new Observer($id, "Observer", new Info(BreakInfo::pickaxe(3.0, ToolTier::WOOD))));
+ 		self::register("obsidian", fn(BID $id) => new Opaque($id, "Obsidian", new Info(BreakInfo::pickaxe(35.0 /* 50 in PC */,  ToolTier::DIAMOND, 6000.0))));
+ 		self::register("packed_ice", fn(BID $id) => new PackedIce($id, "Packed Ice", new Info(BreakInfo::pickaxe(0.5))));
+ 		self::register("podzol", fn(BID $id) => new Podzol($id, "Podzol", new Info(BreakInfo::shovel(0.5), [Tags::DIRT])));
+--- a/src/data/bedrock/block/convert/VanillaBlockMappings.php
++++ b/src/data/bedrock/block/convert/VanillaBlockMappings.php
+@@ -192,6 +192,7 @@
+ 		$reg->mapSimple(Blocks::COBBLED_DEEPSLATE(), Ids::COBBLED_DEEPSLATE);
+ 		$reg->mapSimple(Blocks::COBBLESTONE(), Ids::COBBLESTONE);
+ 		$reg->mapSimple(Blocks::COBWEB(), Ids::WEB);
++		$reg->mapSimple(Blocks::CONDUIT(), Ids::CONDUIT);
+ 		$reg->mapSimple(Blocks::COPPER_ORE(), Ids::COPPER_ORE);
+ 		$reg->mapSimple(Blocks::CRACKED_DEEPSLATE_BRICKS(), Ids::CRACKED_DEEPSLATE_BRICKS);
+ 		$reg->mapSimple(Blocks::CRACKED_DEEPSLATE_TILES(), Ids::CRACKED_DEEPSLATE_TILES);
+@@ -632,6 +633,9 @@
+ 		fn(Seagrass $block, SeagrassType $type) => $block->setSeagrassType($type)
+ 	)
+ ]));
++		$reg->mapModel(Model::create(Blocks::KELP(), Ids::KELP)->properties([
++			new DummyProperty("kelp_age", 0)
++		]));
+ 	}
+ 
+ 	private static function registerCoralMappings(BlockSerializerDeserializerRegistrar $reg, CommonProperties $commonProperties) : void{
+@@ -714,6 +718,10 @@
+ 	        $commonProperties->anyFacingClassic,
+ 	        new DummyProperty(StateNames::POWERED_BIT, false)
+         ]));
++		$reg->mapModel(Model::create(Blocks::GRINDSTONE(), Ids::GRINDSTONE)->properties([
++			new DummyProperty(StateNames::ATTACHMENT, "standing"),
++			new DummyProperty("direction", 0)
++		]));
+ 	}
+ 
+ 	private static function registerFlattenedEnumMappings(BlockSerializerDeserializerRegistrar $reg, CommonProperties $commonProperties) : void{
+--- a/src/item/VanillaItemsInputs.php
++++ b/src/item/VanillaItemsInputs.php
+@@ -171,6 +171,7 @@
+ 		self::register("coal", fn(IID $id) => new Coal($id, "Coal"));
+ 		self::register("cocoa_beans", fn(IID $id) => new CocoaBeans($id, "Cocoa Beans"));
+ 		self::register("compass", fn(IID $id) => new Compass($id, "Compass", [EnchantmentTags::COMPASS]));
++		self::registerDelayed("conduit", fn() : Item => Blocks::CONDUIT()->asItem());
+ 		self::register("cooked_chicken", fn(IID $id) => new CookedChicken($id, "Cooked Chicken"));
+ 		self::register("cooked_fish", fn(IID $id) => new CookedFish($id, "Cooked Fish"));
+ 		self::register("cooked_mutton", fn(IID $id) => new CookedMutton($id, "Cooked Mutton"));
+@@ -218,6 +219,7 @@
+ 		self::register("gold_nugget", fn(IID $id) => new Item($id, "Gold Nugget"));
+ 		self::register("golden_apple", fn(IID $id) => new GoldenApple($id, "Golden Apple"));
+ 		self::register("golden_carrot", fn(IID $id) => new GoldenCarrot($id, "Golden Carrot"));
++		self::registerDelayed("grindstone", fn() : Item => Blocks::GRINDSTONE()->asItem());
+ 		self::register("gunpowder", fn(IID $id) => new Item($id, "Gunpowder"));
+ 		self::register("heart_of_the_sea", fn(IID $id) => new Item($id, "Heart of the Sea"));
+ 		self::register("honey_bottle", fn(IID $id) => new HoneyBottle($id, "Honey Bottle"));
+@@ -228,6 +230,7 @@
+ 		self::register("iron_nugget", fn(IID $id) => new Item($id, "Iron Nugget"));
+ 		self::registerDelayed("jungle_sign", fn(string $name) : ItemBlockWallOrFloor => new ItemBlockWallOrFloor(self::makeIID($name), Blocks::JUNGLE_SIGN(), Blocks::JUNGLE_WALL_SIGN()));
+ 		self::registerDelayed("jungle_hanging_sign", fn(string $name) : HangingSign => new HangingSign(self::makeIID($name), "Jungle Hanging Sign", Blocks::JUNGLE_CEILING_CENTER_HANGING_SIGN(), Blocks::JUNGLE_CEILING_EDGES_HANGING_SIGN(), Blocks::JUNGLE_WALL_HANGING_SIGN()));
++		self::registerDelayed("kelp", fn() : Item => Blocks::KELP()->asItem());
+ 		self::register("lapis_lazuli", fn(IID $id) => new Item($id, "Lapis Lazuli"));
+ 		self::registerDelayed("lava_bucket", fn(string $name) : LiquidBucket => new LiquidBucket(self::makeIID($name), "Lava Bucket", Blocks::LAVA()));
+ 		self::register("leather", fn(IID $id) => new Item($id, "Leather"));
+--- a/src/block/Kelp.php
++++ b/src/block/Kelp.php
+@@ -0,0 +1,8 @@
++<?php
++
++declare(strict_types=1);
++
++namespace pocketmine\block;
++
++class Kelp extends Flowable{
++}

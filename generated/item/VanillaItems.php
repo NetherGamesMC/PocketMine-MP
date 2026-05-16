@@ -121,6 +121,7 @@ final class VanillaItems{
 	private static Item $_mCOAST_ARMOR_TRIM_SMITHING_TEMPLATE;
 	private static CocoaBeans $_mCOCOA_BEANS;
 	private static Compass $_mCOMPASS;
+	private static Item $_mCONDUIT;
 	private static CookedChicken $_mCOOKED_CHICKEN;
 	private static CookedFish $_mCOOKED_FISH;
 	private static CookedMutton $_mCOOKED_MUTTON;
@@ -197,6 +198,7 @@ final class VanillaItems{
 	private static Sword $_mGOLDEN_SWORD;
 	private static Item $_mGOLD_INGOT;
 	private static Item $_mGOLD_NUGGET;
+	private static Item $_mGRINDSTONE;
 	private static Item $_mGUNPOWDER;
 	private static Item $_mHEART_OF_THE_SEA;
 	private static Item $_mHONEYCOMB;
@@ -218,6 +220,7 @@ final class VanillaItems{
 	private static Boat $_mJUNGLE_BOAT;
 	private static HangingSign $_mJUNGLE_HANGING_SIGN;
 	private static ItemBlockWallOrFloor $_mJUNGLE_SIGN;
+	private static Item $_mKELP;
 	private static Item $_mLAPIS_LAZULI;
 	private static LiquidBucket $_mLAVA_BUCKET;
 	private static Item $_mLEATHER;
@@ -256,6 +259,7 @@ final class VanillaItems{
 	private static Boat $_mOAK_BOAT;
 	private static HangingSign $_mOAK_HANGING_SIGN;
 	private static ItemBlockWallOrFloor $_mOAK_SIGN;
+	private static Item $_mOBSERVER;
 	private static ItemBlockWallOrFloor $_mOMINOUS_BANNER;
 	private static PaintingItem $_mPAINTING;
 	private static HangingSign $_mPALE_OAK_HANGING_SIGN;
@@ -479,6 +483,7 @@ final class VanillaItems{
 			"coast_armor_trim_smithing_template" => fn(Item $v) => self::$_mCOAST_ARMOR_TRIM_SMITHING_TEMPLATE = $v,
 			"cocoa_beans" => fn(CocoaBeans $v) => self::$_mCOCOA_BEANS = $v,
 			"compass" => fn(Compass $v) => self::$_mCOMPASS = $v,
+			"conduit" => fn(Item $v) => self::$_mCONDUIT = $v,
 			"cooked_chicken" => fn(CookedChicken $v) => self::$_mCOOKED_CHICKEN = $v,
 			"cooked_fish" => fn(CookedFish $v) => self::$_mCOOKED_FISH = $v,
 			"cooked_mutton" => fn(CookedMutton $v) => self::$_mCOOKED_MUTTON = $v,
@@ -555,6 +560,7 @@ final class VanillaItems{
 			"golden_sword" => fn(Sword $v) => self::$_mGOLDEN_SWORD = $v,
 			"gold_ingot" => fn(Item $v) => self::$_mGOLD_INGOT = $v,
 			"gold_nugget" => fn(Item $v) => self::$_mGOLD_NUGGET = $v,
+			"grindstone" => fn(Item $v) => self::$_mGRINDSTONE = $v,
 			"gunpowder" => fn(Item $v) => self::$_mGUNPOWDER = $v,
 			"heart_of_the_sea" => fn(Item $v) => self::$_mHEART_OF_THE_SEA = $v,
 			"honeycomb" => fn(Item $v) => self::$_mHONEYCOMB = $v,
@@ -576,6 +582,7 @@ final class VanillaItems{
 			"jungle_boat" => fn(Boat $v) => self::$_mJUNGLE_BOAT = $v,
 			"jungle_hanging_sign" => fn(HangingSign $v) => self::$_mJUNGLE_HANGING_SIGN = $v,
 			"jungle_sign" => fn(ItemBlockWallOrFloor $v) => self::$_mJUNGLE_SIGN = $v,
+			"kelp" => fn(Item $v) => self::$_mKELP = $v,
 			"lapis_lazuli" => fn(Item $v) => self::$_mLAPIS_LAZULI = $v,
 			"lava_bucket" => fn(LiquidBucket $v) => self::$_mLAVA_BUCKET = $v,
 			"leather" => fn(Item $v) => self::$_mLEATHER = $v,
@@ -614,6 +621,7 @@ final class VanillaItems{
 			"oak_boat" => fn(Boat $v) => self::$_mOAK_BOAT = $v,
 			"oak_hanging_sign" => fn(HangingSign $v) => self::$_mOAK_HANGING_SIGN = $v,
 			"oak_sign" => fn(ItemBlockWallOrFloor $v) => self::$_mOAK_SIGN = $v,
+			"observer" => fn(Item $v) => self::$_mOBSERVER = $v,
 			"ominous_banner" => fn(ItemBlockWallOrFloor $v) => self::$_mOMINOUS_BANNER = $v,
 			"painting" => fn(PaintingItem $v) => self::$_mPAINTING = $v,
 			"pale_oak_hanging_sign" => fn(HangingSign $v) => self::$_mPALE_OAK_HANGING_SIGN = $v,
@@ -1173,6 +1181,11 @@ final class VanillaItems{
 		return clone self::$_mCOMPASS;
 	}
 
+	public static function CONDUIT() : Item{
+		if(!isset(self::$_mCONDUIT)){ self::init(); }
+		return clone self::$_mCONDUIT;
+	}
+
 	public static function COOKED_CHICKEN() : CookedChicken{
 		if(!isset(self::$_mCOOKED_CHICKEN)){ self::init(); }
 		return clone self::$_mCOOKED_CHICKEN;
@@ -1553,6 +1566,11 @@ final class VanillaItems{
 		return clone self::$_mGOLD_NUGGET;
 	}
 
+	public static function GRINDSTONE() : Item{
+		if(!isset(self::$_mGRINDSTONE)){ self::init(); }
+		return clone self::$_mGRINDSTONE;
+	}
+
 	public static function GUNPOWDER() : Item{
 		if(!isset(self::$_mGUNPOWDER)){ self::init(); }
 		return clone self::$_mGUNPOWDER;
@@ -1656,6 +1674,11 @@ final class VanillaItems{
 	public static function JUNGLE_SIGN() : ItemBlockWallOrFloor{
 		if(!isset(self::$_mJUNGLE_SIGN)){ self::init(); }
 		return clone self::$_mJUNGLE_SIGN;
+	}
+
+	public static function KELP() : Item{
+		if(!isset(self::$_mKELP)){ self::init(); }
+		return clone self::$_mKELP;
 	}
 
 	public static function LAPIS_LAZULI() : Item{
@@ -1846,6 +1869,11 @@ final class VanillaItems{
 	public static function OAK_SIGN() : ItemBlockWallOrFloor{
 		if(!isset(self::$_mOAK_SIGN)){ self::init(); }
 		return clone self::$_mOAK_SIGN;
+	}
+
+	public static function OBSERVER() : Item{
+		if(!isset(self::$_mOBSERVER)){ self::init(); }
+		return clone self::$_mOBSERVER;
 	}
 
 	public static function OMINOUS_BANNER() : ItemBlockWallOrFloor{

@@ -192,6 +192,7 @@ final class VanillaBlockMappings{
 		$reg->mapSimple(Blocks::COBBLED_DEEPSLATE(), Ids::COBBLED_DEEPSLATE);
 		$reg->mapSimple(Blocks::COBBLESTONE(), Ids::COBBLESTONE);
 		$reg->mapSimple(Blocks::COBWEB(), Ids::WEB);
+		$reg->mapSimple(Blocks::CONDUIT(), Ids::CONDUIT);
 		$reg->mapSimple(Blocks::COPPER_ORE(), Ids::COPPER_ORE);
 		$reg->mapSimple(Blocks::CRACKED_DEEPSLATE_BRICKS(), Ids::CRACKED_DEEPSLATE_BRICKS);
 		$reg->mapSimple(Blocks::CRACKED_DEEPSLATE_TILES(), Ids::CRACKED_DEEPSLATE_TILES);
@@ -632,6 +633,9 @@ final class VanillaBlockMappings{
 		fn(Seagrass $block, SeagrassType $type) => $block->setSeagrassType($type)
 	)
 ]));
+		$reg->mapModel(Model::create(Blocks::KELP(), Ids::KELP)->properties([
+			new DummyProperty("kelp_age", 0)
+		]));
 	}
 
 	private static function registerCoralMappings(BlockSerializerDeserializerRegistrar $reg, CommonProperties $commonProperties) : void{
@@ -714,6 +718,10 @@ final class VanillaBlockMappings{
 	        $commonProperties->anyFacingClassic,
 	        new DummyProperty(StateNames::POWERED_BIT, false)
         ]));
+		$reg->mapModel(Model::create(Blocks::GRINDSTONE(), Ids::GRINDSTONE)->properties([
+			new DummyProperty(StateNames::ATTACHMENT, "standing"),
+			new DummyProperty("direction", 0)
+		]));
 	}
 
 	private static function registerFlattenedEnumMappings(BlockSerializerDeserializerRegistrar $reg, CommonProperties $commonProperties) : void{
