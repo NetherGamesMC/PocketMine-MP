@@ -2,11 +2,11 @@
 
 /*
  *
- *  ____            _        _   __  __ _                  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
+ * ____            _        _   __  __ _                  __  __ ____
+ * | _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
+ * | __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
+ * |_|  \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,7 +15,6 @@
  *
  * @author PocketMine Team
  * @link http://www.pocketmine.net/
- *
  *
  */
 
@@ -26,12 +25,28 @@ namespace pocketmine\event\entity;
 use pocketmine\entity\effect\VanillaEffects;
 use pocketmine\entity\Entity;
 use pocketmine\entity\Living;
+use pocketmine\item\enchantment\VanillaEnchantments;
+use pocketmine\player\Player;
 
 /**
  * Called when an entity takes damage from another entity.
  */
 class EntityDamageByEntityEvent extends EntityDamageEvent{
+
 	private int $damagerEntityId;
+
+	/**
+	 * 击退附魔每级额外增加的横向 KB。
+	 *
+	 * 0.5 = 击退 I 横向 +0.5，击退 II 横向 +1.0
+	 */
+	private const KNOCKBACK_ENCHANTMENT_EXTRA_HORIZONTAL_PER_LEVEL = 0.5;
+
+	/**
+	 * true = 击退附魔只增加横向 KB，不增加 Y KB。
+	 * false = 击退附魔同时增加横向和纵向。
+	 */
+	private const KNOCKBACK_ENCHANTMENT_ONLY_HORIZONTAL = true;
 
 	/**
 	 * @param float[] $modifiers
@@ -43,22 +58,63 @@ class EntityDamageByEntityEvent extends EntityDamageEvent{
 		float $damage,
 		array $modifiers = [],
 		private float $knockBack = Living::DEFAULT_KNOCKBACK_FORCE,
-		private float $verticalKnockBackLimit = Living::DEFAULT_KNOCKBACK_VERTICAL_LIMIT
+		private float $verticalKnockBackLimit = Living::DEFAULT_KNOCKBACK_VERTICAL_LIMIT,
+		private ?float $verticalKnockBack = null
 	){
 		$this->damagerEntityId = $damager->getId();
+
 		parent::__construct($entity, $cause, $damage, $modifiers);
+
 		$this->addAttackerModifiers($damager);
 	}
 
 	protected function addAttackerModifiers(Entity $damager) : void{
 		if($damager instanceof Living){ //TODO: move this to entity classes
 			$effects = $damager->getEffects();
+
 			if(($strength = $effects->get(VanillaEffects::STRENGTH())) !== null){
 				$this->setModifier($this->getBaseDamage() * 0.3 * $strength->getEffectLevel(), self::MODIFIER_STRENGTH);
 			}
 
 			if(($weakness = $effects->get(VanillaEffects::WEAKNESS())) !== null && $this->getCause() === EntityDamageEvent::CAUSE_ENTITY_ATTACK){
 				$this->setModifier(-($this->getBaseDamage() * 0.2 * $weakness->getEffectLevel()), self::MODIFIER_WEAKNESS);
+			}
+		}
+
+		$this->addKnockBackEnchantmentModifier($damager);
+	}
+
+	private function addKnockBackEnchantmentModifier(Entity $damager) : void{
+		if($this->getCause() !== EntityDamageEvent::CAUSE_ENTITY_ATTACK){
+			return;
+		}
+
+		if(!$damager instanceof Player){
+			return;
+		}
+
+		$level = $damager->getInventory()->getItemInHand()->getEnchantmentLevel(VanillaEnchantments::KNOCKBACK());
+		if($level <= 0){
+			return;
+		}
+
+		$extraHorizontal = $level * self::KNOCKBACK_ENCHANTMENT_EXTRA_HORIZONTAL_PER_LEVEL;
+
+		// 先锁住原始 Y KB。
+		// 因为 getVerticalKnockBack() 默认会 fallback 到 knockBack。
+		// 如果先加 knockBack，再取 vertical，就会导致 Y 也被附魔放大。
+		$baseVertical = $this->getVerticalKnockBack();
+
+		// 击退附魔只加横向。
+		$this->knockBack += $extraHorizontal;
+
+		if(self::KNOCKBACK_ENCHANTMENT_ONLY_HORIZONTAL){
+			$this->verticalKnockBack = $baseVertical;
+		}else{
+			$this->verticalKnockBack = $baseVertical + $extraHorizontal;
+
+			if($this->verticalKnockBackLimit < $this->verticalKnockBack){
+				$this->verticalKnockBackLimit = $this->verticalKnockBack;
 			}
 		}
 	}
@@ -71,7 +127,7 @@ class EntityDamageByEntityEvent extends EntityDamageEvent{
 	}
 
 	/**
-	 * Returns the force with which the victim will be knocked back from the attacking entity.
+	 * Returns the horizontal force with which the victim will be knocked back from the attacking entity.
 	 *
 	 * @see Living::DEFAULT_KNOCKBACK_FORCE
 	 */
@@ -80,12 +136,28 @@ class EntityDamageByEntityEvent extends EntityDamageEvent{
 	}
 
 	/**
-	 * Sets the force with which the victim will be knocked back from the attacking entity.
+	 * Sets the horizontal force with which the victim will be knocked back from the attacking entity.
 	 * Larger values will knock the victim back further.
 	 * Negative values will pull the victim towards the attacker.
 	 */
 	public function setKnockBack(float $knockBack) : void{
 		$this->knockBack = $knockBack;
+	}
+
+	/**
+	 * Returns the independent vertical knockback force.
+	 *
+	 * If not explicitly set, it falls back to horizontal knockback for old API compatibility.
+	 */
+	public function getVerticalKnockBack() : float{
+		return $this->verticalKnockBack ?? $this->knockBack;
+	}
+
+	/**
+	 * Sets the independent vertical knockback force.
+	 */
+	public function setVerticalKnockBack(float $verticalKnockBack) : void{
+		$this->verticalKnockBack = $verticalKnockBack;
 	}
 
 	/**
@@ -100,7 +172,7 @@ class EntityDamageByEntityEvent extends EntityDamageEvent{
 
 	/**
 	 * Sets the maximum upwards velocity the victim may have after being knocked back.
-	 * Larger values will allow the victim to fly higher if the knockback force is also large.
+	 * Larger values will allow the victim to fly higher if the vertical knockback force is also large.
 	 */
 	public function setVerticalKnockBackLimit(float $verticalKnockBackLimit) : void{
 		$this->verticalKnockBackLimit = $verticalKnockBackLimit;
