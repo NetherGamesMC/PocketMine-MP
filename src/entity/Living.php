@@ -587,7 +587,13 @@ abstract class Living extends Entity{
 				$e = $source->getChild();
 				if($e !== null){
 					$motion = $e->getMotion();
-					$this->knockBack($motion->x, $motion->z, $source->getKnockBack(), $source->getVerticalKnockBackLimit());
+					$this->knockBack(
+	                    $motion->x,
+	                    $motion->z,
+	                    $source->getKnockBack(),
+	                    $source->getVerticalKnockBackLimit(),
+	                    $source->getVerticalKnockBack()
+                    );
 				}
 		    // Knockback Displacement
 			}elseif($source instanceof EntityDamageByEntityEvent){
@@ -625,7 +631,13 @@ if($e instanceof Player && $e->isSprinting()){
     }
 }
 
-$this->knockBack($deltaX, $deltaZ, $source->getKnockBack(), $source->getVerticalKnockBackLimit());
+$this->knockBack(
+	$deltaX,
+	$deltaZ,
+	$source->getKnockBack(),
+	$source->getVerticalKnockBackLimit(),
+	$source->getVerticalKnockBack()
+);
 	}
 }
 
@@ -643,29 +655,38 @@ $this->knockBack($deltaX, $deltaZ, $source->getKnockBack(), $source->getVertical
 		$this->broadcastAnimation(new HurtAnimation($this));
 	}
 
-	public function knockBack(float $x, float $z, float $force = self::DEFAULT_KNOCKBACK_FORCE, ?float $verticalLimit = self::DEFAULT_KNOCKBACK_VERTICAL_LIMIT) : void{
-		$f = sqrt($x * $x + $z * $z);
-		if($f <= 0){
-			return;
-		}
-		if(mt_rand() / mt_getrandmax() > $this->knockbackResistanceAttr->getValue()){
-			$f = 1 / $f;
-
-			$motionX = $this->motion->x / 2;
-			$motionY = $this->motion->y / 2;
-			$motionZ = $this->motion->z / 2;
-			$motionX += $x * $f * $force;
-			$motionY += $force;
-			$motionZ += $z * $f * $force;
-
-			$verticalLimit ??= $force;
-			if($motionY > $verticalLimit){
-				$motionY = $verticalLimit;
-			}
-
-			$this->setMotion(new Vector3($motionX, $motionY, $motionZ));
-		}
+	public function knockBack(
+	float $x,
+	float $z,
+	float $horizontalForce = self::DEFAULT_KNOCKBACK_FORCE,
+	?float $verticalLimit = self::DEFAULT_KNOCKBACK_VERTICAL_LIMIT,
+	?float $verticalForce = null
+    ) : void{
+	$f = sqrt($x * $x + $z * $z);
+	if($f <= 0){
+		return;
 	}
+
+	if(mt_rand() / mt_getrandmax() > $this->knockbackResistanceAttr->getValue()){
+		$f = 1 / $f;
+		$verticalForce ??= $horizontalForce;
+
+		$motionX = $this->motion->x / 2;
+		$motionY = $this->motion->y / 2;
+		$motionZ = $this->motion->z / 2;
+
+		$motionX += $x * $f * $horizontalForce;
+		$motionY += $verticalForce;
+		$motionZ += $z * $f * $horizontalForce;
+
+		$verticalLimit ??= $verticalForce;
+		if($motionY > $verticalLimit){
+			$motionY = $verticalLimit;
+		}
+
+		$this->setMotion(new Vector3($motionX, $motionY, $motionZ));
+	}
+}
 
 	protected function onDeath() : void{
 		$ev = new EntityDeathEvent($this, $this->getDrops(), $this->getXpDropAmount());
