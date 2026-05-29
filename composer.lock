@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c80a41649b4091a09e6e95c6efe8d48a",
+    "content-hash": "584ffd5dce68042aeabf50759a637a0d",
     "packages": [
         {
             "name": "adhocore/json-comment",
@@ -156,12 +156,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/NetherGamesMC/BedrockProtocol.git",
-                "reference": "1e3d570d88d05379f335ac6caf0f44a3077f981f"
+                "reference": "d928fecd467b0d51ab1ea10c4d8184403d4187a3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/NetherGamesMC/BedrockProtocol/zipball/1e3d570d88d05379f335ac6caf0f44a3077f981f",
-                "reference": "1e3d570d88d05379f335ac6caf0f44a3077f981f",
+                "url": "https://api.github.com/repos/NetherGamesMC/BedrockProtocol/zipball/d928fecd467b0d51ab1ea10c4d8184403d4187a3",
+                "reference": "d928fecd467b0d51ab1ea10c4d8184403d4187a3",
                 "shasum": ""
             },
             "require": {
@@ -204,7 +204,7 @@
             "support": {
                 "source": "https://github.com/NetherGamesMC/BedrockProtocol/tree/master"
             },
-            "time": "2026-05-06T15:04:38+00:00"
+            "time": "2026-05-24T19:07:43+00:00"
         },
         {
             "name": "netresearch/jsonmapper",
@@ -285,7 +285,7 @@
         },
         {
             "name": "pocketmine/bedrock-item-upgrade-schema",
-            "version": "dev-feature/1.26.20",
+            "version": "1.17.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pmmp/BedrockItemUpgradeSchema.git",
@@ -1300,16 +1300,16 @@
         },
         {
             "name": "phpstan/phpstan-strict-rules",
-            "version": "2.0.10",
+            "version": "2.0.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan-strict-rules.git",
-                "reference": "1aba28b697c1e3b6bbec8a1725f8b11b6d3e5a5f"
+                "reference": "9b000a578b85b32945b358b172c7b20e91189024"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan-strict-rules/zipball/1aba28b697c1e3b6bbec8a1725f8b11b6d3e5a5f",
-                "reference": "1aba28b697c1e3b6bbec8a1725f8b11b6d3e5a5f",
+                "url": "https://api.github.com/repos/phpstan/phpstan-strict-rules/zipball/9b000a578b85b32945b358b172c7b20e91189024",
+                "reference": "9b000a578b85b32945b358b172c7b20e91189024",
                 "shasum": ""
             },
             "require": {
@@ -1345,9 +1345,9 @@
             ],
             "support": {
                 "issues": "https://github.com/phpstan/phpstan-strict-rules/issues",
-                "source": "https://github.com/phpstan/phpstan-strict-rules/tree/2.0.10"
+                "source": "https://github.com/phpstan/phpstan-strict-rules/tree/2.0.11"
             },
-            "time": "2026-02-11T14:17:32+00:00"
+            "time": "2026-05-02T06:54:10+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -2787,8 +2787,7 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "nethergamesmc/bedrock-data": 20,
-        "nethergamesmc/bedrock-protocol": 20,
-        "pocketmine/bedrock-item-upgrade-schema": 20
+        "nethergamesmc/bedrock-protocol": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

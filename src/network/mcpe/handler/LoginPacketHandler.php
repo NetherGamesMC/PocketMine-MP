@@ -29,6 +29,7 @@ use pocketmine\lang\KnownTranslationFactory;
 use pocketmine\lang\Translatable;
 use pocketmine\network\mcpe\auth\ProcessLegacyLoginTask;
 use pocketmine\network\mcpe\auth\ProcessOpenIdLoginTask;
+use pocketmine\network\mcpe\auth\ProcessSelfSignedLoginTask;
 use pocketmine\network\mcpe\JwtException;
 use pocketmine\network\mcpe\JwtUtils;
 use pocketmine\network\mcpe\NetworkSession;
@@ -40,6 +41,7 @@ use pocketmine\network\mcpe\protocol\types\login\clientdata\ClientData;
 use pocketmine\network\mcpe\protocol\types\login\clientdata\ClientDataToSkinDataHelper;
 use pocketmine\network\mcpe\protocol\types\login\legacy\LegacyAuthChain;
 use pocketmine\network\mcpe\protocol\types\login\legacy\LegacyAuthIdentityData;
+use pocketmine\network\mcpe\protocol\types\login\openid\SelfSignedJwtBody;
 use pocketmine\network\mcpe\protocol\types\login\openid\XboxAuthJwtBody;
 use pocketmine\network\mcpe\protocol\types\login\openid\XboxAuthJwtHeader;
 use pocketmine\network\PacketHandlingException;
@@ -119,78 +121,107 @@ class LoginPacketHandler extends PacketHandler{
 			$this->processOpenIdLogin($authInfo->Token, $header->kid, $packet->clientDataJwt, $authRequired);
 
 		}elseif($authInfo->AuthenticationType === AuthenticationType::SELF_SIGNED->value){
-			try{
-				$chainData = json_decode($authInfo->Certificate, flags: JSON_THROW_ON_ERROR);
-			}catch(\JsonException $e){
-				throw PacketHandlingException::wrap($e, "Error parsing self-signed certificate chain");
-			}
-			if(!is_object($chainData)){
-				throw new PacketHandlingException("Unexpected type for self-signed certificate chain: " . gettype($chainData) . ", expected object");
-			}
-			try{
-				$chain = $this->defaultJsonMapper("Self-signed auth chain JSON")->map($chainData, new LegacyAuthChain());
-			}catch(\JsonMapper_Exception $e){
-				throw PacketHandlingException::wrap($e, "Error mapping self-signed certificate chain");
-			}
-			if($this->session->getProtocolId() >= ProtocolInfo::PROTOCOL_1_21_93){
-				if(count($chain->chain) > 1 || !isset($chain->chain[0])){
-					throw new PacketHandlingException("Expected exactly one certificate in self-signed certificate chain, got " . count($chain->chain));
+			if($this->session->getProtocolId() >= ProtocolInfo::PROTOCOL_1_26_20){
+				try{
+					[, $claimsArray, ] = JwtUtils::parse($authInfo->Token);
+				}catch(JwtException $e){
+					throw PacketHandlingException::wrap($e, "Error parsing self-signed authentication token");
+				}
+				$claims = $this->mapSelfSignedTokenBody($claimsArray);
+
+				if(!Uuid::isValid($claims->leguuid)){
+					throw new PacketHandlingException("Invalid UUID string in self-signed certificate: " . $claims->leguuid);
+				}
+
+				$legacyUuid = Uuid::fromString($claims->leguuid);
+				$username = $claims->xname;
+				$xuid = "";
+
+				$selfSignedKey = base64_decode($claims->cpk, strict: true);
+				if($selfSignedKey === false){
+					throw new PacketHandlingException("Invalid self-signed key");
+				}
+
+				$authRequired = $this->processLoginCommon($packet, $username, $legacyUuid, $xuid);
+				if($authRequired === null){
+					//plugin cancelled
+					return true;
+				}
+				$this->processSelfSignedLogin($authInfo->Token, $selfSignedKey, $packet->clientDataJwt, $authRequired);
+			}else{
+				try{
+					$chainData = json_decode($authInfo->Certificate, flags: JSON_THROW_ON_ERROR);
+				}catch(\JsonException $e){
+					throw PacketHandlingException::wrap($e, "Error parsing self-signed certificate chain");
+				}
+				if(!is_object($chainData)){
+					throw new PacketHandlingException("Unexpected type for self-signed certificate chain: " . gettype($chainData) . ", expected object");
+				}
+				try{
+					$chain = $this->defaultJsonMapper("Self-signed auth chain JSON")->map($chainData, new LegacyAuthChain());
+				}catch(\JsonMapper_Exception $e){
+					throw PacketHandlingException::wrap($e, "Error mapping self-signed certificate chain");
+				}
+				if($this->session->getProtocolId() >= ProtocolInfo::PROTOCOL_1_21_93){
+					if(count($chain->chain) > 1 || !isset($chain->chain[0])){
+						throw new PacketHandlingException("Expected exactly one certificate in self-signed certificate chain, got " . count($chain->chain));
+					}
+
+					try{
+						[, $claimsArray, ] = JwtUtils::parse($chain->chain[0]);
+					}catch(JwtException $e){
+						throw PacketHandlingException::wrap($e, "Error parsing self-signed certificate");
+					}
+					if(!isset($claimsArray["extraData"]) || !is_array($claimsArray["extraData"])){
+						throw new PacketHandlingException("Expected \"extraData\" to be present in self-signed certificate");
+					}
+				}else{
+					$claimsArray = null;
+
+					foreach($chain->chain as $jwt){
+						try{
+							[, $claims, ] = JwtUtils::parse($jwt);
+						}catch(JwtException $e){
+							throw PacketHandlingException::wrap($e, "Error parsing legacy certificate");
+						}
+						if(isset($claims["extraData"])){
+							if($claimsArray !== null){
+								throw new PacketHandlingException("Multiple certificates in self-signed certificate chain contain \"extraData\" field");
+							}
+
+							if(!is_array($claims["extraData"])){
+								throw new PacketHandlingException("'extraData' key should be an array");
+							}
+
+							$claimsArray = $claims;
+						}
+					}
+
+					if($claimsArray === null){
+						throw new PacketHandlingException("'extraData' not found in legacy chain data");
+					}
 				}
 
 				try{
-					[, $claimsArray, ] = JwtUtils::parse($chain->chain[0]);
-				}catch(JwtException $e){
-					throw PacketHandlingException::wrap($e, "Error parsing self-signed certificate");
-				}
-				if(!isset($claimsArray["extraData"]) || !is_array($claimsArray["extraData"])){
-					throw new PacketHandlingException("Expected \"extraData\" to be present in self-signed certificate");
-				}
-			}else{
-				$claimsArray = null;
-
-				foreach($chain->chain as $jwt){
-					try{
-						[, $claims, ] = JwtUtils::parse($jwt);
-					}catch(JwtException $e){
-						throw PacketHandlingException::wrap($e, "Error parsing legacy certificate");
-					}
-					if(isset($claims["extraData"])){
-						if($claimsArray !== null){
-							throw new PacketHandlingException("Multiple certificates in self-signed certificate chain contain \"extraData\" field");
-						}
-
-						if(!is_array($claims["extraData"])){
-							throw new PacketHandlingException("'extraData' key should be an array");
-						}
-
-						$claimsArray = $claims;
-					}
+					$claims = $this->defaultJsonMapper("Self-signed auth JWT 'extraData'")->map($claimsArray["extraData"], new LegacyAuthIdentityData());
+				}catch(\JsonMapper_Exception $e){
+					throw PacketHandlingException::wrap($e, "Error mapping self-signed certificate extraData");
 				}
 
-				if($claimsArray === null){
-					throw new PacketHandlingException("'extraData' not found in legacy chain data");
+				if(!Uuid::isValid($claims->identity)){
+					throw new PacketHandlingException("Invalid UUID string in self-signed certificate: " . $claims->identity);
 				}
-			}
+				$legacyUuid = Uuid::fromString($claims->identity);
+				$username = $claims->displayName;
+				$xuid = $this->session->getProtocolId() >= ProtocolInfo::PROTOCOL_1_21_93 ? "" : $claims->XUID;
 
-			try{
-				$claims = $this->defaultJsonMapper("Self-signed auth JWT 'extraData'")->map($claimsArray["extraData"], new LegacyAuthIdentityData());
-			}catch(\JsonMapper_Exception $e){
-				throw PacketHandlingException::wrap($e, "Error mapping self-signed certificate extraData");
+				$authRequired = $this->processLoginCommon($packet, $username, $legacyUuid, $xuid);
+				if($authRequired === null){
+					//plugin cancelled
+					return true;
+				}
+				$this->processLegacySelfSignedLogin($chain->chain, $packet->clientDataJwt, $authRequired);
 			}
-
-			if(!Uuid::isValid($claims->identity)){
-				throw new PacketHandlingException("Invalid UUID string in self-signed certificate: " . $claims->identity);
-			}
-			$legacyUuid = Uuid::fromString($claims->identity);
-			$username = $claims->displayName;
-			$xuid = $this->session->getProtocolId() >= ProtocolInfo::PROTOCOL_1_21_93 ? "" : $claims->XUID;
-
-			$authRequired = $this->processLoginCommon($packet, $username, $legacyUuid, $xuid);
-			if($authRequired === null){
-				//plugin cancelled
-				return true;
-			}
-			$this->processSelfSignedLogin($chain->chain, $packet->clientDataJwt, $authRequired);
 		}else{
 			throw new PacketHandlingException("Unsupported authentication type: $authInfo->AuthenticationType");
 		}
@@ -322,6 +353,20 @@ class LoginPacketHandler extends PacketHandler{
 	}
 
 	/**
+	 * @param array<string, mixed> $bodyArray
+	 * @throws PacketHandlingException
+	 */
+	protected function mapSelfSignedTokenBody(array $bodyArray) : SelfSignedJwtBody{
+		$mapper = $this->defaultJsonMapper("OpenID JWT body");
+		try{
+			$header = $mapper->map($bodyArray, new SelfSignedJwtBody());
+		}catch(\JsonMapper_Exception $e){
+			throw PacketHandlingException::wrap($e);
+		}
+		return $header;
+	}
+
+	/**
 	 * @throws PacketHandlingException
 	 */
 	protected function parseClientData(string $clientDataJwt) : ClientData{
@@ -360,10 +405,16 @@ class LoginPacketHandler extends PacketHandler{
 		);
 	}
 
+	protected function processSelfSignedLogin(string $token, string $clientPublicKey, string $clientData, bool $authRequired) : void{
+		$this->session->setHandler(null); //drop packets received during login verification
+
+		$this->server->getAsyncPool()->submitTask(new ProcessSelfSignedLoginTask($token, $clientPublicKey, $clientData, $authRequired, onCompletion: $this->authCallback));
+	}
+
 	/**
 	 * @param string[] $legacyCertificate
 	 */
-	protected function processSelfSignedLogin(array $legacyCertificate, string $clientDataJwt, bool $authRequired) : void{
+	protected function processLegacySelfSignedLogin(array $legacyCertificate, string $clientDataJwt, bool $authRequired) : void{
 		$this->session->setHandler(null); //drop packets received during login verification
 
 		$rootAuthKeyDer = $this->session->getProtocolId() >= ProtocolInfo::PROTOCOL_1_21_93 ? null : base64_decode(ProcessLegacyLoginTask::LEGACY_MOJANG_ROOT_PUBLIC_KEY, true);
