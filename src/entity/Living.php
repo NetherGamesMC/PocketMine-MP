@@ -609,7 +609,7 @@ $deltaZ = $originalDeltaZ;
 // Sprinting Knockback
 // 只有变更后方向与原版击退方向夹角在 30° 到 110° 之间，才使用攻击者水平视角方向。
 // 夹角 < 30° 或 > 110° 时，保留原版相对位置击退。
-if($e instanceof Player && $e->isSprinting()){
+if($source->isKnockBackDisplacementEnabled() && $e instanceof Player && $e->isSprinting()){
     $plane = $e->getDirectionPlane(); // 只取水平 yaw，不受 pitch 影响
 
     $lookDeltaX = $plane->x;
