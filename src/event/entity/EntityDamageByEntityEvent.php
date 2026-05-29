@@ -35,6 +35,10 @@ class EntityDamageByEntityEvent extends EntityDamageEvent{
 
 	private int $damagerEntityId;
 
+	private static bool $defaultKnockBackDisplacementEnabled = false;
+
+    private bool $knockBackDisplacementEnabled;
+
 	/**
 	 * 击退附魔每级额外增加的横向 KB。
 	 *
@@ -52,21 +56,23 @@ class EntityDamageByEntityEvent extends EntityDamageEvent{
 	 * @param float[] $modifiers
 	 */
 	public function __construct(
-		Entity $damager,
-		Entity $entity,
-		int $cause,
-		float $damage,
-		array $modifiers = [],
-		private float $knockBack = Living::DEFAULT_KNOCKBACK_FORCE,
-		private float $verticalKnockBackLimit = Living::DEFAULT_KNOCKBACK_VERTICAL_LIMIT,
-		private ?float $verticalKnockBack = null
-	){
-		$this->damagerEntityId = $damager->getId();
+	Entity $damager,
+	Entity $entity,
+	int $cause,
+	float $damage,
+	array $modifiers = [],
+	private float $knockBack = Living::DEFAULT_KNOCKBACK_FORCE,
+	private float $verticalKnockBackLimit = Living::DEFAULT_KNOCKBACK_VERTICAL_LIMIT,
+	private ?float $verticalKnockBack = null,
+	?bool $knockBackDisplacementEnabled = null
+    ){
+	$this->damagerEntityId = $damager->getId();
+	$this->knockBackDisplacementEnabled = $knockBackDisplacementEnabled ?? self::$defaultKnockBackDisplacementEnabled;
 
-		parent::__construct($entity, $cause, $damage, $modifiers);
+	parent::__construct($entity, $cause, $damage, $modifiers);
 
-		$this->addAttackerModifiers($damager);
-	}
+	$this->addAttackerModifiers($damager);
+    }
 
 	protected function addAttackerModifiers(Entity $damager) : void{
 		if($damager instanceof Living){ //TODO: move this to entity classes
@@ -125,6 +131,22 @@ class EntityDamageByEntityEvent extends EntityDamageEvent{
 	public function getDamager() : ?Entity{
 		return $this->getEntity()->getWorld()->getServer()->getWorldManager()->findEntity($this->damagerEntityId);
 	}
+
+	public static function isDefaultKnockBackDisplacementEnabled() : bool{
+	return self::$defaultKnockBackDisplacementEnabled;
+    }
+
+    public static function setDefaultKnockBackDisplacementEnabled(bool $enabled) : void{
+	    self::$defaultKnockBackDisplacementEnabled = $enabled;
+    }
+
+    public function isKnockBackDisplacementEnabled() : bool{
+	    return $this->knockBackDisplacementEnabled;
+    }
+
+    public function setKnockBackDisplacementEnabled(bool $enabled) : void{
+	    $this->knockBackDisplacementEnabled = $enabled;
+    }
 
 	/**
 	 * Returns the horizontal force with which the victim will be knocked back from the attacking entity.
