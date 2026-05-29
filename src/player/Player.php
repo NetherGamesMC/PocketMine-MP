@@ -359,7 +359,9 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 	}
 
 	protected function initHumanData(CompoundTag $nbt) : void{
-		$this->setNameTag($this->username);
+		$normalizedName = str_replace(" ", "_", $this->username);
+		$this->setNameTag($normalizedName);
+		$this->displayName = $normalizedName;
 	}
 
 	private function callDummyItemHeldEvent() : void{
@@ -673,7 +675,7 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 	 * Gets the username
 	 */
 	public function getName() : string{
-		return $this->username;
+		return str_replace(" ", "_", $this->username);
 	}
 
 	/**
