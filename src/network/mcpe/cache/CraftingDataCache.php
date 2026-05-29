@@ -94,6 +94,7 @@ final class CraftingDataCache{
 		$recipesWithTypeIds = [];
 
 		$noUnlockingRequirement = new RecipeUnlockingRequirement(null);
+		$recipeNetId = self::RECIPE_ID_OFFSET;
 		foreach($manager->getCraftingRecipeIndex() as $index => $recipe){
 			//the client doesn't like recipes with an ID of 0, so we need to offset them
 			$recipeNetId = $index + self::RECIPE_ID_OFFSET;
@@ -159,10 +160,12 @@ final class CraftingDataCache{
 				FurnaceType::CAMPFIRE => FurnaceRecipeBlockName::CAMPFIRE,
 				FurnaceType::SOUL_CAMPFIRE => FurnaceRecipeBlockName::SOUL_CAMPFIRE
 			};
+			if($this->getProtocolId() >= ProtocolInfo::PROTOCOL_1_26_20){
+				$recipeNetId++;
+			}
 			foreach($manager->getFurnaceRecipeManager($furnaceType)->getAll() as $recipe){
 				try{
 					if($this->getProtocolId() >= ProtocolInfo::PROTOCOL_1_26_20){
-						$recipeNetId = ($recipeNetId ?? self::RECIPE_ID_OFFSET) + 1;
 						$recipesWithTypeIds[] = new ProtocolShapelessRecipe(
 							CraftingDataPacket::ENTRY_SHAPELESS,
 							BE::packUnsignedInt($recipeNetId), //TODO: this should probably be changed to something human-readable
@@ -172,7 +175,7 @@ final class CraftingDataCache{
 							$typeTag,
 							50,
 							$noUnlockingRequirement,
-							$recipeNetId
+							$recipeNetId //not used, but we need to fill them with something unique regardless
 						);
 					}else{
 						$input = $recipe->getInput();
