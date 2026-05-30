@@ -2032,13 +2032,14 @@ $ev->setCriticalHit($isCriticalHit);
 		$this->getWorld()->addSound($soundPos, new EntityAttackSound());
 
 		if($entity instanceof Living){
+	if($entity instanceof Living && $canPlayHitAnimations){
 	if($ev->shouldPlayCriticalHitAnimation()){
 		$entity->broadcastAnimation(new CriticalHitAnimation($entity));
 	}
-
 	if($ev->shouldPlayMagicHitAnimation()){
 		$entity->broadcastAnimation(new MagicHitAnimation($entity));
 	}
+}
 }
 
 		foreach($meleeEnchantments as $enchantment){
