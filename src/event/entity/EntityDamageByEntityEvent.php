@@ -35,6 +35,28 @@ class EntityDamageByEntityEvent extends EntityDamageEvent{
 
 	private int $damagerEntityId;
 
+	/**
+ * Whether this attack originally matched the vanilla critical-hit condition.
+ * This is independent from MODIFIER_CRITICAL damage.
+ */
+private bool $criticalHit = false;
+
+/**
+ * Whether this attack originally had positive melee enchantment damage.
+ * This is independent from MODIFIER_WEAPON_ENCHANTMENTS after plugins modify it.
+ */
+private bool $magicHit = false;
+
+/**
+ * If false, critical-hit particles won't be shown even if this hit was originally critical.
+ */
+private bool $criticalHitAnimationEnabled = true;
+
+/**
+ * If false, magic critical-hit particles won't be shown even if this hit originally had enchantment damage.
+ */
+private bool $magicHitAnimationEnabled = true;
+
 	private static bool $defaultKnockBackDisplacementEnabled = false;
 
     private bool $knockBackDisplacementEnabled;
@@ -131,6 +153,178 @@ class EntityDamageByEntityEvent extends EntityDamageEvent{
 	public function getDamager() : ?Entity{
 		return $this->getEntity()->getWorld()->getServer()->getWorldManager()->findEntity($this->damagerEntityId);
 	}
+
+	/**
+ * Returns whether this attack originally matched the vanilla critical-hit condition.
+ *
+ * This is separated from MODIFIER_CRITICAL, so plugins may remove critical damage
+ * without removing critical particles.
+ */
+public function isCriticalHit() : bool{
+	return $this->criticalHit;
+}
+
+/**
+ * Sets whether this attack originally matched the vanilla critical-hit condition.
+ *
+ * Normally this is set by Player::attackEntity().
+ */
+public function setCriticalHit(bool $criticalHit) : void{
+	$this->criticalHit = $criticalHit;
+}
+
+/**
+ * Returns whether this attack originally had positive melee enchantment damage.
+ *
+ * This is separated from MODIFIER_WEAPON_ENCHANTMENTS, so plugins may remove magic damage
+ * without removing magic particles.
+ */
+public function isMagicHit() : bool{
+	return $this->magicHit;
+}
+
+/**
+ * Sets whether this attack originally had positive melee enchantment damage.
+ *
+ * Normally this is set by Player::attackEntity().
+ */
+public function setMagicHit(bool $magicHit) : void{
+	$this->magicHit = $magicHit;
+}
+
+/**
+ * Returns whether critical-hit particles are enabled for this event.
+ */
+public function isCriticalHitAnimationEnabled() : bool{
+	return $this->criticalHitAnimationEnabled;
+}
+
+/**
+ * Enables or disables critical-hit particles for this event.
+ */
+public function setCriticalHitAnimationEnabled(bool $enabled) : void{
+	$this->criticalHitAnimationEnabled = $enabled;
+}
+
+/**
+ * Returns whether magic critical-hit particles are enabled for this event.
+ */
+public function isMagicHitAnimationEnabled() : bool{
+	return $this->magicHitAnimationEnabled;
+}
+
+/**
+ * Enables or disables magic critical-hit particles for this event.
+ */
+public function setMagicHitAnimationEnabled(bool $enabled) : void{
+	$this->magicHitAnimationEnabled = $enabled;
+}
+
+/**
+ * Returns whether Player::attackEntity() should show critical-hit particles.
+ *
+ * This intentionally does not depend on MODIFIER_CRITICAL.
+ * If plugins clear critical damage, particles can still play.
+ */
+public function shouldPlayCriticalHitAnimation() : bool{
+	return $this->criticalHitAnimationEnabled && $this->criticalHit;
+}
+
+/**
+ * Returns whether Player::attackEntity() should show magic critical-hit particles.
+ *
+ * This intentionally does not depend on MODIFIER_WEAPON_ENCHANTMENTS.
+ * If plugins clear enchantment damage, particles can still play.
+ */
+public function shouldPlayMagicHitAnimation() : bool{
+	return $this->magicHitAnimationEnabled && $this->magicHit;
+}
+
+/**
+ * Returns whether this attack originally matched the vanilla critical-hit condition.
+ *
+ * This is separated from MODIFIER_CRITICAL, so plugins may remove critical damage
+ * without removing critical particles.
+ */
+public function isCriticalHit() : bool{
+	return $this->criticalHit;
+}
+
+/**
+ * Sets whether this attack originally matched the vanilla critical-hit condition.
+ *
+ * Normally this is set by Player::attackEntity().
+ */
+public function setCriticalHit(bool $criticalHit) : void{
+	$this->criticalHit = $criticalHit;
+}
+
+/**
+ * Returns whether this attack originally had positive melee enchantment damage.
+ *
+ * This is separated from MODIFIER_WEAPON_ENCHANTMENTS, so plugins may remove magic damage
+ * without removing magic particles.
+ */
+public function isMagicHit() : bool{
+	return $this->magicHit;
+}
+
+/**
+ * Sets whether this attack originally had positive melee enchantment damage.
+ *
+ * Normally this is set by Player::attackEntity().
+ */
+public function setMagicHit(bool $magicHit) : void{
+	$this->magicHit = $magicHit;
+}
+
+/**
+ * Returns whether critical-hit particles are enabled for this event.
+ */
+public function isCriticalHitAnimationEnabled() : bool{
+	return $this->criticalHitAnimationEnabled;
+}
+
+/**
+ * Enables or disables critical-hit particles for this event.
+ */
+public function setCriticalHitAnimationEnabled(bool $enabled) : void{
+	$this->criticalHitAnimationEnabled = $enabled;
+}
+
+/**
+ * Returns whether magic critical-hit particles are enabled for this event.
+ */
+public function isMagicHitAnimationEnabled() : bool{
+	return $this->magicHitAnimationEnabled;
+}
+
+/**
+ * Enables or disables magic critical-hit particles for this event.
+ */
+public function setMagicHitAnimationEnabled(bool $enabled) : void{
+	$this->magicHitAnimationEnabled = $enabled;
+}
+
+/**
+ * Returns whether Player::attackEntity() should show critical-hit particles.
+ *
+ * This intentionally does not depend on MODIFIER_CRITICAL.
+ * If plugins clear critical damage, particles can still play.
+ */
+public function shouldPlayCriticalHitAnimation() : bool{
+	return $this->criticalHitAnimationEnabled && $this->criticalHit;
+}
+
+/**
+ * Returns whether Player::attackEntity() should show magic critical-hit particles.
+ *
+ * This intentionally does not depend on MODIFIER_WEAPON_ENCHANTMENTS.
+ * If plugins clear enchantment damage, particles can still play.
+ */
+public function shouldPlayMagicHitAnimation() : bool{
+	return $this->magicHitAnimationEnabled && $this->magicHit;
+}
 
 	public static function isDefaultKnockBackDisplacementEnabled() : bool{
 	return self::$defaultKnockBackDisplacementEnabled;
