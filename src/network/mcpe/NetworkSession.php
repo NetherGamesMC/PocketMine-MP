@@ -975,7 +975,7 @@ class NetworkSession{
 		$checkXUID = $this->server->getConfigGroup()->getPropertyBool(YmlServerProperties::PLAYER_VERIFY_XUID, true);
 		$myXUID = $this->info instanceof XboxLivePlayerInfo ? $this->info->getXuid() : "";
 		$kickForXUIDMismatch = function(string $xuid) use ($checkXUID, $myXUID) : bool{
-			if($checkXUID && $myXUID !== $xuid){
+			if($checkXUID && $myXUID !== "" && $xuid !== "" && $myXUID !== $xuid){
 				$this->logger->debug("XUID mismatch: expected '$xuid', but got '$myXUID'");
 				//TODO: Longer term, we should be identifying playerdata using something more reliable, like XUID or UUID.
 				//However, that would be a very disruptive change, so this will serve as a stopgap for now.

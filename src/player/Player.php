@@ -2497,7 +2497,9 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 	public function getSaveData() : CompoundTag{
 		$nbt = $this->saveNBT();
 
-		$nbt->setString(self::TAG_LAST_KNOWN_XUID, $this->xuid);
+		if($this->xuid !== ""){
+			$nbt->setString(self::TAG_LAST_KNOWN_XUID, $this->xuid);
+		}
 
 		if($this->location->isValid()){
 			$nbt->setString(self::TAG_LEVEL, $this->getWorld()->getFolderName());
