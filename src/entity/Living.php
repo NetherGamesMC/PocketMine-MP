@@ -110,6 +110,7 @@ abstract class Living extends Entity{
 	private const TAG_EFFECT_AMBIENT = "Ambient"; //TAG_Byte
 
 	protected int $attackTime = 0;
+	protected int $lastAttackCooldownStartTick = -PHP_INT_MAX;
 
 	public int $deadTicks = 0;
 	protected int $maxDeadTicks = 25;
@@ -148,6 +149,10 @@ abstract class Living extends Entity{
 
 	public function getAttackTime() : int{
 		return $this->attackTime;
+	}
+
+	public function wasAttackCooldownStartedThisTick() : bool{
+		return $this->lastAttackCooldownStartTick === $this->getWorld()->getServer()->getTick();
 	}
 
 	public function canBeRenamed() : bool{
@@ -590,6 +595,7 @@ abstract class Living extends Entity{
 			//this logic only applies if the entity was cold attacked
 
 			$this->attackTime = $source->getAttackCooldown();
+			$this->lastAttackCooldownStartTick = $this->getWorld()->getServer()->getTick();
 
 			if($source instanceof EntityDamageByChildEntityEvent){
 				$e = $source->getChild();
