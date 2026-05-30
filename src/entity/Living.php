@@ -142,6 +142,14 @@ abstract class Living extends Entity{
 
 	abstract public function getName() : string;
 
+	public function hasAttackCooldown() : bool{
+	return $this->attackTime > 0;
+}
+
+public function getAttackTime() : int{
+	return $this->attackTime;
+}
+
 	public function canBeRenamed() : bool{
 		return true;
 	}
