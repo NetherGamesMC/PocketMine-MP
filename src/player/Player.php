@@ -189,6 +189,7 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 	private const MAX_REACH_DISTANCE_CREATIVE = 13;
 	private const MAX_REACH_DISTANCE_SURVIVAL = 7;
 	private const MAX_REACH_DISTANCE_ENTITY_INTERACTION = 8;
+	private const MAGIC_HIT_ANIMATION_INTERVAL_TICKS = 1;
 
 	public const DEFAULT_FLIGHT_SPEED_MULTIPLIER = 0.05;
 
@@ -309,6 +310,7 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 	protected array $usedItemsCooldown = [];
 
 	private int $lastEmoteTick = 0;
+	private int $lastMagicHitAnimationTick = -PHP_INT_MAX;
 
 	protected int $formIdCounter = 0;
 	/** @var Form[] */
@@ -1967,6 +1969,27 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 		return false;
 	}
 
+	private function broadcastMagicHitAnimation(Living $entity, bool $canPlayHitAnimations) : void{
+		$currentTick = $this->server->getTick();
+
+		// Attacker / other viewers: fixed 2-tick interval, unchanged from the previous behaviour.
+		if($currentTick - $this->lastMagicHitAnimationTick >= self::MAGIC_HIT_ANIMATION_INTERVAL_TICKS){
+			if($entity instanceof Player){
+				// Do not include the victim in the repeated viewer broadcast.
+				// The victim receives a separate hit-cooldown-gated first particle below.
+				$entity->broadcastAnimation(new MagicHitAnimation($entity), $entity->getViewers());
+			}else{
+				$entity->broadcastAnimation(new MagicHitAnimation($entity));
+			}
+			$this->lastMagicHitAnimationTick = $currentTick;
+		}
+
+		// Victim self-view: only the first magic crit particle in the current hit-cooldown window.
+		if($entity instanceof Player && $canPlayHitAnimations){
+			$entity->broadcastAnimation(new MagicHitAnimation($entity), [$entity]);
+		}
+	}
+
 	/**
 	 * Attacks the given entity with the currently-held item.
 	 * TODO: move this up the class hierarchy
@@ -2004,20 +2027,25 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 			}
 		}
 		$hasMagicHit = $meleeEnchantmentDamage > 0;
-$ev->setModifier($meleeEnchantmentDamage, EntityDamageEvent::MODIFIER_WEAPON_ENCHANTMENTS);
-$ev->setMagicHit($hasMagicHit);
+		$ev->setModifier($meleeEnchantmentDamage, EntityDamageEvent::MODIFIER_WEAPON_ENCHANTMENTS);
+		$ev->setMagicHit($hasMagicHit);
 
-$isCriticalHit = !$this->isSprinting() &&
-	!$this->isFlying() &&
-	$this->fallDistance > 0 &&
-	!$this->effectManager->has(VanillaEffects::BLINDNESS()) &&
-	!$this->isUnderwater();
+		$isCriticalHit = !$this->isSprinting() &&
+			!$this->isFlying() &&
+			$this->fallDistance > 0 &&
+			!$this->onGround &&
+			!$this->effectManager->has(VanillaEffects::BLINDNESS()) &&
+			!$this->isUnderwater();
 
-if($isCriticalHit){
-	$ev->setModifier($ev->getFinalDamage() / 2, EntityDamageEvent::MODIFIER_CRITICAL);
-}
+		if($isCriticalHit){
+			$ev->setModifier($ev->getFinalDamage() / 2, EntityDamageEvent::MODIFIER_CRITICAL);
+		}
 
-$ev->setCriticalHit($isCriticalHit);
+		$ev->setCriticalHit($isCriticalHit);
+
+		// Only play crit / magic particles for a cold hit. This checks the target's
+		// current attackTime before Living::attack() applies the new event cooldown.
+		$canPlayHitAnimations = !($entity instanceof Living) || !$entity->hasAttackCooldown();
 
 		$entity->attack($ev);
 		$this->broadcastAnimation(new ArmSwingAnimation($this), $this->getViewers());
@@ -2032,15 +2060,15 @@ $ev->setCriticalHit($isCriticalHit);
 		$this->getWorld()->addSound($soundPos, new EntityAttackSound());
 
 		if($entity instanceof Living){
-	if($entity instanceof Living && $canPlayHitAnimations){
-	if($ev->shouldPlayCriticalHitAnimation()){
-		$entity->broadcastAnimation(new CriticalHitAnimation($entity));
-	}
-	if($ev->shouldPlayMagicHitAnimation()){
-		$entity->broadcastAnimation(new MagicHitAnimation($entity));
-	}
-}
-}
+			if($canPlayHitAnimations && $ev->shouldPlayCriticalHitAnimation()){
+				$entity->broadcastAnimation(new CriticalHitAnimation($entity));
+			}
+
+			// Both the original enchantment magic crit and plugin-forced magic crit use the same split-target rule.
+			if($ev->shouldPlayMagicHitAnimation()){
+				$this->broadcastMagicHitAnimation($entity, $canPlayHitAnimations);
+			}
+		}
 
 		foreach($meleeEnchantments as $enchantment){
 			$type = $enchantment->getType();
