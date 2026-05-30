@@ -2003,11 +2003,21 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 				$meleeEnchantments[] = $enchantment;
 			}
 		}
-		$ev->setModifier($meleeEnchantmentDamage, EntityDamageEvent::MODIFIER_WEAPON_ENCHANTMENTS);
+		$hasMagicHit = $meleeEnchantmentDamage > 0;
+$ev->setModifier($meleeEnchantmentDamage, EntityDamageEvent::MODIFIER_WEAPON_ENCHANTMENTS);
+$ev->setMagicHit($hasMagicHit);
 
-		if(!$this->isSprinting() && !$this->isFlying() && $this->fallDistance > 0 && !$this->effectManager->has(VanillaEffects::BLINDNESS()) && !$this->isUnderwater()){
-			$ev->setModifier($ev->getFinalDamage() / 2, EntityDamageEvent::MODIFIER_CRITICAL);
-		}
+$isCriticalHit = !$this->isSprinting() &&
+	!$this->isFlying() &&
+	$this->fallDistance > 0 &&
+	!$this->effectManager->has(VanillaEffects::BLINDNESS()) &&
+	!$this->isUnderwater();
+
+if($isCriticalHit){
+	$ev->setModifier($ev->getFinalDamage() / 2, EntityDamageEvent::MODIFIER_CRITICAL);
+}
+
+$ev->setCriticalHit($isCriticalHit);
 
 		$entity->attack($ev);
 		$this->broadcastAnimation(new ArmSwingAnimation($this), $this->getViewers());
@@ -2021,12 +2031,15 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 		}
 		$this->getWorld()->addSound($soundPos, new EntityAttackSound());
 
-		if($ev->getModifier(EntityDamageEvent::MODIFIER_CRITICAL) > 0 && $entity instanceof Living){
-			$entity->broadcastAnimation(new CriticalHitAnimation($entity));
-		}
-		if($ev->getModifier(EntityDamageEvent::MODIFIER_WEAPON_ENCHANTMENTS) > 0 && $entity instanceof Living){
-			$entity->broadcastAnimation(new MagicHitAnimation($entity));
-		}
+		if($entity instanceof Living){
+	if($ev->shouldPlayCriticalHitAnimation()){
+		$entity->broadcastAnimation(new CriticalHitAnimation($entity));
+	}
+
+	if($ev->shouldPlayMagicHitAnimation()){
+		$entity->broadcastAnimation(new MagicHitAnimation($entity));
+	}
+}
 
 		foreach($meleeEnchantments as $enchantment){
 			$type = $enchantment->getType();
