@@ -2743,7 +2743,14 @@ class Player extends Human implements CommandSender, ChunkListener, IPlayer, Nev
 	public function broadcastAnimation(Animation $animation, ?array $targets = null) : void{
 		if($this->spawned && $targets === null){
 			$targets = $this->getViewers();
-			$targets[] = $this;
+
+			// Vanilla sharpness / melee-enchantment magic crits are sometimes broadcast
+			// through Player::broadcastAnimation() with null targets. In that case,
+			// keep sending to attackers/viewers normally, but only include the victim
+			// itself on the first hit of the current attack-cooldown window.
+			if(!($animation instanceof MagicHitAnimation) || $this->wasAttackCooldownStartedThisTick()){
+				$targets[] = $this;
+			}
 		}
 		parent::broadcastAnimation($animation, $targets);
 	}
