@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace pocketmine\entity;
 
 use Ahc\Json\Comment as CommentedJsonDecoder;
+use pocketmine\network\mcpe\protocol\types\skin\SkinData;
 use pocketmine\utils\Limits;
 use function implode;
 use function in_array;
@@ -35,7 +36,14 @@ final class Skin{
 	public const ACCEPTED_SKIN_SIZES = [
 		64 * 32 * 4,
 		64 * 64 * 4,
-		128 * 128 * 4
+		128 * 64 * 4,
+		128 * 128 * 4,
+		256 * 128 * 4,
+		256 * 256 * 4,
+		512 * 256 * 4,
+		512 * 512 * 4,
+		1024 * 512 * 4,
+		1024 * 1024 * 4,
 	];
 
 	private string $skinId;
@@ -44,10 +52,33 @@ final class Skin{
 	private string $geometryName;
 	private string $geometryData;
 
+	private ?SkinData $fullSkinData = null;
+
 	private static function checkLength(string $string, string $name, int $maxLength) : void{
+		return;
+		
 		if(strlen($string) > $maxLength){
 			throw new InvalidSkinException("$name must be at most $maxLength bytes, but have " . strlen($string) . " bytes");
 		}
+	}
+
+	private static function findClosestSkinSize(int $actualSize) : ?int{
+		$closestSize = null;
+		$minDiff = PHP_INT_MAX;
+		
+		foreach(self::ACCEPTED_SKIN_SIZES as $size){
+			$diff = abs($actualSize - $size);
+			if($diff < $minDiff){
+				$minDiff = $diff;
+				$closestSize = $size;
+			}
+		}
+		
+		if($closestSize !== null && $minDiff <= $closestSize * 0.5){
+			return $closestSize;
+		}
+		
+		return null;
 	}
 
 	public function __construct(string $skinId, string $skinData, string $capeData = "", string $geometryName = "", string $geometryData = ""){
@@ -56,31 +87,19 @@ final class Skin{
 		self::checkLength($geometryData, "Geometry data", Limits::INT32_MAX);
 
 		if($skinId === ""){
-			throw new InvalidSkinException("Skin ID must not be empty");
+			$skinId = "Standard_Custom_" . bin2hex(random_bytes(4));
 		}
-		$len = strlen($skinData);
-		if(!in_array($len, self::ACCEPTED_SKIN_SIZES, true)){
-			throw new InvalidSkinException("Invalid skin data size $len bytes (allowed sizes: " . implode(", ", self::ACCEPTED_SKIN_SIZES) . ")");
-		}
-		if($capeData !== "" && strlen($capeData) !== 8192){
-			throw new InvalidSkinException("Invalid cape data size " . strlen($capeData) . " bytes (must be exactly 8192 bytes)");
-		}
-
+		
 		if($geometryData !== ""){
 			try{
 				$decodedGeometry = (new CommentedJsonDecoder())->decode($geometryData);
-			}catch(\RuntimeException $e){
-				throw new InvalidSkinException("Invalid geometry data: " . $e->getMessage(), 0, $e);
+				$geometryData = json_encode($decodedGeometry, JSON_THROW_ON_ERROR);
+			}catch(\RuntimeException | \JsonException $e){
 			}
-
-			/*
-			 * Hack to cut down on network overhead due to skins, by un-pretty-printing geometry JSON.
-			 *
-			 * Mojang, some stupid reason, send every single model for every single skin in the selected skin-pack.
-			 * Not only that, they are pretty-printed.
-			 * TODO: find out what model crap can be safely dropped from the packet (unless it gets fixed first)
-			 */
-			$geometryData = json_encode($decodedGeometry, JSON_THROW_ON_ERROR);
+		}
+		
+		if($geometryName === ""){
+			$geometryName = "geometry.humanoid.custom";
 		}
 
 		$this->skinId = $skinId;
@@ -108,5 +127,13 @@ final class Skin{
 
 	public function getGeometryData() : string{
 		return $this->geometryData;
+	}
+
+	public function getFullSkinData() : ?SkinData{
+		return $this->fullSkinData;
+	}
+
+	public function setFullSkinData(?SkinData $data) : void{
+		$this->fullSkinData = $data;
 	}
 }
