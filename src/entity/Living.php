@@ -47,6 +47,7 @@ use pocketmine\item\Durable;
 use pocketmine\item\enchantment\Enchantment;
 use pocketmine\item\enchantment\VanillaEnchantments;
 use pocketmine\item\Item;
+use pocketmine\item\ItemTypeIds;
 use pocketmine\math\AxisAlignedBB;
 use pocketmine\math\Vector3;
 use pocketmine\math\VoxelRayTrace;
@@ -393,6 +394,15 @@ abstract class Living extends Entity{
 		$newVerticalVelocity = $fallBlock->onEntityLand($this);
 
 		$damage = $this->calculateFallDamage($this->fallDistance);
+		$chestplate = $this->armorInventory->getChestplate();
+		if($this->isGliding() && $chestplate->getTypeId() === ItemTypeIds::ELYTRA){
+			// Vanilla-like behaviour: gliding with elytra heavily reduces impact damage.
+			$damage *= 0.2;
+			if($chestplate instanceof Durable){
+				$this->damageItem($chestplate, max(1, (int) floor($this->fallDistance / 4)));
+				$this->armorInventory->setChestplate($chestplate);
+			}
+		}
 		if($damage > 0){
 			$ev = new EntityDamageEvent($this, EntityDamageEvent::CAUSE_FALL, $damage);
 			$this->attack($ev);

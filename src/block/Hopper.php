@@ -24,14 +24,20 @@ declare(strict_types=1);
 namespace pocketmine\block;
 
 use pocketmine\block\tile\Container as TileContainer;
+use pocketmine\block\tile\Chest as TileChest;
 use pocketmine\block\tile\Hopper as TileHopper;
 use pocketmine\block\utils\PoweredByRedstone;
 use pocketmine\block\utils\PoweredByRedstoneTrait;
 use pocketmine\block\utils\SupportType;
+use pocketmine\block\inventory\BrewingStandInventory;
+use pocketmine\block\inventory\FurnaceInventory;
 use pocketmine\data\runtime\RuntimeDataDescriber;
 use pocketmine\entity\object\ItemEntity;
 use pocketmine\inventory\Inventory;
 use pocketmine\item\Item;
+use pocketmine\item\Potion;
+use pocketmine\item\SplashPotion;
+use pocketmine\item\VanillaItems;
 use pocketmine\math\AxisAlignedBB;
 use pocketmine\math\Facing;
 use pocketmine\math\Vector3;
@@ -150,7 +156,34 @@ class Hopper extends Transparent implements PoweredByRedstone{
 			return false;
 		}
 
-		return $this->moveOneItem($hopperInventory, $targetTile->getRealInventory());
+		$targetInventory = $targetTile instanceof TileChest ? $targetTile->getInventory() : $targetTile->getRealInventory();
+		if($targetInventory instanceof FurnaceInventory){
+			$slot = $this->facing === Facing::DOWN ? FurnaceInventory::SLOT_INPUT : FurnaceInventory::SLOT_FUEL;
+			return $this->moveOneItemToSlot($hopperInventory, $targetInventory, $slot, function(Item $item) use ($targetInventory, $slot, $world) : bool{
+				if($slot === FurnaceInventory::SLOT_FUEL){
+					return $item->getFuelTime() > 0;
+				}
+				return $world->getServer()->getCraftingManager()->getFurnaceRecipeManager($targetInventory->getFurnaceType())->match($item) !== null;
+			});
+		}
+		if($targetInventory instanceof BrewingStandInventory){
+			if($this->facing === Facing::DOWN){
+				return $this->moveOneItemToSlot($hopperInventory, $targetInventory, BrewingStandInventory::SLOT_INGREDIENT, function(Item $item) use ($targetInventory, $world) : bool{
+					return $this->isValidBrewingIngredient($item, $targetInventory, $world);
+				});
+			}
+
+			if($this->moveOneItemToSlot($hopperInventory, $targetInventory, BrewingStandInventory::SLOT_FUEL, fn(Item $item) : bool => $item->equals(VanillaItems::BLAZE_POWDER(), true, false))){
+				return true;
+			}
+			return $this->moveOneItemToAnySlot($hopperInventory, $targetInventory, [
+				BrewingStandInventory::SLOT_BOTTLE_LEFT,
+				BrewingStandInventory::SLOT_BOTTLE_MIDDLE,
+				BrewingStandInventory::SLOT_BOTTLE_RIGHT
+			], fn(Item $item) : bool => $item instanceof Potion || $item instanceof SplashPotion);
+		}
+
+		return $this->moveOneItem($hopperInventory, $targetInventory);
 	}
 
 	private function pullFromAboveContainer(Inventory $hopperInventory, World $world) : bool{
@@ -159,7 +192,28 @@ class Hopper extends Transparent implements PoweredByRedstone{
 			return false;
 		}
 
-		return $this->moveOneItem($aboveTile->getRealInventory(), $hopperInventory);
+		$aboveInventory = $aboveTile instanceof TileChest ? $aboveTile->getInventory() : $aboveTile->getRealInventory();
+		if($aboveInventory instanceof FurnaceInventory){
+			if($this->moveOneItemFromSlot($aboveInventory, $hopperInventory, FurnaceInventory::SLOT_RESULT)){
+				return true;
+			}
+
+			$fuelResidue = $aboveInventory->getFuel();
+			if(!$fuelResidue->isNull() && $fuelResidue->getFuelTime() <= 0){
+				return $this->moveOneItemFromSlot($aboveInventory, $hopperInventory, FurnaceInventory::SLOT_FUEL);
+			}
+
+			return false;
+		}
+		if($aboveInventory instanceof BrewingStandInventory){
+			return $this->moveOneItemFromAnySlot($aboveInventory, $hopperInventory, [
+				BrewingStandInventory::SLOT_BOTTLE_LEFT,
+				BrewingStandInventory::SLOT_BOTTLE_MIDDLE,
+				BrewingStandInventory::SLOT_BOTTLE_RIGHT
+			]);
+		}
+
+		return $this->moveOneItem($aboveInventory, $hopperInventory);
 	}
 
 	private function pullFromAboveItems(Inventory $hopperInventory, World $world) : bool{
@@ -211,6 +265,101 @@ class Hopper extends Transparent implements PoweredByRedstone{
 
 	private function moveOneItem(Inventory $from, Inventory $to) : bool{
 		return $this->moveItems($from, $to, 1);
+	}
+
+	private function moveOneItemFromSlot(Inventory $from, Inventory $to, int $slot) : bool{
+		$stack = $from->getItem($slot);
+		if($stack->isNull()){
+			return false;
+		}
+
+		$addable = $to->getAddableItemQuantity($stack);
+		if($addable <= 0){
+			return false;
+		}
+
+		$moving = clone $stack;
+		$moving->setCount(1);
+		$leftovers = $to->addItem($moving);
+		if(count($leftovers) !== 0){
+			return false;
+		}
+
+		$stack->setCount($stack->getCount() - 1);
+		$from->setItem($slot, $stack->getCount() > 0 ? $stack : $stack->setCount(0));
+		return true;
+	}
+
+	private function moveOneItemFromAnySlot(Inventory $from, Inventory $to, array $slots) : bool{
+		foreach($slots as $slot){
+			if($this->moveOneItemFromSlot($from, $to, $slot)){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private function moveOneItemToSlot(Inventory $from, Inventory $to, int $slot, \Closure $filter) : bool{
+		$target = $to->getItem($slot);
+		for($sourceSlot = 0, $size = $from->getSize(); $sourceSlot < $size; ++$sourceSlot){
+			$stack = $from->getItem($sourceSlot);
+			if($stack->isNull() || !$filter($stack)){
+				continue;
+			}
+			if(!$target->isNull() && !$target->canStackWith($stack)){
+				continue;
+			}
+
+			$maxStack = min($to->getMaxStackSize(), $stack->getMaxStackSize());
+			if(!$target->isNull() && $target->getCount() >= $maxStack){
+				continue;
+			}
+
+			$moved = clone $stack;
+			$moved->setCount(1);
+			if($target->isNull()){
+				$to->setItem($slot, $moved);
+			}else{
+				$target->setCount($target->getCount() + 1);
+				$to->setItem($slot, $target);
+			}
+
+			$stack->setCount($stack->getCount() - 1);
+			$from->setItem($sourceSlot, $stack->getCount() > 0 ? $stack : $stack->setCount(0));
+			return true;
+		}
+		return false;
+	}
+
+	private function moveOneItemToAnySlot(Inventory $from, Inventory $to, array $slots, \Closure $filter) : bool{
+		foreach($slots as $slot){
+			if($this->moveOneItemToSlot($from, $to, $slot, $filter)){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private function isValidBrewingIngredient(Item $item, BrewingStandInventory $inventory, World $world) : bool{
+		if($item instanceof Potion || $item instanceof SplashPotion || $item->equals(VanillaItems::BLAZE_POWDER(), true, false)){
+			return false;
+		}
+
+		foreach([
+			BrewingStandInventory::SLOT_BOTTLE_LEFT,
+			BrewingStandInventory::SLOT_BOTTLE_MIDDLE,
+			BrewingStandInventory::SLOT_BOTTLE_RIGHT
+		] as $slot){
+			$bottle = $inventory->getItem($slot);
+			if(!$bottle->isNull() && $world->getServer()->getCraftingManager()->matchBrewingRecipe($bottle, $item) !== null){
+				return true;
+			}
+		}
+
+		// Allow filling the ingredient slot before bottles are inserted.
+		return $inventory->getItem(BrewingStandInventory::SLOT_BOTTLE_LEFT)->isNull() &&
+			$inventory->getItem(BrewingStandInventory::SLOT_BOTTLE_MIDDLE)->isNull() &&
+			$inventory->getItem(BrewingStandInventory::SLOT_BOTTLE_RIGHT)->isNull();
 	}
 
 	private function moveItems(Inventory $from, Inventory $to, int $countLimit) : bool{

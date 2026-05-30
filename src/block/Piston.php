@@ -63,17 +63,6 @@ class Piston extends Opaque implements AnyFacing, PoweredByRedstone{
 	public function onScheduledUpdate() : void{
 		$world = $this->position->getWorld();
 		$powered = $this->isPoweredByNeighbors();
-		$front = $this->getSide($this->getPushFacing());
-		$blockedByRedstoneBlock = $this->isBlockedByFrontRedstoneComponent($front);
-
-		// Hard guard: never keep piston arm/head extended into a front redstone block.
-		if($blockedByRedstoneBlock){
-			$this->powered = false;
-			$world->setBlock($this->position, $this);
-			$this->retractHead();
-			$this->getOrCreatePistonArmTile($world)?->setExtended(false);
-			return;
-		}
 
 		if($powered === $this->powered){
 			return;
@@ -99,10 +88,6 @@ class Piston extends Opaque implements AnyFacing, PoweredByRedstone{
 	}
 
 	private function tryExtend() : bool{
-		$front = $this->getSide($this->getPushFacing());
-		if($this->isBlockedByFrontRedstoneComponent($front)){
-			return false;
-		}
 		if(!$this->tryPushLine()){
 			return false;
 		}
@@ -122,6 +107,9 @@ class Piston extends Opaque implements AnyFacing, PoweredByRedstone{
 				break;
 			}
 			if($i === $maxPush + 1){
+				return false;
+			}
+			if(!$this->canMoveBlock($b)){
 				return false;
 			}
 			$line[] = $b;
@@ -182,6 +170,9 @@ class Piston extends Opaque implements AnyFacing, PoweredByRedstone{
 		if($second->getTypeId() === BlockTypeIds::AIR){
 			return;
 		}
+		if(!$this->canMoveBlock($second)){
+			return;
+		}
 		if(!$front->canBeReplaced()){
 			return;
 		}
@@ -210,8 +201,12 @@ class Piston extends Opaque implements AnyFacing, PoweredByRedstone{
 	}
 
 	private function isPoweredByNeighbors() : bool{
+		$pushFacing = $this->getPushFacing();
 		foreach($this->getAllSides() as $side){
 			if($side instanceof Redstone){
+				if($side->getPosition()->equals($this->getSide($pushFacing)->getPosition())){
+					continue;
+				}
 				return true;
 			}
 			if($side instanceof RedstoneWire && $side->getOutputSignalStrength() > 0){
@@ -238,10 +233,6 @@ class Piston extends Opaque implements AnyFacing, PoweredByRedstone{
 		$tile = new TilePistonArm($world, $this->position->asVector3());
 		$world->addTile($tile);
 		return $tile;
-	}
-
-	private function isBlockedByFrontRedstoneComponent(Block $front) : bool{
-		return $front->getTypeId() === BlockTypeIds::REDSTONE;
 	}
 
 	private function moveBlockWithTile(Block $from, Block $to) : void{
@@ -274,5 +265,14 @@ class Piston extends Opaque implements AnyFacing, PoweredByRedstone{
 	private function shouldBreakOnPush(Block $block) : bool{
 		$typeId = $block->getTypeId();
 		return $typeId === BlockTypeIds::SHULKER_BOX || $typeId === BlockTypeIds::DYED_SHULKER_BOX;
+	}
+
+	private function canMoveBlock(Block $block) : bool{
+		return match($block->getTypeId()){
+			BlockTypeIds::OBSIDIAN,
+			BlockTypeIds::CRYING_OBSIDIAN,
+			BlockTypeIds::GLOWING_OBSIDIAN => false,
+			default => true,
+		};
 	}
 }
