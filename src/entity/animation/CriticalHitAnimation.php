@@ -28,7 +28,7 @@ use pocketmine\network\mcpe\protocol\AnimatePacket;
 
 final class CriticalHitAnimation implements Animation{
 
-	public function __construct(private Living $entity, private int $particleCount = 55){}
+	public function __construct(private Living $entity, private int $particleCount = 48){}
 
 	public function encode() : array{
 		return [
