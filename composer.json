@@ -33,7 +33,7 @@
       "ext-zlib": ">=1.2.11",
       "composer-runtime-api": "^2.0",
       "adhocore/json-comment": "~1.2.0",
-      "axolotl-pm/bedrock-block-upgrade-schema": "~5.2.0+bedrock-1.21.110",
+      "axolotl-pm/bedrock-block-upgrade-schema": "~5.3.0+bedrock-1.26.30",
       "nethergamesmc/bedrock-data": "dev-master",
       "axolotl-pm/bedrock-item-upgrade-schema": "1.18.0+bedrock-1.26.40",
       "nethergamesmc/bedrock-protocol": "dev-master",
@@ -58,9 +58,9 @@
       "phpunit/phpunit": "^10.5.24"
    },
    "replace": {
+      "pocketmine/pocketmine-mp": "*",
       "symfony/polyfill-ctype": "*",
-      "symfony/polyfill-mbstring": "*",
-      "pocketmine/pocketmine-mp": "*"
+      "symfony/polyfill-mbstring": "*"
    },
    "autoload": {
       "psr-4": {

@@ -1,5 +1,5 @@
 # PocketMine-MP Docker image
-This folder contains the files used to build and test the `pmmp/pocketmine-mp` Docker image.
+This folder contains the files used to build and test the `ghcr.io/axolotl-pm/pocketmine-mp` Docker image.
 
 Docker is an easy, safe way to run software in a container where it can't affect anything else on your machine.
 You don't need to build any dependencies, and updating is as simple as changing the version number of the image you're using.
@@ -7,7 +7,7 @@ You don't need to build any dependencies, and updating is as simple as changing 
 ## Pre-requisites
 To install Docker, refer to the [official Docker docs](https://docs.docker.com/engine/install/).
 
-## Running PocketMine-MP from Docker (using Docker Hub)
+## Running PocketMine-MP from Docker (using GitHub Container Registry)
 This is really easy once you have `docker` installed.
 
 ```
@@ -15,12 +15,12 @@ mkdir wherever-you-want
 cd wherever-you-want
 mkdir data plugins
 sudo chown -R 1000:1000 data plugins
-docker run -it -p 19132:19132/udp -v $PWD/data:/data -v $PWD/plugins:/plugins ghcr.io/pmmp/pocketmine-mp
+docker run -it -p 19132:19132/udp -v $PWD/data:/data -v $PWD/plugins:/plugins ghcr.io/axolotl-pm/pocketmine-mp
 ```
 
 To run a specific version, just add it to the end of the command, like this:
 ```
-docker run -it -p 19132:19132/udp -v $PWD/data:/data -v $PWD/plugins:/plugins ghcr.io/pmmp/pocketmine-mp:4.0.0
+docker run -it -p 19132:19132/udp -v $PWD/data:/data -v $PWD/plugins:/plugins ghcr.io/axolotl-pm/pocketmine-mp:5.46.0
 ```
 
 ## Changing the server port
@@ -58,8 +58,8 @@ This will run the server in the background even if you closed console. (No need 
 Use `docker ps` to see a list of running containers. It will look like this:
 ```
 user@DYLANS-PC:~/pm-docker-test$ docker ps
-CONTAINER ID   IMAGE                      COMMAND                  CREATED         STATUS         PORTS                                                                              NAMES
-dc20edd3dd62   pmmp/pocketmine-mp:4.0.0   "start-pocketmine"       7 seconds ago   Up 6 seconds   19132/tcp, 0.0.0.0:19132-19133->19132-19133/udp, :::19132-19133->19132-19133/udp   brave_dijkstra
+CONTAINER ID   IMAGE                                     COMMAND                  CREATED         STATUS         PORTS                                                                              NAMES
+dc20edd3dd62   ghcr.io/axolotl-pm/pocketmine-mp:5.46.0   "start-pocketmine"       7 seconds ago   Up 6 seconds   19132/tcp, 0.0.0.0:19132-19133->19132-19133/udp, :::19132-19133->19132-19133/udp   brave_dijkstra
 ```
 In this case, the container name is `brave_dijkstra`, but it might be something else in your case.
 
