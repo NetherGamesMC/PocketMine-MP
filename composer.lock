@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7b08ffd2955df2f462a96787c90dd3e1",
+    "content-hash": "d4d654ba5e8ae06b35d12c01b0e0bc03",
     "packages": [
         {
             "name": "adhocore/json-comment",
@@ -67,16 +67,16 @@
         },
         {
             "name": "axolotl-pm/bedrock-block-upgrade-schema",
-            "version": "5.2.0",
+            "version": "5.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/axolotl-pm/BedrockBlockUpgradeSchema.git",
-                "reference": "5d7889c9a1cdf9e3cd814d2a104ad69b75116ec7"
+                "reference": "e8e01b5a80192ca8d05ca257fe300cfb5b8df3da"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/axolotl-pm/BedrockBlockUpgradeSchema/zipball/5d7889c9a1cdf9e3cd814d2a104ad69b75116ec7",
-                "reference": "5d7889c9a1cdf9e3cd814d2a104ad69b75116ec7",
+                "url": "https://api.github.com/repos/axolotl-pm/BedrockBlockUpgradeSchema/zipball/e8e01b5a80192ca8d05ca257fe300cfb5b8df3da",
+                "reference": "e8e01b5a80192ca8d05ca257fe300cfb5b8df3da",
                 "shasum": ""
             },
             "type": "library",
@@ -87,9 +87,9 @@
             "description": "Schemas describing how to upgrade saved block data in older Minecraft: Bedrock Edition world saves",
             "support": {
                 "issues": "https://github.com/axolotl-pm/BedrockBlockUpgradeSchema/issues",
-                "source": "https://github.com/axolotl-pm/BedrockBlockUpgradeSchema/tree/5.2.0"
+                "source": "https://github.com/axolotl-pm/BedrockBlockUpgradeSchema/tree/5.3.0"
             },
-            "time": "2025-10-02T13:22:10+00:00"
+            "time": "2026-08-24T11:38:43+00:00"
         },
         {
             "name": "axolotl-pm/bedrock-item-upgrade-schema",
@@ -208,12 +208,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/kostamax27/BedrockProtocol-NG.git",
-                "reference": "c29a13b32811d327fe1c2434b26416cb672645b0"
+                "reference": "d29c470f71ac2324f40299243f01cae24aff82ec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kostamax27/BedrockProtocol-NG/zipball/c29a13b32811d327fe1c2434b26416cb672645b0",
-                "reference": "c29a13b32811d327fe1c2434b26416cb672645b0",
+                "url": "https://api.github.com/repos/kostamax27/BedrockProtocol-NG/zipball/d29c470f71ac2324f40299243f01cae24aff82ec",
+                "reference": "d29c470f71ac2324f40299243f01cae24aff82ec",
                 "shasum": ""
             },
             "require": {
@@ -256,7 +256,7 @@
             "support": {
                 "source": "https://github.com/kostamax27/BedrockProtocol-NG/tree/master"
             },
-            "time": "2026-08-15T14:39:11+00:00"
+            "time": "2026-08-29T19:34:43+00:00"
         },
         {
             "name": "netresearch/jsonmapper",
@@ -351,6 +351,7 @@
                 "issues": "https://github.com/pmmp/BinaryUtils/issues",
                 "source": "https://github.com/pmmp/BinaryUtils/tree/0.2.7"
             },
+            "abandoned": true,
             "time": "2025-12-24T04:20:35+00:00"
         },
         {
@@ -401,6 +402,7 @@
                 "issues": "https://github.com/pmmp/CallbackValidator/issues",
                 "source": "https://github.com/pmmp/CallbackValidator/tree/1.0.4"
             },
+            "abandoned": true,
             "time": "2025-12-24T01:25:05+00:00"
         },
         {
@@ -439,6 +441,7 @@
                 "issues": "https://github.com/pmmp/Color/issues",
                 "source": "https://github.com/pmmp/Color/tree/0.3.1"
             },
+            "abandoned": true,
             "time": "2023-04-10T11:38:05+00:00"
         },
         {
@@ -478,6 +481,7 @@
                 "issues": "https://github.com/pmmp/ErrorHandler/issues",
                 "source": "https://github.com/pmmp/ErrorHandler/tree/0.7.1"
             },
+            "abandoned": true,
             "time": "2025-12-24T02:26:52+00:00"
         },
         {
@@ -519,6 +523,7 @@
                 "issues": "https://github.com/pmmp/Log/issues",
                 "source": "https://github.com/pmmp/Log/tree/0.4.0"
             },
+            "abandoned": true,
             "time": "2021-06-18T19:08:09+00:00"
         },
         {
@@ -560,6 +565,7 @@
                 "issues": "https://github.com/pmmp/Math/issues",
                 "source": "https://github.com/pmmp/Math/tree/1.0.0"
             },
+            "abandoned": true,
             "time": "2023-08-03T12:56:33+00:00"
         },
         {
@@ -603,6 +609,7 @@
                 "issues": "https://github.com/pmmp/NBT/issues",
                 "source": "https://github.com/pmmp/NBT/tree/1.2.0"
             },
+            "abandoned": true,
             "time": "2025-09-19T18:09:30+00:00"
         },
         {
@@ -687,6 +694,7 @@
                 "issues": "https://github.com/pmmp/RakLibIpc/issues",
                 "source": "https://github.com/pmmp/RakLibIpc/tree/1.0.1"
             },
+            "abandoned": true,
             "time": "2024-03-01T15:55:05+00:00"
         },
         {
@@ -727,6 +735,7 @@
                 "issues": "https://github.com/pmmp/Snooze/issues",
                 "source": "https://github.com/pmmp/Snooze/tree/0.5.0"
             },
+            "abandoned": true,
             "time": "2023-05-22T23:43:01+00:00"
         },
         {
@@ -885,16 +894,16 @@
         },
         {
             "name": "symfony/filesystem",
-            "version": "v6.4.43",
+            "version": "v6.4.44",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/filesystem.git",
-                "reference": "9ff03da12d67649fbd1f34ca95951554624d0a16"
+                "reference": "e84ffb3e77e3a7144727a0d0735d0d9cc0ca77a7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/filesystem/zipball/9ff03da12d67649fbd1f34ca95951554624d0a16",
-                "reference": "9ff03da12d67649fbd1f34ca95951554624d0a16",
+                "url": "https://api.github.com/repos/symfony/filesystem/zipball/e84ffb3e77e3a7144727a0d0735d0d9cc0ca77a7",
+                "reference": "e84ffb3e77e3a7144727a0d0735d0d9cc0ca77a7",
                 "shasum": ""
             },
             "require": {
@@ -931,7 +940,7 @@
             "description": "Provides basic utilities for the filesystem",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/filesystem/tree/v6.4.43"
+                "source": "https://github.com/symfony/filesystem/tree/v6.4.44"
             },
             "funding": [
                 {
@@ -951,7 +960,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-06-27T10:13:35+00:00"
+            "time": "2026-08-20T20:21:47+00:00"
         }
     ],
     "packages-dev": [
