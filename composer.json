@@ -33,11 +33,11 @@
       "ext-zlib": ">=1.2.11",
       "composer-runtime-api": "^2.0",
       "adhocore/json-comment": "~1.2.0",
-      "netresearch/jsonmapper": "~v5.0.0",
-      "pocketmine/bedrock-block-upgrade-schema": "~5.2.0+bedrock-1.21.110",
+      "axolotl-pm/bedrock-block-upgrade-schema": "~5.3.0+bedrock-1.26.30",
       "nethergamesmc/bedrock-data": "dev-master",
-      "pocketmine/bedrock-item-upgrade-schema": "~1.17.0+bedrock-1.26.20",
+      "axolotl-pm/bedrock-item-upgrade-schema": "1.18.0+bedrock-1.26.40",
       "nethergamesmc/bedrock-protocol": "dev-master",
+      "netresearch/jsonmapper": "~v6.0.0",
       "pocketmine/binaryutils": "^0.2.1",
       "pocketmine/callback-validator": "~1.0.4",
       "pocketmine/color": "^0.3.0",
@@ -58,9 +58,9 @@
       "phpunit/phpunit": "^10.5.24"
    },
    "replace": {
+      "pocketmine/pocketmine-mp": "*",
       "symfony/polyfill-ctype": "*",
-      "symfony/polyfill-mbstring": "*",
-      "pocketmine/pocketmine-mp": "*"
+      "symfony/polyfill-mbstring": "*"
    },
    "autoload": {
       "psr-4": {
@@ -104,11 +104,11 @@
    "repositories": [
       {
          "type": "vcs",
-         "url":  "git@github.com:NetherGamesMC/BedrockProtocol.git"
+         "url":  "git@github.com:kostamax27/BedrockProtocol-NG.git"
       },
       {
          "type": "vcs",
-         "url":  "git@github.com:NetherGamesMC/BedrockData.git"
+         "url":  "git@github.com:kostamax27/BedrockData-NG.git"
       }
    ]
 }

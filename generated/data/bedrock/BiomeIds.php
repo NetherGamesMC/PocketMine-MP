@@ -124,4 +124,5 @@ final class BiomeIds{
 	public const CHERRY_GROVE = 192;
 	public const PALE_GARDEN = 193;
 	public const SULFUR_CAVES = 194;
+	public const DAPPLED_FOREST = 195;
 }

@@ -67,6 +67,9 @@ class RakLibInterface implements ServerEventListener, AdvancedNetworkInterface{
 
 	private const MCPE_RAKNET_PACKET_ID = "\xfe";
 
+	private const SERVER_NAME_FLAG_TRUE = "1";
+	private const SERVER_NAME_FLAG_FALSE = "0";
+
 	private Server $server;
 	private Network $network;
 
@@ -274,7 +277,15 @@ class RakLibInterface implements ServerEventListener, AdvancedNetworkInterface{
 					GameMode::SURVIVAL => "Survival",
 					GameMode::ADVENTURE => "Adventure",
 					default => "Creative"
-				}
+				},
+				self::SERVER_NAME_FLAG_TRUE, //isJoinableThroughServerScreen
+				(string) $this->server->getPort(),
+				(string) $this->server->getPortV6(),
+				self::SERVER_NAME_FLAG_FALSE, //isEditorWorld
+				//if the server can actually reach Xbox services
+				($isOnline = $this->server->getOnlineMode()) ? self::SERVER_NAME_FLAG_TRUE : self::SERVER_NAME_FLAG_FALSE,
+				//inverse of online-mode
+				!$isOnline ? self::SERVER_NAME_FLAG_TRUE : self::SERVER_NAME_FLAG_FALSE,
 			]) . ";"
 		);
 	}

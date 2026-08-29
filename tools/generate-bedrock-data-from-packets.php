@@ -57,8 +57,6 @@ use pocketmine\network\mcpe\protocol\types\inventory\CreativeGroupEntry;
 use pocketmine\network\mcpe\protocol\types\inventory\ItemStack;
 use pocketmine\network\mcpe\protocol\types\inventory\ItemStackExtraData;
 use pocketmine\network\mcpe\protocol\types\inventory\ItemStackExtraDataShield;
-use pocketmine\network\mcpe\protocol\types\recipe\ComplexAliasItemDescriptor;
-use pocketmine\network\mcpe\protocol\types\recipe\IntIdMetaItemDescriptor;
 use pocketmine\network\mcpe\protocol\types\recipe\MolangItemDescriptor;
 use pocketmine\network\mcpe\protocol\types\recipe\MultiRecipe;
 use pocketmine\network\mcpe\protocol\types\recipe\RecipeIngredient;
@@ -326,12 +324,9 @@ class ParserPacketHandler extends PacketHandler{
 		}
 		$data = new RecipeIngredientData();
 
-		if($descriptor instanceof IntIdMetaItemDescriptor || $descriptor instanceof StringIdMetaItemDescriptor){
-			if($descriptor instanceof IntIdMetaItemDescriptor){
-				$data->name = $this->itemTypeDictionary->fromIntId($descriptor->getId());
-			}else{
-				$data->name = $descriptor->getId();
-			}
+		if($descriptor instanceof StringIdMetaItemDescriptor){
+			$data->name = $descriptor->getId();
+
 			$meta = $descriptor->getMeta();
 			if($meta !== 32767){
 				$blockStateId = $this->blockTranslator->getBlockStateDictionary()->lookupStateIdFromIdMeta($data->name, $meta);
@@ -351,8 +346,6 @@ class ParserPacketHandler extends PacketHandler{
 		}elseif($descriptor instanceof MolangItemDescriptor){
 			$data->molang_expression = $descriptor->getMolangExpression();
 			$data->molang_version = $descriptor->getMolangVersion();
-		}elseif($descriptor instanceof ComplexAliasItemDescriptor){
-			$data->name = $descriptor->getAlias();
 		}else{
 			throw new \UnexpectedValueException("Unknown item descriptor type " . get_class($descriptor));
 		}
@@ -391,7 +384,7 @@ class ParserPacketHandler extends PacketHandler{
 				}
 			}
 		}
-		$unlockingIngredients = $entry->getUnlockingRequirement()->getUnlockingIngredients();
+		$unlockingIngredients = $entry->getUnlockingRequirement()?->getUnlockingIngredients();
 		return new ShapedRecipeData(
 			array_map(fn(array $array) => implode('', array_values($array)), array_values($shape)),
 			$outputsByKey,
@@ -403,7 +396,7 @@ class ParserPacketHandler extends PacketHandler{
 	}
 
 	private function shapelessRecipeToJson(ShapelessRecipe $recipe) : ShapelessRecipeData{
-		$unlockingIngredients = $recipe->getUnlockingRequirement()->getUnlockingIngredients();
+		$unlockingIngredients = $recipe->getUnlockingRequirement()?->getUnlockingIngredients();
 		return new ShapelessRecipeData(
 			array_map(fn(RecipeIngredient $input) => $this->recipeIngredientToJson($input), $recipe->getInputs()),
 			array_map(fn(ItemStack $output) => $this->itemStackToJson($output), $recipe->getOutputs()),
@@ -440,58 +433,55 @@ class ParserPacketHandler extends PacketHandler{
 		@mkdir($recipesPath);
 
 		$recipes = [];
-		foreach($packet->recipesWithTypeIds as $entry){
-			static $typeMap = [
-				CraftingDataPacket::ENTRY_SHAPELESS => "shapeless_crafting",
-				CraftingDataPacket::ENTRY_SHAPED => "shaped_crafting",
-				CraftingDataPacket::ENTRY_MULTI => "special_hardcoded",
-				CraftingDataPacket::ENTRY_USER_DATA_SHAPELESS => "shapeless_shulker_box",
-				CraftingDataPacket::ENTRY_SHAPELESS_CHEMISTRY => "shapeless_chemistry",
-				CraftingDataPacket::ENTRY_SHAPED_CHEMISTRY => "shaped_chemistry",
-				CraftingDataPacket::ENTRY_SMITHING_TRANSFORM => "smithing",
-				CraftingDataPacket::ENTRY_SMITHING_TRIM => "smithing_trim",
-			];
-			if(!isset($typeMap[$entry->getTypeId()])){
-				throw new \UnexpectedValueException("Unknown recipe type ID " . $entry->getTypeId());
-			}
-			$mappedType = $typeMap[$entry->getTypeId()];
-
-			if($entry instanceof ShapedRecipe){
-				//all known recipes are currently symmetric and I don't feel like attaching a `symmetric` field to
-				//every shaped recipe for this - split it into a separate category instead
-				if(!$entry->isSymmetric()){
-					$recipes[$mappedType . "_asymmetric"][] = $this->shapedRecipeToJson($entry);
+		$recipeTypes = [
+			"shaped_crafting" => $packet->shapedRecipes,
+			"shapeless_crafting" => $packet->shapelessRecipes,
+			"special_hardcoded" => $packet->multiRecipes,
+			"shapeless_shulker_box" => $packet->userDataShapelessRecipes,
+			"shapeless_chemistry" => $packet->shapelessChemistryRecipes,
+			"shaped_chemistry" => $packet->shapedChemistryRecipes,
+			"smithing" => $packet->smithingTransformRecipes,
+			"smithing_trim" => $packet->smithingTrimRecipes,
+		];
+		foreach($recipeTypes as $mappedType => $entries){
+			foreach($entries as $entry){
+				if($entry instanceof ShapedRecipe){
+					//all known recipes are currently symmetric and I don't feel like attaching a `symmetric` field to
+					//every shaped recipe for this - split it into a separate category instead
+					if(!$entry->isSymmetric()){
+						$recipes[$mappedType . "_asymmetric"][] = $this->shapedRecipeToJson($entry);
+					}else{
+						$recipes[$mappedType][] = $this->shapedRecipeToJson($entry);
+					}
+				}elseif($entry instanceof ShapelessRecipe){
+					$recipes[$mappedType][] = $this->shapelessRecipeToJson($entry);
+				}elseif($entry instanceof MultiRecipe){
+					$recipes[$mappedType][] = $entry->getRecipeId()->toString();
+				}elseif($entry instanceof SmithingTransformRecipe){
+					$recipes[$mappedType][] = $this->smithingRecipeToJson($entry);
+				}elseif($entry instanceof SmithingTrimRecipe){
+					$recipes[$mappedType][] = $this->smithingTrimRecipeToJson($entry);
 				}else{
-					$recipes[$mappedType][] = $this->shapedRecipeToJson($entry);
+					throw new AssumptionFailedError("Unknown recipe type " . get_class($entry));
 				}
-			}elseif($entry instanceof ShapelessRecipe){
-				$recipes[$mappedType][] = $this->shapelessRecipeToJson($entry);
-			}elseif($entry instanceof MultiRecipe){
-				$recipes[$mappedType][] = $entry->getRecipeId()->toString();
-			}elseif($entry instanceof SmithingTransformRecipe){
-				$recipes[$mappedType][] = $this->smithingRecipeToJson($entry);
-			}elseif($entry instanceof SmithingTrimRecipe){
-				$recipes[$mappedType][] = $this->smithingTrimRecipeToJson($entry);
-			}else{
-				throw new AssumptionFailedError("Unknown recipe type " . get_class($entry));
 			}
-		}
-
-		foreach($packet->potionTypeRecipes as $recipe){
-			$recipes["potion_type"][] = new PotionTypeRecipeData(
-				$this->recipeIngredientToJson(new RecipeIngredient(new IntIdMetaItemDescriptor($recipe->getInputItemId(), $recipe->getInputItemMeta()), 1)),
-				$this->recipeIngredientToJson(new RecipeIngredient(new IntIdMetaItemDescriptor($recipe->getIngredientItemId(), $recipe->getIngredientItemMeta()), 1)),
-				$this->itemStackToJson(new ItemStack($recipe->getOutputItemId(), $recipe->getOutputItemMeta(), 1, 0, "")),
-			);
 		}
 
 		if($this->itemTypeDictionary === null){
 			throw new AssumptionFailedError("We should have already crashed if this was null");
 		}
+
+		foreach($packet->potionTypeRecipes as $recipe){
+			$recipes["potion_type"][] = new PotionTypeRecipeData(
+				$this->recipeIngredientToJson(new RecipeIngredient(new StringIdMetaItemDescriptor($this->itemTypeDictionary->fromIntId($recipe->getInputItemId()), $recipe->getInputItemMeta()), 1)),
+				$this->recipeIngredientToJson(new RecipeIngredient(new StringIdMetaItemDescriptor($this->itemTypeDictionary->fromIntId($recipe->getIngredientItemId()), $recipe->getIngredientItemMeta()), 1)),
+				$this->itemStackToJson(new ItemStack($recipe->getOutputItemId(), $recipe->getOutputItemMeta(), 1, 0, "")),
+			);
+		}
 		foreach($packet->potionContainerRecipes as $recipe){
 			$recipes["potion_container_change"][] = new PotionContainerChangeRecipeData(
 				$this->itemTypeDictionary->fromIntId($recipe->getInputItemId()),
-				$this->recipeIngredientToJson(new RecipeIngredient(new IntIdMetaItemDescriptor($recipe->getIngredientItemId(), 0), 1)),
+				$this->recipeIngredientToJson(new RecipeIngredient(new StringIdMetaItemDescriptor($this->itemTypeDictionary->fromIntId($recipe->getIngredientItemId()), 0), 1)),
 				$this->itemTypeDictionary->fromIntId($recipe->getOutputItemId()),
 			);
 		}

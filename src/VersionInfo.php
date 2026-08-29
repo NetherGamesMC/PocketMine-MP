@@ -31,10 +31,10 @@ use function str_repeat;
 
 final class VersionInfo{
 	public const NAME = "NG-PocketMine-MP";
-	public const BASE_VERSION = "5.44.2";
+	public const BASE_VERSION = "5.47.1";
 	public const IS_DEVELOPMENT_BUILD = true;
 	public const BUILD_CHANNEL = "stable";
-	public const GITHUB_URL = "https://github.com/pmmp/PocketMine-MP";
+	public const GITHUB_URL = "https://github.com/axolotl-pm/PocketMine-MP";
 
 	/**
 	 * PocketMine-MP-specific version ID for world data. Used to determine what fixes need to be applied to old world

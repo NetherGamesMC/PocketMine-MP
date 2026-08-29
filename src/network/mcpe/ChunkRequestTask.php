@@ -77,7 +77,7 @@ class ChunkRequestTask extends AsyncTask{
 		$payload = ChunkSerializer::serializeFullChunk($chunk, $dimensionId, $converter, $this->tiles);
 
 		$stream = new ByteBufferWriter();
-		PacketBatch::encodePackets($stream, $this->mappingProtocol, [LevelChunkPacket::create(new ChunkPosition($this->chunkX, $this->chunkZ), $dimensionId, $subCount, false, null, $payload)]);
+		PacketBatch::encodePackets($stream, $this->mappingProtocol, [LevelChunkPacket::create(new ChunkPosition($this->chunkX, $this->chunkZ), $dimensionId, $subCount, null, false, [], $payload)]);
 
 		$compressor = $this->compressor->deserialize();
 		$protocolAddition = $this->mappingProtocol >= ProtocolInfo::PROTOCOL_1_20_60 ? chr($compressor->getNetworkId()) : '';

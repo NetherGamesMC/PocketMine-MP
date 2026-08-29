@@ -881,6 +881,7 @@ final class BlockTypeNames{
 	public const ORANGE_CONCRETE = "minecraft:orange_concrete";
 	public const ORANGE_CONCRETE_POWDER = "minecraft:orange_concrete_powder";
 	public const ORANGE_GLAZED_TERRACOTTA = "minecraft:orange_glazed_terracotta";
+	public const ORANGE_POPLAR_LEAVES = "minecraft:orange_poplar_leaves";
 	public const ORANGE_SHULKER_BOX = "minecraft:orange_shulker_box";
 	public const ORANGE_STAINED_GLASS = "minecraft:orange_stained_glass";
 	public const ORANGE_STAINED_GLASS_PANE = "minecraft:orange_stained_glass_pane";
@@ -997,6 +998,23 @@ final class BlockTypeNames{
 	public const POLISHED_TUFF_SLAB = "minecraft:polished_tuff_slab";
 	public const POLISHED_TUFF_STAIRS = "minecraft:polished_tuff_stairs";
 	public const POLISHED_TUFF_WALL = "minecraft:polished_tuff_wall";
+	public const POPLAR_BUTTON = "minecraft:poplar_button";
+	public const POPLAR_DOOR = "minecraft:poplar_door";
+	public const POPLAR_DOUBLE_SLAB = "minecraft:poplar_double_slab";
+	public const POPLAR_FENCE = "minecraft:poplar_fence";
+	public const POPLAR_FENCE_GATE = "minecraft:poplar_fence_gate";
+	public const POPLAR_HANGING_SIGN = "minecraft:poplar_hanging_sign";
+	public const POPLAR_LOG = "minecraft:poplar_log";
+	public const POPLAR_PLANKS = "minecraft:poplar_planks";
+	public const POPLAR_PRESSURE_PLATE = "minecraft:poplar_pressure_plate";
+	public const POPLAR_SAPLING = "minecraft:poplar_sapling";
+	public const POPLAR_SHELF = "minecraft:poplar_shelf";
+	public const POPLAR_SLAB = "minecraft:poplar_slab";
+	public const POPLAR_STAIRS = "minecraft:poplar_stairs";
+	public const POPLAR_STANDING_SIGN = "minecraft:poplar_standing_sign";
+	public const POPLAR_TRAPDOOR = "minecraft:poplar_trapdoor";
+	public const POPLAR_WALL_SIGN = "minecraft:poplar_wall_sign";
+	public const POPLAR_WOOD = "minecraft:poplar_wood";
 	public const POPPY = "minecraft:poppy";
 	public const PORTAL = "minecraft:portal";
 	public const POTATOES = "minecraft:potatoes";
@@ -1055,6 +1073,7 @@ final class BlockTypeNames{
 	public const RED_NETHER_BRICK_SLAB = "minecraft:red_nether_brick_slab";
 	public const RED_NETHER_BRICK_STAIRS = "minecraft:red_nether_brick_stairs";
 	public const RED_NETHER_BRICK_WALL = "minecraft:red_nether_brick_wall";
+	public const RED_POPLAR_LEAVES = "minecraft:red_poplar_leaves";
 	public const RED_SAND = "minecraft:red_sand";
 	public const RED_SANDSTONE = "minecraft:red_sandstone";
 	public const RED_SANDSTONE_DOUBLE_SLAB = "minecraft:red_sandstone_double_slab";
@@ -1170,6 +1189,7 @@ final class BlockTypeNames{
 	public const STONE_STAIRS = "minecraft:stone_stairs";
 	public const STONECUTTER = "minecraft:stonecutter";
 	public const STONECUTTER_BLOCK = "minecraft:stonecutter_block";
+	public const STRAW_BED = "minecraft:straw_bed";
 	public const STRIPPED_ACACIA_LOG = "minecraft:stripped_acacia_log";
 	public const STRIPPED_ACACIA_WOOD = "minecraft:stripped_acacia_wood";
 	public const STRIPPED_BAMBOO_BLOCK = "minecraft:stripped_bamboo_block";
@@ -1189,6 +1209,8 @@ final class BlockTypeNames{
 	public const STRIPPED_OAK_WOOD = "minecraft:stripped_oak_wood";
 	public const STRIPPED_PALE_OAK_LOG = "minecraft:stripped_pale_oak_log";
 	public const STRIPPED_PALE_OAK_WOOD = "minecraft:stripped_pale_oak_wood";
+	public const STRIPPED_POPLAR_LOG = "minecraft:stripped_poplar_log";
+	public const STRIPPED_POPLAR_WOOD = "minecraft:stripped_poplar_wood";
 	public const STRIPPED_SPRUCE_LOG = "minecraft:stripped_spruce_log";
 	public const STRIPPED_SPRUCE_WOOD = "minecraft:stripped_spruce_wood";
 	public const STRIPPED_WARPED_HYPHAE = "minecraft:stripped_warped_hyphae";
@@ -1381,6 +1403,7 @@ final class BlockTypeNames{
 	public const YELLOW_CONCRETE = "minecraft:yellow_concrete";
 	public const YELLOW_CONCRETE_POWDER = "minecraft:yellow_concrete_powder";
 	public const YELLOW_GLAZED_TERRACOTTA = "minecraft:yellow_glazed_terracotta";
+	public const YELLOW_POPLAR_LEAVES = "minecraft:yellow_poplar_leaves";
 	public const YELLOW_SHULKER_BOX = "minecraft:yellow_shulker_box";
 	public const YELLOW_STAINED_GLASS = "minecraft:yellow_stained_glass";
 	public const YELLOW_STAINED_GLASS_PANE = "minecraft:yellow_stained_glass_pane";

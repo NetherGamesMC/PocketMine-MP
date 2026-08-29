@@ -149,7 +149,7 @@ auto-updater:
   preferred-channel: stable
   #If using a development version, it will suggest changing the channel
   suggest-channels: true
-  host: update.pmmp.io
+  host: update.axolotl-pm.org
 
 timings:
   #Choose the host to use for viewing your timings results.

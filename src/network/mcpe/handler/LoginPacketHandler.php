@@ -50,6 +50,7 @@ use pocketmine\player\PlayerInfo;
 use pocketmine\player\XboxLivePlayerInfo;
 use pocketmine\Server;
 use pocketmine\utils\Utils;
+use pocketmine\utils\VersionString;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use function base64_decode;
@@ -237,6 +238,17 @@ class LoginPacketHandler extends PacketHandler{
 		}
 
 		$clientData = $this->parseClientData($packet->clientDataJwt);
+
+		if($this->session->getProtocolId() === ProtocolInfo::PROTOCOL_1_26_44){
+			try{
+				$version = new VersionString($clientData->GameVersion);
+			}catch(\InvalidArgumentException $e){
+				throw PacketHandlingException::wrap($e);
+			}
+			if($version->getMajor() === 1 && $version->getMinor() === 26 && $version->getPatch() < 44){
+				$this->session->setProtocolId(ProtocolInfo::PROTOCOL_1_26_40);
+			}
+		}
 
 		try{
 			$skin = $this->session->getTypeConverter()->getSkinAdapter()->fromSkinData(ClientDataToSkinDataHelper::fromClientData($clientData));

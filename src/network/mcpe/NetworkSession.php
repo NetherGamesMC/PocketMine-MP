@@ -909,7 +909,7 @@ class NetworkSession{
 	public function transfer(string $ip, int $port, Translatable|string|null $reason = null) : void{
 		$reason ??= KnownTranslationFactory::pocketmine_disconnect_transfer();
 		$this->tryDisconnect(function() use ($ip, $port, $reason) : void{
-			$this->sendDataPacket(TransferPacket::create($ip, $port, false), true);
+			$this->sendDataPacket(TransferPacket::create($ip, $port, false, null), true);
 			if($this->player !== null){
 				$this->player->onPostDisconnect($reason, null);
 			}

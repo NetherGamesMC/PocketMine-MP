@@ -72,6 +72,7 @@ use pocketmine\world\sound\Sound;
 use pocketmine\world\World;
 use function abs;
 use function array_map;
+use function array_values;
 use function assert;
 use function cos;
 use function count;
@@ -1527,8 +1528,8 @@ abstract class Entity{
 			$this->location->yaw, //TODO: head yaw
 			$this->location->yaw, //TODO: body yaw (wtf mojang?)
 			array_map(function(Attribute $attr) : NetworkAttribute{
-				return new NetworkAttribute($attr->getId(), $attr->getMinValue(), $attr->getMaxValue(), $attr->getValue(), $attr->getDefaultValue(), []);
-			}, $this->attributeMap->getAll()),
+				return new NetworkAttribute($attr->getId(), $attr->getMinValue(), $attr->getMaxValue(), $attr->getValue());
+			}, array_values($this->attributeMap->getAll())),
 			$this->getAllNetworkData(),
 			new PropertySyncData([], []),
 			[] //TODO: entity links

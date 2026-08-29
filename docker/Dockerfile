@@ -28,7 +28,7 @@ COPY ./composer.json ./composer.lock /opt/pocketmine/repo/
 
 WORKDIR /opt/pocketmine/repo
 RUN composer install --classmap-authoritative --no-dev --prefer-dist
-RUN php vendor/pocketmine/bedrock-data/.minify_json.php
+RUN php vendor/axolotl-pm/bedrock-data/.minify_json.php
 RUN php -dphar.readonly=0 ./build/server-phar.php --git ${GIT_HASH}
 # Just to make sure the build script didn't false-positive-exit
 RUN test -f /opt/pocketmine/repo/PocketMine-MP.phar

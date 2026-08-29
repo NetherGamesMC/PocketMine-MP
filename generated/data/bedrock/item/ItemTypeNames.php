@@ -67,6 +67,7 @@ final class ItemTypeNames{
 	public const BIRCH_HANGING_SIGN = "minecraft:birch_hanging_sign";
 	public const BIRCH_SIGN = "minecraft:birch_sign";
 	public const BLACK_BUNDLE = "minecraft:black_bundle";
+	public const BLACK_CUSHION = "minecraft:black_cushion";
 	public const BLACK_DYE = "minecraft:black_dye";
 	public const BLACK_HARNESS = "minecraft:black_harness";
 	public const BLADE_POTTERY_SHERD = "minecraft:blade_pottery_sherd";
@@ -75,6 +76,7 @@ final class ItemTypeNames{
 	public const BLAZE_SPAWN_EGG = "minecraft:blaze_spawn_egg";
 	public const BLEACH = "minecraft:bleach";
 	public const BLUE_BUNDLE = "minecraft:blue_bundle";
+	public const BLUE_CUSHION = "minecraft:blue_cushion";
 	public const BLUE_DYE = "minecraft:blue_dye";
 	public const BLUE_EGG = "minecraft:blue_egg";
 	public const BLUE_HARNESS = "minecraft:blue_harness";
@@ -95,6 +97,7 @@ final class ItemTypeNames{
 	public const BREWING_STAND = "minecraft:brewing_stand";
 	public const BRICK = "minecraft:brick";
 	public const BROWN_BUNDLE = "minecraft:brown_bundle";
+	public const BROWN_CUSHION = "minecraft:brown_cushion";
 	public const BROWN_DYE = "minecraft:brown_dye";
 	public const BROWN_EGG = "minecraft:brown_egg";
 	public const BROWN_HARNESS = "minecraft:brown_harness";
@@ -182,6 +185,7 @@ final class ItemTypeNames{
 	public const CRIMSON_SIGN = "minecraft:crimson_sign";
 	public const CROSSBOW = "minecraft:crossbow";
 	public const CYAN_BUNDLE = "minecraft:cyan_bundle";
+	public const CYAN_CUSHION = "minecraft:cyan_cushion";
 	public const CYAN_DYE = "minecraft:cyan_dye";
 	public const CYAN_HARNESS = "minecraft:cyan_harness";
 	public const DANGER_POTTERY_SHERD = "minecraft:danger_pottery_sherd";
@@ -190,7 +194,6 @@ final class ItemTypeNames{
 	public const DARK_OAK_DOOR = "minecraft:dark_oak_door";
 	public const DARK_OAK_HANGING_SIGN = "minecraft:dark_oak_hanging_sign";
 	public const DARK_OAK_SIGN = "minecraft:dark_oak_sign";
-	public const DEBUG_STICK = "minecraft:debug_stick";
 	public const DIAMOND = "minecraft:diamond";
 	public const DIAMOND_AXE = "minecraft:diamond_axe";
 	public const DIAMOND_BOOTS = "minecraft:diamond_boots";
@@ -286,9 +289,11 @@ final class ItemTypeNames{
 	public const GOLDEN_SPEAR = "minecraft:golden_spear";
 	public const GOLDEN_SWORD = "minecraft:golden_sword";
 	public const GRAY_BUNDLE = "minecraft:gray_bundle";
+	public const GRAY_CUSHION = "minecraft:gray_cushion";
 	public const GRAY_DYE = "minecraft:gray_dye";
 	public const GRAY_HARNESS = "minecraft:gray_harness";
 	public const GREEN_BUNDLE = "minecraft:green_bundle";
+	public const GREEN_CUSHION = "minecraft:green_cushion";
 	public const GREEN_DYE = "minecraft:green_dye";
 	public const GREEN_HARNESS = "minecraft:green_harness";
 	public const GUARDIAN_SPAWN_EGG = "minecraft:guardian_spawn_egg";
@@ -347,12 +352,15 @@ final class ItemTypeNames{
 	public const LEAVES2 = "minecraft:leaves2";
 	public const LIGHT_BLOCK = "minecraft:light_block";
 	public const LIGHT_BLUE_BUNDLE = "minecraft:light_blue_bundle";
+	public const LIGHT_BLUE_CUSHION = "minecraft:light_blue_cushion";
 	public const LIGHT_BLUE_DYE = "minecraft:light_blue_dye";
 	public const LIGHT_BLUE_HARNESS = "minecraft:light_blue_harness";
 	public const LIGHT_GRAY_BUNDLE = "minecraft:light_gray_bundle";
+	public const LIGHT_GRAY_CUSHION = "minecraft:light_gray_cushion";
 	public const LIGHT_GRAY_DYE = "minecraft:light_gray_dye";
 	public const LIGHT_GRAY_HARNESS = "minecraft:light_gray_harness";
 	public const LIME_BUNDLE = "minecraft:lime_bundle";
+	public const LIME_CUSHION = "minecraft:lime_cushion";
 	public const LIME_DYE = "minecraft:lime_dye";
 	public const LIME_HARNESS = "minecraft:lime_harness";
 	public const LINGERING_POTION = "minecraft:lingering_potion";
@@ -362,6 +370,7 @@ final class ItemTypeNames{
 	public const LOG2 = "minecraft:log2";
 	public const MACE = "minecraft:mace";
 	public const MAGENTA_BUNDLE = "minecraft:magenta_bundle";
+	public const MAGENTA_CUSHION = "minecraft:magenta_cushion";
 	public const MAGENTA_DYE = "minecraft:magenta_dye";
 	public const MAGENTA_HARNESS = "minecraft:magenta_harness";
 	public const MAGMA_CREAM = "minecraft:magma_cream";
@@ -437,6 +446,7 @@ final class ItemTypeNames{
 	public const OMINOUS_BOTTLE = "minecraft:ominous_bottle";
 	public const OMINOUS_TRIAL_KEY = "minecraft:ominous_trial_key";
 	public const ORANGE_BUNDLE = "minecraft:orange_bundle";
+	public const ORANGE_CUSHION = "minecraft:orange_cushion";
 	public const ORANGE_DYE = "minecraft:orange_dye";
 	public const ORANGE_HARNESS = "minecraft:orange_harness";
 	public const OXIDIZED_COPPER_DOOR = "minecraft:oxidized_copper_door";
@@ -458,6 +468,7 @@ final class ItemTypeNames{
 	public const PIGLIN_SPAWN_EGG = "minecraft:piglin_spawn_egg";
 	public const PILLAGER_SPAWN_EGG = "minecraft:pillager_spawn_egg";
 	public const PINK_BUNDLE = "minecraft:pink_bundle";
+	public const PINK_CUSHION = "minecraft:pink_cushion";
 	public const PINK_DYE = "minecraft:pink_dye";
 	public const PINK_HARNESS = "minecraft:pink_harness";
 	public const PITCHER_POD = "minecraft:pitcher_pod";
@@ -465,6 +476,11 @@ final class ItemTypeNames{
 	public const PLENTY_POTTERY_SHERD = "minecraft:plenty_pottery_sherd";
 	public const POISONOUS_POTATO = "minecraft:poisonous_potato";
 	public const POLAR_BEAR_SPAWN_EGG = "minecraft:polar_bear_spawn_egg";
+	public const POPLAR_BOAT = "minecraft:poplar_boat";
+	public const POPLAR_CHEST_BOAT = "minecraft:poplar_chest_boat";
+	public const POPLAR_DOOR = "minecraft:poplar_door";
+	public const POPLAR_HANGING_SIGN = "minecraft:poplar_hanging_sign";
+	public const POPLAR_SIGN = "minecraft:poplar_sign";
 	public const POPPED_CHORUS_FRUIT = "minecraft:popped_chorus_fruit";
 	public const PORKCHOP = "minecraft:porkchop";
 	public const POTATO = "minecraft:potato";
@@ -479,6 +495,7 @@ final class ItemTypeNames{
 	public const PUMPKIN_PIE = "minecraft:pumpkin_pie";
 	public const PUMPKIN_SEEDS = "minecraft:pumpkin_seeds";
 	public const PURPLE_BUNDLE = "minecraft:purple_bundle";
+	public const PURPLE_CUSHION = "minecraft:purple_cushion";
 	public const PURPLE_DYE = "minecraft:purple_dye";
 	public const PURPLE_HARNESS = "minecraft:purple_harness";
 	public const QUARTZ = "minecraft:quartz";
@@ -495,6 +512,7 @@ final class ItemTypeNames{
 	public const RAW_IRON = "minecraft:raw_iron";
 	public const RECOVERY_COMPASS = "minecraft:recovery_compass";
 	public const RED_BUNDLE = "minecraft:red_bundle";
+	public const RED_CUSHION = "minecraft:red_cushion";
 	public const RED_DYE = "minecraft:red_dye";
 	public const RED_FLOWER = "minecraft:red_flower";
 	public const RED_HARNESS = "minecraft:red_harness";
@@ -562,6 +580,7 @@ final class ItemTypeNames{
 	public const STONE_SPEAR = "minecraft:stone_spear";
 	public const STONE_SWORD = "minecraft:stone_sword";
 	public const STONEBRICK = "minecraft:stonebrick";
+	public const STRAW_BED = "minecraft:straw_bed";
 	public const STRAY_SPAWN_EGG = "minecraft:stray_spawn_egg";
 	public const STRIDER_SPAWN_EGG = "minecraft:strider_spawn_egg";
 	public const STRING = "minecraft:string";
@@ -608,6 +627,7 @@ final class ItemTypeNames{
 	public const WHEAT = "minecraft:wheat";
 	public const WHEAT_SEEDS = "minecraft:wheat_seeds";
 	public const WHITE_BUNDLE = "minecraft:white_bundle";
+	public const WHITE_CUSHION = "minecraft:white_cushion";
 	public const WHITE_DYE = "minecraft:white_dye";
 	public const WHITE_HARNESS = "minecraft:white_harness";
 	public const WILD_ARMOR_TRIM_SMITHING_TEMPLATE = "minecraft:wild_armor_trim_smithing_template";
@@ -630,6 +650,7 @@ final class ItemTypeNames{
 	public const WRITABLE_BOOK = "minecraft:writable_book";
 	public const WRITTEN_BOOK = "minecraft:written_book";
 	public const YELLOW_BUNDLE = "minecraft:yellow_bundle";
+	public const YELLOW_CUSHION = "minecraft:yellow_cushion";
 	public const YELLOW_DYE = "minecraft:yellow_dye";
 	public const YELLOW_HARNESS = "minecraft:yellow_harness";
 	public const ZOGLIN_SPAWN_EGG = "minecraft:zoglin_spawn_egg";
