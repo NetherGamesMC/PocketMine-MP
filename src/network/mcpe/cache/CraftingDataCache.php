@@ -95,7 +95,9 @@ final class CraftingDataCache{
 		$converter = TypeConverter::getInstance($this->protocolId);
 		$itemTagDowngrader = ItemTagDowngrader::getInstance($this->protocolId);
 		$protocolId = $this->getProtocolId();
-		$makeRecipeId = static fn(int $recipeNetId) : string => BE::packUnsignedInt($recipeNetId); //TODO: this should probably be changed to something human-readable
+		$makeRecipeId = static fn(int $recipeNetId) : string => $protocolId >= ProtocolInfo::PROTOCOL_1_26_40 ?
+			Uuid::uuid4()->toString() :
+			BE::packUnsignedInt($recipeNetId); //TODO: this should probably be changed to something human-readable
 
 		$noUnlockingRequirement = new RecipeUnlockingRequirement(RecipeUnlockingContext::ALWAYS_UNLOCKED, null);
 		$recipeNetId = self::RECIPE_ID_OFFSET;

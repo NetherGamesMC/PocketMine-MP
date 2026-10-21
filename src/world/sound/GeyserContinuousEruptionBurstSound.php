@@ -25,11 +25,15 @@ namespace pocketmine\world\sound;
 
 use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
+use pocketmine\network\mcpe\protocol\ProtocolInfo;
 use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
 
-final class GeyserContinuousEruptionBurstSound implements Sound{
+final class GeyserContinuousEruptionBurstSound extends ProtocolSound{
 
 	public function encode(Vector3 $pos) : array{
+		if($this->protocolId < ProtocolInfo::PROTOCOL_1_26_30){
+			return [];
+		}
 		return [LevelSoundEventPacket::nonActorSound(
 			LevelSoundEvent::GEYSER_CONTINUOUS_ERUPTION_ACTIVE,
 			$pos,

@@ -25,13 +25,20 @@ namespace pocketmine\world\sound;
 
 use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\protocol\ClientboundUpdateSoundDataPacket;
+use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
+use pocketmine\network\mcpe\protocol\ProtocolInfo;
+use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
 use pocketmine\network\mcpe\protocol\types\sound\SoundDataEvent;
 
-class RecordStopSound implements Sound{
+class RecordStopSound extends ProtocolSound{
 	public function __construct(private int $serverSoundHandleId = 0){
 	}
 
 	public function encode(Vector3 $pos) : array{
+		if($this->protocolId < ProtocolInfo::PROTOCOL_1_26_50){
+			return [LevelSoundEventPacket::nonActorSound(LevelSoundEvent::RECORD_NULL, $pos, false)];
+		}
+
 		return [
 			ClientboundUpdateSoundDataPacket::create($this->serverSoundHandleId, SoundDataEvent::stop())
 		];

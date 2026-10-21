@@ -74,11 +74,14 @@ class PreSpawnPacketHandler extends PacketHandler{
 
 			$typeConverter = $this->session->getTypeConverter();
 
-			$this->session->getLogger()->debug("Sending JigsawStructureData");
-			$this->session->sendDataPacket(StaticPacketCache::getInstance()->getJigsawStructureData());
+			//this data is only available for the latest version
+			if($protocolId >= ProtocolInfo::PROTOCOL_1_26_50){
+				$this->session->getLogger()->debug("Sending JigsawStructureData");
+				$this->session->sendDataPacket(StaticPacketCache::getInstance()->getJigsawStructureData());
 
-			$this->session->getLogger()->debug("Sending VoxelShapesPacket");
-			$this->session->sendDataPacket(StaticPacketCache::getInstance()->getVoxelShapes());
+				$this->session->getLogger()->debug("Sending VoxelShapesPacket");
+				$this->session->sendDataPacket(StaticPacketCache::getInstance()->getVoxelShapes());
+			}
 
 			$this->session->getLogger()->debug("Preparing StartGamePacket");
 			$levelSettings = new LevelSettings();
@@ -126,7 +129,7 @@ class PreSpawnPacketHandler extends PacketHandler{
 				true,
 				null,
 				new ServerTelemetryData("", "", "", ""),
-				StaticPacketCache::getInstance()->getBlockPaletteEntries(),
+				$protocolId >= ProtocolInfo::PROTOCOL_1_26_50 ? StaticPacketCache::getInstance()->getBlockPaletteEntries() : [],
 				0,
 				$typeConverter->getItemTypeDictionary()->getEntries(),
 			));

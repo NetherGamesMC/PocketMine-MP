@@ -25,22 +25,23 @@ namespace pocketmine\world\sound;
 
 use pocketmine\block\ChiseledBookshelf;
 use pocketmine\math\Vector3;
-use pocketmine\network\mcpe\convert\TypeConverter;
 use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
 use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
 
-final class ChiseledBookshelfInsertSound implements Sound{
+final class ChiseledBookshelfInsertSound extends BlockSound{
 	public function __construct(
-		private readonly ChiseledBookshelf $bookshelf,
+		ChiseledBookshelf $bookshelf,
 		private readonly bool $enchanted
-	){}
+	){
+		parent::__construct($bookshelf);
+	}
 
 	public function encode(Vector3 $pos) : array{
 		return [LevelSoundEventPacket::nonActorSound(
 			$this->enchanted ? LevelSoundEvent::INSERT_ENCHANTED : LevelSoundEvent::INSERT,
 			$pos,
 			false,
-			TypeConverter::getInstance()->getBlockTranslator()->internalIdToNetworkId($this->bookshelf->getStateId())
+			$this->toRuntimeId()
 		)];
 	}
 }
