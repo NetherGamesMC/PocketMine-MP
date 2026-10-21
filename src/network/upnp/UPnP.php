@@ -85,6 +85,9 @@ use const SOCKET_ETIMEDOUT;
 use const SOL_SOCKET;
 use const SOL_UDP;
 
+/**
+ * @deprecated Deprecated along with {@link UPnPNetworkInterface} as of Minecraft Bedrock 1.26.50.
+ */
 class UPnP{
 	private const MAX_DISCOVERY_ATTEMPTS = 3;
 

@@ -34,12 +34,10 @@ interface Compressor{
 	public function compress(string $payload) : string;
 
 	/**
-	 * Returns the canonical ID of this compressor, used to tell the remote end how to decompress a packet compressed
+	 * Returns the compression algorithm of this compressor, used to tell the remote end how to decompress a packet compressed
 	 * with this compressor.
-	 *
-	 * @return CompressionAlgorithm::*
 	 */
-	public function getNetworkId() : int;
+	public function getNetworkType() : CompressionAlgorithm;
 
 	/**
 	 * Returns the minimum size of packet batch that the compressor will attempt to compress.

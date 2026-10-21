@@ -75,13 +75,101 @@ network:
   #Due to large overhead of AsyncTask, async compression isn't worth it except for large packets
   async-compression-threshold: 10000
   #Experimental. Use UPnP to automatically port forward
+  #DEPRECATED: This only forwards the RakNet port and will be removed once RakNet support is removed.
+  #NetherNet handles NAT traversal via STUN/TURN relays (transport.nethernet.ice-servers) and supports reverse proxies or tunnels for signaling.
   upnp-forwarding: false
   #Maximum size in bytes of packets sent over the network (default 1492 bytes). Packets larger than this will be
   #fragmented or split into smaller parts. Clients can request MTU sizes up to but not more than this number.
+  #DEPRECATED: Only applies to RakNet. See transport.nethernet.mtu for NetherNet.
   max-mtu-size: 1492
   #Enable encryption of Minecraft network traffic. This has an impact on performance, but prevents hackers from stealing sessions and pretending to be other players.
   #DO NOT DISABLE THIS unless you understand the risks involved.
+  #DEPRECATED: This setting will be removed in a future version once the RakNet support is removed.
   enable-encryption: true
+
+transport:
+  #Network transport(s) used for player connections. Accepts a comma-separated list (e.g. raknet,nethernet), up to 8 entries.
+  #Built-in options: raknet, nethernet. Plugins may register additional transports.
+  name: nethernet,raknet
+  #Settings for the NetherNet (WebRTC) transport.
+  nethernet:
+    #Path to the persistent identity key, relative to the data directory.
+    #Clients trust this key upon their first join.
+    #Changing this file will prompt players to re-verify on their next connection.
+    key-file: nethernet.key
+
+    #Operator domain or server name included in identity assertions sent to clients.
+    #Leave empty to use the server MOTD (with formatting codes stripped).
+    #Clients pin the public key rather than this name, so changing it does not require players to re-verify.
+    identity-domain:
+
+    #Enables ICE UDP multiplexing so connections share a single UDP socket.
+    #Only uses a fixed port if port-range specifies a single port; otherwise, an arbitrary port is assigned.
+    #NOTE: Cannot be used with TURN servers.
+    ice-udp-mux: false
+
+    #UDP port range for connections.
+    #Parsed as [min, max], e.g. [19132, 19140]. Leave empty to use any available port.
+    port-range:
+
+    #Maximum size in bytes of IP packets sent to clients. Not negotiated, so only raise it if every client's network path allows it.
+    mtu: 1200
+
+    #IP addresses advertised to clients for peer connections instead of locally gathered interface addresses.
+    #Useful when behind a 1:1 NAT (specify the public IP) or when the server has unreachable internal interfaces.
+    #Addresses are announced using the local bound port; 1:1 port forwarding without port translation is required.
+    #Only affects HTTP signaling; LAN discovery always advertises local addresses. Leave empty to advertise all gathered addresses.
+    advertise-addresses:
+    #Example:
+    #- 203.0.113.10
+
+    #STUN/TURN ICE servers for NAT traversal and relay.
+    #Unreachable servers will delay connection establishment until candidate gathering times out.
+    ice-servers:
+      #port defaults to 3478 if omitted.
+      #Example:
+      #- type: stun
+      #  host: stun.example.com
+      #  port: 3478
+      #- type: turn
+      #  host: turn.example.com
+      #  port: 3478
+      #  username: <username for the TURN server>
+      #  password: <password for the TURN server>
+
+    #Built-in signaling channels: HTTP signaling endpoint (GET/POST /v1/join) and LAN broadcast discovery.
+    builtin-signaling:
+      #Disable if signaling is handled externally (e.g. by a custom signaling plugin using NetherNetInterface::acceptOffer()).
+      #If disabled without an alternative signaling mechanism, clients cannot connect.
+      enabled: true
+
+      #TCP port for HTTP signaling. Set to 0 to use server-port from server.properties.
+      #Only modify this when behind a reverse proxy that forwards signaling traffic to a custom port.
+      port: 0
+
+      #TLS encryption for the HTTP signaling endpoint. Plain HTTP requests are redirected to HTTPS.
+      #Leave certificate and key empty to serve plain HTTP only. Paths are relative to the data directory.
+      tls:
+        #Path to PEM certificate or certificate chain file.
+        certificate:
+        #Path to PEM private key file.
+        key:
+        #Optional private key passphrase, or file:<path> to read from a file.
+        passphrase:
+
+      #Enable when HTTP signaling is behind a reverse proxy (e.g. nginx, Caddy, Cloudflare).
+      #Allows resolving the client's real IP from forwarded headers for features like TURN relays.
+      reverse-proxy:
+        enabled: false
+        #Header the proxy sets the client's IP in (e.g. X-Forwarded-For, X-Real-IP, CF-Connecting-IP).
+        header: X-Forwarded-For
+        #List of trusted reverse proxy IP addresses or CIDR blocks.
+        #Forwarded headers from unlisted addresses are ignored to prevent IP address spoofing.
+        #At least one entry is required when enabled.
+        trusted-ips:
+        #Example:
+        #- 127.0.0.1
+        #- 10.0.0.2
 
 debug:
   #If > 1, it will show debug messages in the console
@@ -134,7 +222,7 @@ auto-report:
   send-settings: true
   send-phpinfo: false
   use-https: true
-  host: crash.pmmp.io
+  host: crash.axolotl-pm.org
 
 anonymous-statistics:
   #Sends anonymous statistics for data aggregation, plugin usage tracking
@@ -149,11 +237,11 @@ auto-updater:
   preferred-channel: stable
   #If using a development version, it will suggest changing the channel
   suggest-channels: true
-  host: update.pmmp.io
+  host: update.axolotl-pm.org
 
 timings:
   #Choose the host to use for viewing your timings results.
-  host: timings.pmmp.io
+  host: timings.axolotl-pm.org
 
 console:
   #Whether to accept commands via the console. If disabled, anything typed on the console will be ignored.

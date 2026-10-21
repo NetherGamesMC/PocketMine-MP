@@ -24,12 +24,16 @@ declare(strict_types=1);
 namespace pocketmine\world\sound;
 
 use pocketmine\math\Vector3;
-use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
-use pocketmine\network\mcpe\protocol\types\LevelSoundEvent;
+use pocketmine\network\mcpe\protocol\ClientboundUpdateSoundDataPacket;
+use pocketmine\network\mcpe\protocol\types\sound\SoundDataEvent;
 
 class RecordStopSound implements Sound{
+	public function __construct(private int $serverSoundHandleId = 0){
+	}
 
 	public function encode(Vector3 $pos) : array{
-		return [LevelSoundEventPacket::nonActorSound(LevelSoundEvent::RECORD_NULL, $pos, false)];
+		return [
+			ClientboundUpdateSoundDataPacket::create($this->serverSoundHandleId, SoundDataEvent::stop())
+		];
 	}
 }

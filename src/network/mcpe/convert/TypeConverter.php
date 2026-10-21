@@ -131,7 +131,7 @@ class TypeConverter{
 	 *
 	 * @internal
 	 */
-	public function coreGameModeToProtocol(GameMode $gamemode) : int{
+	public function coreGameModeToProtocol(GameMode $gamemode) : ProtocolGameMode{
 		return match($gamemode){
 			GameMode::SURVIVAL => ProtocolGameMode::SURVIVAL,
 			//TODO: native spectator support
@@ -140,7 +140,7 @@ class TypeConverter{
 		};
 	}
 
-	public function protocolGameModeToCore(int $gameMode) : ?GameMode{
+	public function protocolGameModeToCore(ProtocolGameMode $gameMode) : ?GameMode{
 		return match($gameMode){
 			ProtocolGameMode::SURVIVAL => GameMode::SURVIVAL,
 			ProtocolGameMode::CREATIVE => GameMode::CREATIVE,
@@ -159,9 +159,8 @@ class TypeConverter{
 			$oldStringId = $ingredient->getItemId();
 			[$stringId, $meta] = $this->itemDataDowngrader->downgrade($oldStringId, 0);
 
-			$id = $this->itemTypeDictionary->fromStringId($stringId);
 			$meta = $meta === 0 && $stringId === $oldStringId ? self::RECIPE_INPUT_WILDCARD_META : $meta; // downgrader returns the same meta
-			$descriptor = new IntIdMetaItemDescriptor($id, $meta);
+			$descriptor = new IntIdMetaItemDescriptor($this->itemTypeDictionary->fromStringId($stringId), $meta);
 		}elseif($ingredient instanceof ExactRecipeIngredient){
 			$item = $ingredient->getItem();
 			[$id, $meta, $blockRuntimeId] = $this->itemTranslator->toNetworkId($item);

@@ -18,17 +18,17 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Setup PHP
-        uses: pmmp/setup-php-action@3.2.0
+        uses: axolotl-pm/setup-php-action@1.0.0
         with:
           php-version: 8.3
           install-path: "./bin"
           pm-version-major: 5
 
       - name: Restore Composer package cache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: |
             ~/.cache/composer/files
@@ -41,7 +41,7 @@ jobs:
         run: composer install --prefer-dist --no-interaction
 
       - name: Clone extension stubs
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: pmmp/phpstorm-stubs
           path: extension-stubs

@@ -27,6 +27,11 @@ use pocketmine\network\NetworkInterface;
 use pocketmine\utils\Internet;
 use pocketmine\utils\InternetException;
 
+/**
+ * @deprecated Deprecated along with RakNet as of Minecraft Bedrock 1.26.50, as this interface only forwards the
+ * RakNet UDP port. NetherNet handles NAT traversal via STUN/TURN relays, and its signaling can be exposed through a
+ * reverse proxy or tunnel.
+ */
 final class UPnPNetworkInterface implements NetworkInterface{
 	private ?string $serviceURL = null;
 

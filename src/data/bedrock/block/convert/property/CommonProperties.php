@@ -44,12 +44,14 @@ use pocketmine\block\utils\CopperOxidation;
 use pocketmine\block\utils\CoralMaterial;
 use pocketmine\block\utils\CoralType;
 use pocketmine\block\utils\DyeColor;
+use pocketmine\block\utils\HorizontalConnectable;
 use pocketmine\block\utils\HorizontalFacing;
 use pocketmine\block\utils\Lightable;
 use pocketmine\block\utils\MultiAnyFacing;
 use pocketmine\block\utils\PillarRotation;
 use pocketmine\block\utils\SignLikeRotation;
 use pocketmine\block\utils\SlabType;
+use pocketmine\block\utils\StairShape;
 use pocketmine\block\Wall;
 use pocketmine\block\Wood;
 use pocketmine\data\bedrock\block\BlockLegacyMetadata;
@@ -202,6 +204,20 @@ final class CommonProperties{
 	 * @phpstan-var non-empty-list<Property<contravariant Wall>>
 	 */
 	public readonly array $wallProperties;
+
+	/**
+	 * @var Property[]
+	 * @phpstan-var non-empty-list<Property<contravariant HorizontalConnectable>>
+	 */
+	public readonly array $horizontalConnectionProperties;
+
+	/**
+	 * TODO: Implement HorizontalConnectable on Tripwire and use $horizontalConnectionProperties instead.
+	 *
+	 * @var Property[]
+	 * @phpstan-var non-empty-list<Property<object>>
+	 */
+	public readonly array $dummyHorizontalConnectionProperties;
 
 	private function __construct(){
 		$vm = ValueMappings::getInstance();
@@ -390,8 +406,27 @@ final class CommonProperties{
 		];
 
 		$this->stairProperties = [
+			new ValueFromStringProperty(StateNames::MC_CORNER, $vm->stairCorner, fn(Stair $b) => $b->getShape(), fn(Stair $b, StairShape $v) => $b->setShape($v)),
 			new BoolProperty(StateNames::UPSIDE_DOWN_BIT, fn(Stair $b) => $b->isUpsideDown(), fn(Stair $b, bool $v) => $b->setUpsideDown($v)),
 			new ValueFromIntProperty(StateNames::WEIRDO_DIRECTION, $vm->horizontalFacing5Minus, $hfGet, $hfSet),
+		];
+
+		$connectionProperty = static fn(string $stateName, int $facing) : BoolProperty => new BoolProperty(
+			$stateName,
+			static fn(HorizontalConnectable $b) => $b->isConnectedAt($facing),
+			static fn(HorizontalConnectable $b, bool $connected) => $b->setConnectedAt($facing, $connected)
+		);
+		$this->horizontalConnectionProperties = [
+			$connectionProperty(StateNames::MC_CONNECTION_EAST, Facing::EAST),
+			$connectionProperty(StateNames::MC_CONNECTION_NORTH, Facing::NORTH),
+			$connectionProperty(StateNames::MC_CONNECTION_SOUTH, Facing::SOUTH),
+			$connectionProperty(StateNames::MC_CONNECTION_WEST, Facing::WEST),
+		];
+		$this->dummyHorizontalConnectionProperties = [
+			new DummyProperty(StateNames::MC_CONNECTION_EAST, false),
+			new DummyProperty(StateNames::MC_CONNECTION_NORTH, false),
+			new DummyProperty(StateNames::MC_CONNECTION_SOUTH, false),
+			new DummyProperty(StateNames::MC_CONNECTION_WEST, false),
 		];
 
 		$this->stemProperties = [

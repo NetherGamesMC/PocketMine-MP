@@ -38,6 +38,13 @@ body:
         > [!IMPORTANT]
         > **Steps to reproduce are critical to finding the cause of the problem!**
         > Without reproducing steps, the issue will probably not be solvable and may be closed.
+        
+        > [!IMPORTANT]
+        > While we accept AI-generated reports, you must follow these guidelines before submitting:
+        > - Verify for yourself that the issue is reproducible and not a false positive.
+        > - You must provide in-game tests or test code to reproduce so that maintainers do not waste time trying to reproduce the issue themselves.
+        > - If applicable, provide the prompt you used to generate the report.
+        > Failure to follow these guidelines may result in your issue being closed.
 
   - type: textarea
     attributes:

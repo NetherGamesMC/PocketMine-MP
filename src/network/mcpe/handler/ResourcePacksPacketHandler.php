@@ -33,6 +33,7 @@ use pocketmine\network\mcpe\protocol\ResourcePackDataInfoPacket;
 use pocketmine\network\mcpe\protocol\ResourcePacksInfoPacket;
 use pocketmine\network\mcpe\protocol\ResourcePackStackPacket;
 use pocketmine\network\mcpe\protocol\types\Experiments;
+use pocketmine\network\mcpe\protocol\types\ResourcePackClientResponseStatus;
 use pocketmine\network\mcpe\protocol\types\resourcepacks\ResourcePackInfoEntry;
 use pocketmine\network\mcpe\protocol\types\resourcepacks\ResourcePackStackEntry;
 use pocketmine\network\mcpe\protocol\types\resourcepacks\ResourcePackType;
@@ -157,11 +158,11 @@ class ResourcePacksPacketHandler extends PacketHandler{
 
 	public function handleResourcePackClientResponse(ResourcePackClientResponsePacket $packet) : bool{
 		switch($packet->status){
-			case ResourcePackClientResponsePacket::STATUS_REFUSED:
+			case ResourcePackClientResponseStatus::REFUSED:
 				//TODO: add lang strings for this
 				$this->session->disconnect("Refused resource packs", "You must accept resource packs to join this server.", true);
 				break;
-			case ResourcePackClientResponsePacket::STATUS_SEND_PACKS:
+			case ResourcePackClientResponseStatus::SEND_PACKS:
 				if($this->requestedMetadata){
 					throw new PacketHandlingException("Cannot request resource pack metadata multiple times");
 				}
@@ -207,7 +208,7 @@ class ResourcePacksPacketHandler extends PacketHandler{
 				}
 				$this->session->getLogger()->debug("Player requested download of " . count($packet->packIds) . " resource packs");
 				break;
-			case ResourcePackClientResponsePacket::STATUS_HAVE_ALL_PACKS:
+			case ResourcePackClientResponseStatus::HAVE_ALL_PACKS:
 				if($this->requestedStack){
 					throw new PacketHandlingException("Cannot request resource pack stack multiple times");
 				}
@@ -228,8 +229,11 @@ class ResourcePacksPacketHandler extends PacketHandler{
 				$this->session->sendDataPacket(ResourcePackStackPacket::create($stack, [], false, ProtocolInfo::MINECRAFT_VERSION_NETWORK, new Experiments([], false), false));
 				$this->session->getLogger()->debug("Applying resource pack stack");
 				break;
-			case ResourcePackClientResponsePacket::STATUS_COMPLETED:
+			case ResourcePackClientResponseStatus::COMPLETED:
 				$this->session->getLogger()->debug("Resource packs sequence completed");
+				if($this->session->getHandler() === $this){
+					$this->session->setHandler(null);
+				}
 				($this->completionCallback)();
 				break;
 			default:

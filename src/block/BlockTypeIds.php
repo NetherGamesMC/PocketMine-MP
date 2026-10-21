@@ -854,8 +854,40 @@ final class BlockTypeIds{
 	public const BAMBOO_MOSAIC_STAIRS = 10824;
 	public const AZALEA = 10825;
 	public const FLOWERING_AZALEA = 10826;
+	public const HEAVY_CORE = 10827;
+	public const SULFUR = 10828;
+	public const SULFUR_SLAB = 10829;
+	public const SULFUR_STAIRS = 10830;
+	public const SULFUR_WALL = 10831;
+	public const CHISELED_SULFUR = 10832;
+	public const POLISHED_SULFUR = 10833;
+	public const POLISHED_SULFUR_SLAB = 10834;
+	public const POLISHED_SULFUR_STAIRS = 10835;
+	public const POLISHED_SULFUR_WALL = 10836;
+	public const SULFUR_BRICKS = 10837;
+	public const SULFUR_BRICK_SLAB = 10838;
+	public const SULFUR_BRICK_STAIRS = 10839;
+	public const SULFUR_BRICK_WALL = 10840;
+	public const POTENT_SULFUR = 10841;
+	public const WET_POTENT_SULFUR = 10842;
+	public const CONTINUOUS_POTENT_SULFUR = 10843;
+	public const CYCLING_POTENT_SULFUR = 10844;
 
-	public const FIRST_UNUSED_BLOCK_ID = 10827;
+	public const CINNABAR = 10845;
+	public const CINNABAR_SLAB = 10846;
+	public const CINNABAR_STAIRS = 10847;
+	public const CINNABAR_WALL = 10848;
+	public const CHISELED_CINNABAR = 10849;
+	public const POLISHED_CINNABAR = 10850;
+	public const POLISHED_CINNABAR_SLAB = 10851;
+	public const POLISHED_CINNABAR_STAIRS = 10852;
+	public const POLISHED_CINNABAR_WALL = 10853;
+	public const CINNABAR_BRICKS = 10854;
+	public const CINNABAR_BRICK_SLAB = 10855;
+	public const CINNABAR_BRICK_STAIRS = 10856;
+	public const CINNABAR_BRICK_WALL = 10857;
+
+	public const FIRST_UNUSED_BLOCK_ID = 10858;
 
 	private static int $nextDynamicId = self::FIRST_UNUSED_BLOCK_ID;
 

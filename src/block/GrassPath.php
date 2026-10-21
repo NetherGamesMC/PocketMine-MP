@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace pocketmine\block;
 
+use pocketmine\block\utils\SupportType;
 use pocketmine\item\Item;
 use pocketmine\math\AxisAlignedBB;
 use pocketmine\math\Facing;
@@ -31,6 +32,14 @@ class GrassPath extends Transparent{
 
 	protected function recalculateCollisionBoxes() : array{
 		return [AxisAlignedBB::one()->trim(Facing::UP, 1 / 16)];
+	}
+
+	public function getSupportType(int $facing) : SupportType{
+		return match($facing){
+			Facing::UP => SupportType::EDGE,
+			Facing::DOWN => SupportType::FULL,
+			default => SupportType::NONE,
+		};
 	}
 
 	public function onNearbyBlockChange() : void{

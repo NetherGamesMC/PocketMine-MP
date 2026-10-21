@@ -73,6 +73,7 @@ final class TileFactory{
 		$this->register(Lectern::class, ["Lectern", "minecraft:lectern"]);
 		$this->register(MonsterSpawner::class, ["MobSpawner", "minecraft:mob_spawner"]);
 		$this->register(Note::class, ["Music", "minecraft:noteblock"]);
+		$this->register(PotentSulfur::class, ["PotentSulfurBlock", "minecraft:potent_sulfur"]); //what an inconsistent, mojang. potent sulfur has 'Block' suffix in their name...
 		$this->register(ShulkerBox::class, ["ShulkerBox", "minecraft:shulker_box"]);
 		$this->register(Sign::class, ["Sign", "minecraft:sign"]);
 		$this->register(Smoker::class, ["Smoker", "minecraft:smoker"]);

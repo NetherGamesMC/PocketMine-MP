@@ -54,6 +54,7 @@ use pocketmine\block\tile\MobHead as TileMobHead;
 use pocketmine\block\tile\MonsterSpawner as TileMonsterSpawner;
 use pocketmine\block\tile\NormalFurnace as TileNormalFurnace;
 use pocketmine\block\tile\Note as TileNote;
+use pocketmine\block\tile\PotentSulfur as TilePotentSulfur;
 use pocketmine\block\tile\ShulkerBox as TileShulkerBox;
 use pocketmine\block\tile\Sign as TileSign;
 use pocketmine\block\tile\Smoker as TileSmoker;
@@ -264,6 +265,7 @@ final class VanillaBlocksInputs extends RegistrySource{
 		self::register("hardened_glass", fn(BID $id) => new HardenedGlass($id, "Hardened Glass", $hardenedGlassBreakInfo));
 		self::register("hardened_glass_pane", fn(BID $id) => new HardenedGlassPane($id, "Hardened Glass Pane", $hardenedGlassBreakInfo));
 		self::register("hay_bale", fn(BID $id) => new HayBale($id, "Hay Bale", new Info(new BreakInfo(0.5))));
+		self::register("heavy_core", fn(BID $id) => new HeavyCore($id, "Heavy Core", new Info(BreakInfo::pickaxe(10.0, null, 6000.0))));
 		self::register("hopper", fn(BID $id) => new Hopper($id, "Hopper", new Info(BreakInfo::pickaxe(3.0, ToolTier::WOOD, 24.0))), TileHopper::class);
 		self::register("ice", fn(BID $id) => new Ice($id, "Ice", new Info(BreakInfo::pickaxe(0.5))));
 
@@ -615,6 +617,47 @@ final class VanillaBlocksInputs extends RegistrySource{
 			}
 		});
 		self::register("cactus_flower", fn(BID $id) => new CactusFlower($id, "Cactus Flower", new Info(BreakInfo::instant())));
+
+		$sulfurBreakInfo = new Info(BreakInfo::pickaxe(1.5, ToolTier::WOOD, 30.0));
+
+		self::register("sulfur", fn(BID $id) => new Opaque($id, "Sulfur", $sulfurBreakInfo));
+		self::register("sulfur_slab", fn(BID $id) => new Slab($id, "Sulfur", $sulfurBreakInfo));
+		self::register("sulfur_stairs", fn(BID $id) => new Stair($id, "Sulfur Stairs", $sulfurBreakInfo));
+		self::register("sulfur_wall", fn(BID $id) => new Wall($id, "Sulfur Wall", $sulfurBreakInfo));
+		self::register("chiseled_sulfur", fn(BID $id) => new Opaque($id, "Chiseled Sulfur", $sulfurBreakInfo));
+
+		self::register("polished_sulfur", fn(BID $id) => new Opaque($id, "Polished Sulfur", $sulfurBreakInfo));
+		self::register("polished_sulfur_slab", fn(BID $id) => new Slab($id, "Polished Sulfur", $sulfurBreakInfo));
+		self::register("polished_sulfur_stairs", fn(BID $id) => new Stair($id, "Polished Sulfur Stairs", $sulfurBreakInfo));
+		self::register("polished_sulfur_wall", fn(BID $id) => new Wall($id, "Polished Sulfur Wall", $sulfurBreakInfo));
+
+		self::register("sulfur_bricks", fn(BID $id) => new Opaque($id, "Sulfur Bricks", $sulfurBreakInfo));
+		self::register("sulfur_brick_slab", fn(BID $id) => new Slab($id, "Sulfur Brick", $sulfurBreakInfo));
+		self::register("sulfur_brick_stairs", fn(BID $id) => new Stair($id, "Sulfur Brick Stairs", $sulfurBreakInfo));
+		self::register("sulfur_brick_wall", fn(BID $id) => new Wall($id, "Sulfur Brick Wall", $sulfurBreakInfo));
+
+		self::register("potent_sulfur", fn(BID $id) => new PotentSulfur($id, "Potent Sulfur", $sulfurBreakInfo), TilePotentSulfur::class);
+		self::register("wet_potent_sulfur", fn(BID $id) => new WetPotentSulfur($id, "Wet Potent Sulfur", $sulfurBreakInfo), TilePotentSulfur::class);
+		self::register("continuous_potent_sulfur", fn(BID $id) => new ContinuousPotentSulfur($id, "Continuous Potent Sulfur", $sulfurBreakInfo), TilePotentSulfur::class);
+		self::register("cycling_potent_sulfur", fn(BID $id) => new CyclingPotentSulfur($id, "Cycling Potent Sulfur", $sulfurBreakInfo), TilePotentSulfur::class);
+
+		$cinnabarBreakInfo = new Info(BreakInfo::pickaxe(1.5, ToolTier::WOOD, 30.0));
+
+		self::register("cinnabar", fn(BID $id) => new Opaque($id, "Cinnabar", $cinnabarBreakInfo));
+		self::register("cinnabar_slab", fn(BID $id) => new Slab($id, "Cinnabar", $cinnabarBreakInfo));
+		self::register("cinnabar_stairs", fn(BID $id) => new Stair($id, "Cinnabar Stairs", $cinnabarBreakInfo));
+		self::register("cinnabar_wall", fn(BID $id) => new Wall($id, "Cinnabar Wall", $cinnabarBreakInfo));
+		self::register("chiseled_cinnabar", fn(BID $id) => new Opaque($id, "Chiseled Cinnabar", $cinnabarBreakInfo));
+
+		self::register("polished_cinnabar", fn(BID $id) => new Opaque($id, "Polished Cinnabar", $cinnabarBreakInfo));
+		self::register("polished_cinnabar_slab", fn(BID $id) => new Slab($id, "Polished Cinnabar", $cinnabarBreakInfo));
+		self::register("polished_cinnabar_stairs", fn(BID $id) => new Stair($id, "Polished Cinnabar Stairs", $cinnabarBreakInfo));
+		self::register("polished_cinnabar_wall", fn(BID $id) => new Wall($id, "Polished Cinnabar Wall", $cinnabarBreakInfo));
+
+		self::register("cinnabar_bricks", fn(BID $id) => new Opaque($id, "Cinnabar Bricks", $cinnabarBreakInfo));
+		self::register("cinnabar_brick_slab", fn(BID $id) => new Slab($id, "Cinnabar Brick", $cinnabarBreakInfo));
+		self::register("cinnabar_brick_stairs", fn(BID $id) => new Stair($id, "Cinnabar Brick Stairs", $cinnabarBreakInfo));
+		self::register("cinnabar_brick_wall", fn(BID $id) => new Wall($id, "Cinnabar Brick Wall", $cinnabarBreakInfo));
 
 		self::registerBlocksR13();
 		self::registerBlocksR14();

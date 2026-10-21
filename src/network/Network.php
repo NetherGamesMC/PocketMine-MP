@@ -28,12 +28,17 @@ namespace pocketmine\network;
 
 use pocketmine\event\server\NetworkInterfaceRegisterEvent;
 use pocketmine\event\server\NetworkInterfaceUnregisterEvent;
+use pocketmine\network\mcpe\convert\TypeConverter;
+use pocketmine\network\mcpe\EntityEventBroadcaster;
+use pocketmine\network\mcpe\PacketBroadcaster;
 use pocketmine\utils\Utils;
 use function base64_encode;
 use function get_class;
 use function preg_match;
 use function spl_object_id;
+use function strtolower;
 use function time;
+use function trim;
 use const PHP_INT_MAX;
 
 class Network{
@@ -42,6 +47,20 @@ class Network{
 
 	/** @var AdvancedNetworkInterface[] */
 	private array $advancedInterfaces = [];
+
+	/**
+	 * @var Transport[]
+	 * @phpstan-var array<string, Transport>
+	 */
+	private array $transports = [];
+
+	/**
+	 * @var Transport[]
+	 * @phpstan-var array<string, Transport>
+	 */
+	private array $activeTransports = [];
+
+	private bool $transportsStarted = false;
 
 	/** @var RawPacketHandler[] */
 	private array $rawPacketHandlers = [];
@@ -93,9 +112,19 @@ class Network{
 	}
 
 	/**
+	 * @deprecated Register a {@link Transport} with {@link Network::registerTransport()} instead, so that users can
+	 * enable it from pocketmine.yml.
+	 *
 	 * @throws NetworkInterfaceStartException
 	 */
 	public function registerInterface(NetworkInterface $interface) : bool{
+		return $this->addInterface($interface);
+	}
+
+	/**
+	 * @throws NetworkInterfaceStartException
+	 */
+	private function addInterface(NetworkInterface $interface) : bool{
 		$ev = new NetworkInterfaceRegisterEvent($interface);
 		$ev->call();
 		if(!$ev->isCancelled()){
@@ -115,6 +144,91 @@ class Network{
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Registers a transport under the given name.
+	 *
+	 * @throws \InvalidArgumentException if a transport is already registered under the same name
+	 */
+	public function registerTransport(string $name, Transport $transport) : void{
+		$name = strtolower(trim($name));
+		if(isset($this->transports[$name])){
+			throw new \InvalidArgumentException("Transport \"$name\" is already registered");
+		}
+		$this->transports[$name] = $transport;
+	}
+
+	/**
+	 * Returns the transport registered under the given name, or null if there is none.
+	 */
+	public function getTransport(string $name) : ?Transport{
+		return $this->transports[strtolower(trim($name))] ?? null;
+	}
+
+	/**
+	 * Returns all registered transports, active or not, indexed by name.
+	 *
+	 * @return Transport[]
+	 * @phpstan-return array<string, Transport>
+	 */
+	public function getTransports() : array{
+		return $this->transports;
+	}
+
+	/**
+	 * Marks a registered transport to be started on network startup. This must be called before active transports are
+	 * started.
+	 *
+	 * @throws \InvalidArgumentException if no transport is registered under the given name
+	 * @throws \LogicException if the active transports have already been started
+	 */
+	public function activateTransport(string $name) : void{
+		$name = strtolower(trim($name));
+		if(!isset($this->transports[$name])){
+			throw new \InvalidArgumentException("Transport \"$name\" is not registered");
+		}
+		if($this->transportsStarted){
+			throw new \LogicException("Transports have already been started");
+		}
+		$this->activeTransports[$name] = $this->transports[$name];
+	}
+
+	/**
+	 * @return Transport[]
+	 * @phpstan-return array<string, Transport>
+	 */
+	public function getActiveTransports() : array{
+		return $this->activeTransports;
+	}
+
+	/**
+	 * Starts all active transports and registers their interfaces.
+	 *
+	 * @throws NetworkInterfaceStartException if a transport fails to start
+	 * @throws \LogicException if active transports have already been started
+	 *
+	 * @internal
+	 */
+	public function startActiveTransports(
+		PacketBroadcaster $packetBroadcaster,
+		EntityEventBroadcaster $entityEventBroadcaster,
+		TypeConverter $typeConverter
+	) : void{
+		if($this->transportsStarted){
+			throw new \LogicException("Transports have already been started");
+		}
+		$this->transportsStarted = true;
+
+		foreach(Utils::stringifyKeys($this->activeTransports) as $name => $transport){
+			try{
+				foreach($transport->createInterfaces($packetBroadcaster, $entityEventBroadcaster, $typeConverter) as $interface){
+					$this->addInterface($interface);
+				}
+			}catch(NetworkInterfaceStartException $e){
+				throw new NetworkInterfaceStartException("Failed to start transport \"$name\": " . $e->getMessage(), 0, $e);
+			}
+		}
 	}
 
 	/**

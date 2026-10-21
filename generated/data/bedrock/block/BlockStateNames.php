@@ -90,6 +90,11 @@ final class BlockStateNames{
 	public const LIT = "lit";
 	public const MC_BLOCK_FACE = "minecraft:block_face";
 	public const MC_CARDINAL_DIRECTION = "minecraft:cardinal_direction";
+	public const MC_CONNECTION_EAST = "minecraft:connection_east";
+	public const MC_CONNECTION_NORTH = "minecraft:connection_north";
+	public const MC_CONNECTION_SOUTH = "minecraft:connection_south";
+	public const MC_CONNECTION_WEST = "minecraft:connection_west";
+	public const MC_CORNER = "minecraft:corner";
 	public const MC_FACING_DIRECTION = "minecraft:facing_direction";
 	public const MC_VERTICAL_HALF = "minecraft:vertical_half";
 	public const MOISTURIZED_AMOUNT = "moisturized_amount";

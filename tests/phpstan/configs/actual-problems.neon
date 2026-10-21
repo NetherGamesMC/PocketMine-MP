@@ -151,7 +151,7 @@ parameters:
 			path: ../../../src/block/DragonEgg.php
 
 		-
-			message: '#^Parameter \#2 \$y of method pocketmine\\world\\World\:\:getBlockAt\(\) expects int, float\|int\<\-64, 319\> given\.$#'
+			message: '#^Parameter \#2 \$y of method pocketmine\\world\\World\:\:getBlockAt\(\) expects int, float\|int given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../../src/block/DragonEgg.php
@@ -807,12 +807,6 @@ parameters:
 		-
 			message: '#^Cannot call method syncAll\(\) on pocketmine\\network\\mcpe\\InventoryManager\|null\.$#'
 			identifier: method.nonObject
-			count: 1
-			path: ../../../src/network/mcpe/NetworkSession.php
-
-		-
-			message: '#^Parameter \#1 \$clientPub of class pocketmine\\network\\mcpe\\encryption\\PrepareEncryptionTask constructor expects string, string\|null given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../../src/network/mcpe/NetworkSession.php
 

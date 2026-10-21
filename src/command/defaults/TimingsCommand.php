@@ -129,7 +129,7 @@ class TimingsCommand extends VanillaCommand{
 			"private" => "true"
 		];
 
-		$host = $sender->getServer()->getConfigGroup()->getPropertyString(YmlServerProperties::TIMINGS_HOST, "timings.pmmp.io");
+		$host = $sender->getServer()->getConfigGroup()->getPropertyString(YmlServerProperties::TIMINGS_HOST, "timings.axolotl-pm.org");
 
 		$sender->getServer()->getAsyncPool()->submitTask(new BulkCurlTask(
 			[new BulkCurlTaskOperation(

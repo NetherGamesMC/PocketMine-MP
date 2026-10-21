@@ -51,7 +51,7 @@ final class SessionStartPacketHandler extends PacketHandler{
 		//TODO: we're filling in the defaults to get pre-1.19.30 behaviour back for now, but we should explore the new options in the future
 		$this->session->sendDataPacket(NetworkSettingsPacket::create(
 			NetworkSettingsPacket::COMPRESS_EVERYTHING,
-			$this->session->getCompressor()->getNetworkId(),
+			$this->session->getCompressor()->getNetworkType(),
 			false,
 			0,
 			0

@@ -37,6 +37,8 @@ use pocketmine\math\Axis;
 use pocketmine\math\Facing;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
+use pocketmine\world\sound\ChiseledBookshelfInsertSound;
+use pocketmine\world\sound\ChiseledBookshelfPickupSound;
 use function spl_object_id;
 
 class ChiseledBookshelf extends Opaque implements HorizontalFacing{
@@ -160,15 +162,18 @@ class ChiseledBookshelf extends Opaque implements HorizontalFacing{
 
 		$inventory = $tile->getInventory();
 		if(!$inventory->isSlotEmpty($slot->value)){
-			$returnedItems[] = $inventory->getItem($slot->value);
+			$storedItem = $inventory->getItem($slot->value);
+			$returnedItems[] = $storedItem;
 			$inventory->clear($slot->value);
 			$this->setSlot($slot, false);
 			$this->lastInteractedSlot = $slot;
+			$this->position->getWorld()->addSound($this->position, new ChiseledBookshelfPickupSound($this, $storedItem instanceof EnchantedBook));
 		}elseif($item instanceof WritableBookBase || $item instanceof Book || $item instanceof EnchantedBook){
 			//TODO: type tags like blocks would be better for this
 			$inventory->setItem($slot->value, $item->pop());
 			$this->setSlot($slot, true);
 			$this->lastInteractedSlot = $slot;
+			$this->position->getWorld()->addSound($this->position, new ChiseledBookshelfInsertSound($this, $item instanceof EnchantedBook));
 		}else{
 			return true;
 		}

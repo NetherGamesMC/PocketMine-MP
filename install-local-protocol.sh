@@ -12,7 +12,7 @@ composer config repositories.bedrock-data path ../deps/BedrockData
 composer config repositories.bedrock-block-upgrade-schema path ../deps/BedrockBlockUpgradeSchema
 composer config repositories.bedrock-item-upgrade-schema path ../deps/BedrockItemUpgradeSchema
 
-composer require pocketmine/bedrock-protocol:*@dev pocketmine/bedrock-data:*@dev pocketmine/bedrock-block-upgrade-schema:*@dev pocketmine/bedrock-item-upgrade-schema:*@dev
+composer require nethergamesmc/bedrock-protocol:*@dev nethergamesmc/bedrock-data:*@dev axolotl-pm/bedrock-block-upgrade-schema:*@dev axolotl-pm/bedrock-item-upgrade-schema:*@dev
 
 composer install
 

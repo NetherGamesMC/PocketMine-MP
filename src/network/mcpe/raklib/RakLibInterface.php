@@ -32,11 +32,10 @@ use pocketmine\network\mcpe\EntityEventBroadcaster;
 use pocketmine\network\mcpe\NetworkSession;
 use pocketmine\network\mcpe\PacketBroadcaster;
 use pocketmine\network\mcpe\protocol\PacketPool;
-use pocketmine\network\mcpe\protocol\ProtocolInfo;
+use pocketmine\network\mcpe\ServerPongData;
 use pocketmine\network\Network;
 use pocketmine\network\NetworkInterfaceStartException;
 use pocketmine\network\PacketHandlingException;
-use pocketmine\player\GameMode;
 use pocketmine\Server;
 use pocketmine\thread\ThreadCrashException;
 use pocketmine\timings\Timings;
@@ -50,14 +49,15 @@ use raklib\server\ipc\RakLibToUserThreadMessageReceiver;
 use raklib\server\ipc\UserToRakLibThreadMessageSender;
 use raklib\server\ServerEventListener;
 use raklib\utils\InternetAddress;
-use function addcslashes;
 use function base64_encode;
 use function implode;
 use function mt_rand;
-use function rtrim;
 use function substr;
 use const PHP_INT_MAX;
 
+/**
+ * @deprecated RakNet has been deprecated as of 1.26.50
+ */
 class RakLibInterface implements ServerEventListener, AdvancedNetworkInterface{
 	/**
 	 * Sometimes this gets changed when the MCPE-layer protocol gets broken to the point where old and new can't
@@ -71,6 +71,7 @@ class RakLibInterface implements ServerEventListener, AdvancedNetworkInterface{
 	private Network $network;
 
 	private int $rakServerId;
+	private InternetAddress $bindAddress;
 	private RakLibServer $rakLib;
 
 	/** @var NetworkSession[] */
@@ -100,6 +101,7 @@ class RakLibInterface implements ServerEventListener, AdvancedNetworkInterface{
 		$this->typeConverter = $typeConverter;
 
 		$this->rakServerId = mt_rand(0, PHP_INT_MAX);
+		$this->bindAddress = new InternetAddress($ip, $port, $ipV6 ? 6 : 4);
 
 		$sleeperEntry = $this->server->getTickSleeper()->addNotifier(function() : void{
 			Timings::$connection->startTiming();
@@ -120,7 +122,7 @@ class RakLibInterface implements ServerEventListener, AdvancedNetworkInterface{
 			$this->server->getLogger(),
 			$mainToThreadBuffer,
 			$threadToMainBuffer,
-			new InternetAddress($ip, $port, $ipV6 ? 6 : 4),
+			$this->bindAddress,
 			$this->rakServerId,
 			$this->server->getConfigGroup()->getPropertyInt(YmlServerProperties::NETWORK_MAX_MTU_SIZE, 1492),
 			self::MCPE_RAKNET_PROTOCOL_VERSION,
@@ -142,10 +144,21 @@ class RakLibInterface implements ServerEventListener, AdvancedNetworkInterface{
 			throw new NetworkInterfaceStartException($e->getMessage(), 0, $e);
 		}
 		$this->server->getLogger()->debug("RakLib booted successfully");
+
+		$ip = $this->bindAddress->getIp();
+		$prettyIp = $this->bindAddress->getVersion() === 6 ? "[$ip]" : $ip;
+		$this->server->getLogger()->info($this->server->getLanguage()->translate(KnownTranslationFactory::pocketmine_server_networkStart($prettyIp, (string) $this->bindAddress->getPort())));
 	}
 
 	public function setNetwork(Network $network) : void{
 		$this->network = $network;
+	}
+
+	/**
+	 * @internal
+	 */
+	public function getBindAddress() : InternetAddress{
+		return $this->bindAddress;
 	}
 
 	public function tick() : void{
@@ -258,25 +271,7 @@ class RakLibInterface implements ServerEventListener, AdvancedNetworkInterface{
 	}
 
 	public function setName(string $name) : void{
-		$info = $this->server->getQueryInformation();
-
-		$this->interface->setName(implode(";",
-			[
-				"MCPE",
-				rtrim(addcslashes($name, ";"), '\\'),
-				ProtocolInfo::CURRENT_PROTOCOL,
-				ProtocolInfo::MINECRAFT_VERSION_NETWORK,
-				$info->getPlayerCount(),
-				$info->getMaxPlayerCount(),
-				$this->rakServerId,
-				$this->server->getName(),
-				match($this->server->getGamemode()){
-					GameMode::SURVIVAL => "Survival",
-					GameMode::ADVENTURE => "Adventure",
-					default => "Creative"
-				}
-			]) . ";"
-		);
+		$this->interface->setName(ServerPongData::build($this->server, $name, $this->rakServerId));
 	}
 
 	public function setPortCheck(bool $name) : void{

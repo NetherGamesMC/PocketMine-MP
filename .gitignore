@@ -19,6 +19,11 @@ server.lock
 /phpstan.neon
 /docker/test_data/
 
+# NetherNet identity key and certificate files
+nethernet.key
+nethernet-cert.pem
+nethernet-key.pem
+
 # Common IDEs
 .idea/*
 !.idea/codeStyles/

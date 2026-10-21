@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace pocketmine\block;
 
+use pocketmine\block\utils\RandomOffsetGenerator;
 use pocketmine\block\utils\StaticSupportTrait;
 use pocketmine\block\utils\SupportType;
 use pocketmine\data\runtime\RuntimeDataDescriber;
@@ -52,6 +53,10 @@ class Bamboo extends Transparent{
 	public const NO_LEAVES = 0;
 	public const SMALL_LEAVES = 1;
 	public const LARGE_LEAVES = 2;
+
+	private const OFFSET_MIN = -4 / 16;
+	private const OFFSET_MAX = 4 / 16;
+	private const OFFSET_STEPS = 16;
 
 	protected bool $thick = false; //age in PC, but this is 0/1
 	protected bool $ready = false;
@@ -88,9 +93,15 @@ class Bamboo extends Transparent{
 	}
 
 	protected function recalculateCollisionBoxes() : array{
-		//this places the BB at the northwest corner, not the center
-		$inset = 1 - (($this->thick ? 3 : 2) / 16);
-		return [AxisAlignedBB::one()->trim(Facing::SOUTH, $inset)->trim(Facing::EAST, $inset)];
+		//the stalk starts at the block center and extends towards +X/+Z; the random offset then moves it around.
+		$width = ($this->thick ? 3 : 2) / 16;
+		return [
+			AxisAlignedBB::one()
+				->trim(Facing::WEST, 0.5)
+				->trim(Facing::EAST, 0.5 - $width)
+				->trim(Facing::NORTH, 0.5)
+				->trim(Facing::SOUTH, 0.5 - $width)
+		];
 	}
 
 	public function getSupportType(int $facing) : SupportType{
@@ -113,10 +124,14 @@ class Bamboo extends Transparent{
 	}
 
 	public function getModelPositionOffset() : ?Vector3{
-		$seed = self::getOffsetSeed($this->position->getFloorX(), 0, $this->position->getFloorZ());
-		$retX = (($seed % 12) + 1) / 16;
-		$retZ = ((($seed >> 8) % 12) + 1) / 16;
-		return new Vector3($retX, 0, $retZ);
+		[$offsetX, $offsetZ] = RandomOffsetGenerator::horizontal(
+			$this->position->getFloorX(),
+			$this->position->getFloorZ(),
+			self::OFFSET_MIN,
+			self::OFFSET_MAX,
+			self::OFFSET_STEPS
+		);
+		return new Vector3($offsetX, 0, $offsetZ);
 	}
 
 	private function canBeSupportedAt(Block $block) : bool{

@@ -77,7 +77,7 @@ final class ZlibCompressor implements Compressor{
 			Utils::assumeNotFalse(zlib_encode($payload, ZLIB_ENCODING_RAW, $level), "ZLIB compression failed");
 	}
 
-	public function getNetworkId() : int{
+	public function getNetworkType() : CompressionAlgorithm{
 		return CompressionAlgorithm::ZLIB;
 	}
 }

@@ -42,7 +42,7 @@ class RedstoneWire extends Flowable implements AnalogRedstoneSignalEmitter{
 	}
 
 	private function canBeSupportedAt(Block $block) : bool{
-		return $block->getAdjacentSupportType(Facing::DOWN)->hasCenterSupport();
+		return $block->getAdjacentSupportType(Facing::DOWN)->hasEdgeSupport();
 	}
 
 	public function asItem() : Item{
