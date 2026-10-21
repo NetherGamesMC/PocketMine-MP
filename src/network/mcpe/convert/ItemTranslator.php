@@ -140,6 +140,7 @@ final class ItemTranslator{
 			ProtocolInfo::PROTOCOL_1_26_50 => 281,
 
 			ProtocolInfo::PROTOCOL_1_26_45,
+			ProtocolInfo::PROTOCOL_1_26_44,
 			ProtocolInfo::PROTOCOL_1_26_40 => 271,
 
 			ProtocolInfo::PROTOCOL_1_26_30,

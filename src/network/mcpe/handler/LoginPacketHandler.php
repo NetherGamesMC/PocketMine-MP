@@ -50,6 +50,7 @@ use pocketmine\player\PlayerInfo;
 use pocketmine\player\XboxLivePlayerInfo;
 use pocketmine\Server;
 use pocketmine\utils\Utils;
+use pocketmine\utils\VersionString;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use function base64_decode;
@@ -100,6 +101,18 @@ class LoginPacketHandler extends PacketHandler{
 			$authInfo->Token = "";
 		}
 		$clientData = $this->parseClientData($packet->clientDataJwt);
+
+		if($this->session->getProtocolId() === ProtocolInfo::PROTOCOL_1_26_44){
+			//1.26.40 clients also send 2168, but 1.26.44 changed the wire format without a protocol bump
+			try{
+				$version = new VersionString($clientData->GameVersion);
+			}catch(\InvalidArgumentException $e){
+				throw PacketHandlingException::wrap($e);
+			}
+			if($version->getMajor() === 1 && $version->getMinor() === 26 && $version->getPatch() < 44){
+				$this->session->setProtocolId(ProtocolInfo::PROTOCOL_1_26_40);
+			}
+		}
 
 		if($authInfo->AuthenticationType === AuthenticationType::FULL->value){
 			try{
