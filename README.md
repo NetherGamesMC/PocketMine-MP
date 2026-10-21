@@ -1,23 +1,23 @@
 <p align="center">
-	<a href="https://pmmp.io">
+	<a href="https://nethergames.org">
 		<!--[if IE]>
-			<img src="https://github.com/pmmp/PocketMine-MP/blob/stable/.github/readme/pocketmine.png" alt="The PocketMine-MP logo" title="PocketMine" loading="eager" />
+			<img src="https://github.com/NetherGamesMC/PocketMine-MP/blob/stable/.github/readme/legacy-pocketmine.png" alt="The PocketMine-MP logo" title="PocketMine" loading="eager" />
 		<![endif]-->
 		<picture>
-			<source srcset="https://raw.githubusercontent.com/pmmp/PocketMine-MP/stable/.github/readme/pocketmine-dark-rgb.gif" media="(prefers-color-scheme: dark)">
-			<img src="https://raw.githubusercontent.com/pmmp/PocketMine-MP/stable/.github/readme/pocketmine-rgb.gif" loading="eager" />
+			<source srcset="https://raw.githubusercontent.com/NetherGamesMC/PocketMine-MP/stable/.github/readme/pocketmine-dark-rgb.gif" media="(prefers-color-scheme: dark)">
+			<img src="https://raw.githubusercontent.com/NetherGamesMC/PocketMine-MP/stable/.github/readme/pocketmine-rgb.gif" loading="eager" />
 		</picture>
 	</a><br>
 	<b>A highly customisable, open source server software for Minecraft: Bedrock Edition written in PHP</b>
 </p>
 
 <p align="center">
-	<a href="https://github.com/pmmp/PocketMine-MP/actions/workflows/main.yml"><img src="https://github.com/pmmp/PocketMine-MP/actions/workflows/main.yml/badge.svg" alt="CI" /></a>
-	<a href="https://github.com/pmmp/PocketMine-MP/releases/latest"><img alt="GitHub release (latest SemVer)" src="https://img.shields.io/github/v/release/pmmp/PocketMine-MP?label=release&sort=semver"></a>
-	<a href="https://discord.gg/bmSAZBG"><img src="https://img.shields.io/discord/373199722573201408?label=discord&color=7289DA&logo=discord" alt="Discord" /></a>
+	<a href="https://github.com/NetherGamesMC/PocketMine-MP/actions/workflows/main.yml"><img src="https://github.com/NetherGamesMC/PocketMine-MP/actions/workflows/main.yml/badge.svg" alt="CI" /></a>
+	<a href="https://github.com/axolotl-pm/PocketMine-MP/releases/latest"><img alt="GitHub release (latest SemVer)" src="https://img.shields.io/github/v/release/axolotl-pm/PocketMine-MP?label=release&sort=semver"></a>
+	<a href="https://nethergames.org/discord"><img src="https://img.shields.io/discord/276992368358457344?label=discord&color=7289DA&logo=discord" alt="Discord" /></a>
 	<br>
-	<a href="https://github.com/pmmp/PocketMine-MP/releases"><img alt="GitHub all releases" src="https://img.shields.io/github/downloads/pmmp/PocketMine-MP/total?label=downloads%40total"></a>
-	<a href="https://github.com/pmmp/PocketMine-MP/releases/latest"><img alt="GitHub release (latest by SemVer)" src="https://img.shields.io/github/downloads/pmmp/PocketMine-MP/latest/total?sort=semver"></a>
+	<a href="https://github.com/axolotl-pm/PocketMine-MP/releases"><img alt="GitHub all releases" src="https://img.shields.io/github/downloads/axolotl-pm/PocketMine-MP/total?label=downloads%40total"></a>
+	<a href="https://github.com/axolotl-pm/PocketMine-MP/releases/latest"><img alt="GitHub release (latest by SemVer)" src="https://img.shields.io/github/downloads/axolotl-pm/PocketMine-MP/latest/total?sort=semver"></a>
 </p>
 
 ## What is this?
@@ -46,7 +46,7 @@ If that's not an option for you, you may be able to add some of PocketMine-MP's 
 - [Plugin repository](https://poggit.pmmp.io/plugins)
 
 ## Community & Support
-Join our [Discord](https://discord.gg/bmSAZBG) server to chat with other users and developers.
+Join our [Discord](https://nethergames.org/discord) server to chat with other users and developers.
 
 You can also post questions on [StackOverflow](https://stackoverflow.com/tags/pocketmine) under the tag `pocketmine`.
 
