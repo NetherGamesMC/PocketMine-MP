@@ -182,11 +182,20 @@ final class BlockTranslator{
 	private BlockStateData $fallbackStateData;
 	private int $fallbackStateId;
 
+	/**
+	 * Protocols that share the same data files share the same instance
+	 * @var BlockTranslator[]
+	 * @phpstan-var array<string, BlockTranslator>
+	 */
+	private static array $loaded = [];
+
 	public static function loadFromProtocolId(int $protocolId) : BlockTranslator{
-		$canonicalBlockStatesRaw = Filesystem::fileGetContents(str_replace(".nbt", self::PATHS[$protocolId][self::CANONICAL_BLOCK_STATES_PATH] . ".nbt", BedrockDataFiles::CANONICAL_BLOCK_STATES_NBT));
-		$metaMappingRaw = Filesystem::fileGetContents(str_replace(".json", self::PATHS[$protocolId][self::BLOCK_STATE_META_MAP_PATH] . ".json", BedrockDataFiles::BLOCK_STATE_META_MAP_JSON));
-		return new self(
-			BlockStateDictionary::loadFromString($canonicalBlockStatesRaw, $metaMappingRaw),
+		$paths = self::PATHS[$protocolId];
+		return self::$loaded[$paths[self::CANONICAL_BLOCK_STATES_PATH] . ":" . $paths[self::BLOCK_STATE_META_MAP_PATH]] ??= new self(
+			BlockStateDictionary::loadFromString(
+				Filesystem::fileGetContents(str_replace(".nbt", $paths[self::CANONICAL_BLOCK_STATES_PATH] . ".nbt", BedrockDataFiles::CANONICAL_BLOCK_STATES_NBT)),
+				Filesystem::fileGetContents(str_replace(".json", $paths[self::BLOCK_STATE_META_MAP_PATH] . ".json", BedrockDataFiles::BLOCK_STATE_META_MAP_JSON))
+			),
 			GlobalBlockStateHandlers::getSerializer(),
 		);
 	}
