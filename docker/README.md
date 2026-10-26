@@ -1,5 +1,5 @@
 # PocketMine-MP Docker image
-This folder contains the files used to build and test the `pmmp/pocketmine-mp` Docker image.
+This folder contains the files used to build and test the `nethergamesmc/pocketmine-mp` Docker image.
 
 Docker is an easy, safe way to run software in a container where it can't affect anything else on your machine.
 You don't need to build any dependencies, and updating is as simple as changing the version number of the image you're using.
@@ -15,12 +15,15 @@ mkdir wherever-you-want
 cd wherever-you-want
 mkdir data plugins
 sudo chown -R 1000:1000 data plugins
-docker run -it -p 19132:19132/udp -v $PWD/data:/data -v $PWD/plugins:/plugins ghcr.io/pmmp/pocketmine-mp
+docker run -it -p 19132:19132/udp -v $PWD/data:/data -v $PWD/plugins:/plugins nethergamesmc/pocketmine-mp
 ```
+
+> [!NOTE]
+> The image is also published to the GitHub Container Registry. To use it, prefix the image name with `ghcr.io/` (e.g. `ghcr.io/nethergamesmc/pocketmine-mp`).
 
 To run a specific version, just add it to the end of the command, like this:
 ```
-docker run -it -p 19132:19132/udp -v $PWD/data:/data -v $PWD/plugins:/plugins ghcr.io/pmmp/pocketmine-mp:4.0.0
+docker run -it -p 19132:19132/udp -v $PWD/data:/data -v $PWD/plugins:/plugins nethergamesmc/pocketmine-mp:5.50.0-dev
 ```
 
 ## Changing the server port
@@ -58,8 +61,8 @@ This will run the server in the background even if you closed console. (No need 
 Use `docker ps` to see a list of running containers. It will look like this:
 ```
 user@DYLANS-PC:~/pm-docker-test$ docker ps
-CONTAINER ID   IMAGE                      COMMAND                  CREATED         STATUS         PORTS                                                                              NAMES
-dc20edd3dd62   pmmp/pocketmine-mp:4.0.0   "start-pocketmine"       7 seconds ago   Up 6 seconds   19132/tcp, 0.0.0.0:19132-19133->19132-19133/udp, :::19132-19133->19132-19133/udp   brave_dijkstra
+CONTAINER ID   IMAGE                                    COMMAND                  CREATED         STATUS         PORTS                                                                              NAMES
+dc20edd3dd62   nethergamesmc/pocketmine-mp:5.50.0-dev   "start-pocketmine"       7 seconds ago   Up 6 seconds   19132/tcp, 0.0.0.0:19132-19133->19132-19133/udp, :::19132-19133->19132-19133/udp   brave_dijkstra
 ```
 In this case, the container name is `brave_dijkstra`, but it might be something else in your case.
 
@@ -95,6 +98,13 @@ The list of plugins should be given in the format `PluginOne:1.2.3 PluginTwo:4.5
 
 ## Advanced usage: Passing args to PocketMine-MP.phar inside the container
 The `POCKETMINE_ARGS` environment variable will be passed to `PocketMine-MP.phar` when run.
+
+## Image tags
+Images are built by pushing to `stable` with `[Build]` in the commit message, and are published to both Docker Hub and the GitHub Container Registry.
+The version comes from `BASE_VERSION` in `src/VersionInfo.php`, with `-dev` added while `IS_DEVELOPMENT_BUILD` is `true`:
+- `<version>` (e.g. `5.50.0-dev`) is overwritten every time that version is built.
+- `<version>-<short sha>` is never overwritten, use it to pin an exact build.
+- `latest` is the newest build.
 
 ## Building this image
 The Dockerfile requires a build-arg `GIT_HASH` to fill the git hash metadata when building `PocketMine-MP.phar`.

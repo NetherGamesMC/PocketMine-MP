@@ -33,6 +33,10 @@ RUN php -dphar.readonly=0 ./build/server-phar.php --git ${GIT_HASH}
 # Just to make sure the build script didn't false-positive-exit
 RUN test -f /opt/pocketmine/repo/PocketMine-MP.phar
 
+# Only the phar, so CI can export it with `--target phar --output type=local,dest=<dir>`
+FROM scratch AS phar
+COPY --from=build-pocketmine /opt/pocketmine/repo/PocketMine-MP.phar /PocketMine-MP.phar
+
 FROM ubuntu:22.04
 LABEL maintainer="PMMP Team <team@pmmp.io>"
 
