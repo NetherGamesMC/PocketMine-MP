@@ -23,8 +23,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
-        with:
-          submodules: true #needed for build/php submodule
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4

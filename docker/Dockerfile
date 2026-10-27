@@ -1,15 +1,16 @@
-#PHP is built in a separate image from PM, so that we don't need to rebuild the entire Dockerfile whenever one src file changes
-FROM ubuntu:22.04 AS build-php
-ARG COMPILE_SH_ARGS="-f -g -P5"
+#Prebuilt PHP needs glibc 2.38+
+FROM ubuntu:resolute AS build-php
+ARG PHP_BINARY_URL="https://github.com/NetherGamesMC/php-build-scripts/releases/download/pm5-php-8.5-latest/PHP-8.5-Linux-x86_64-PM5.tar.gz"
 
-RUN apt-get update && apt-get install --no-install-recommends -y curl ca-certificates build-essential m4 gzip bzip2 bison git cmake autoconf automake pkg-config libtool libtool-bin re2c
-
-RUN mkdir /opt/pocketmine
-COPY --chmod=700 ./build/php/compile.sh /opt/pocketmine
 WORKDIR /opt/pocketmine
-RUN ./compile.sh -t linux64 -j ${THREADS:-$(grep -E ^processor /proc/cpuinfo | wc -l)} ${COMPILE_SH_ARGS}
+ADD ${PHP_BINARY_URL} /tmp/php.tar.gz
+RUN tar -xzf /tmp/php.tar.gz -C /opt/pocketmine && rm /tmp/php.tar.gz
+#php.ini's extension_dir points at the CI build path
+RUN EXTENSION_DIR=$(echo /opt/pocketmine/bin/php7/lib/php/extensions/no-debug-zts-*) && \
+	test -d "$EXTENSION_DIR" && \
+	sed -i "s|^extension_dir=.*|extension_dir=$EXTENSION_DIR|" /opt/pocketmine/bin/php7/bin/php.ini
 
-FROM ubuntu:22.04 AS build-pocketmine
+FROM ubuntu:resolute AS build-pocketmine
 ARG GIT_HASH=""
 RUN test ! -z ${GIT_HASH} || (echo "Missing build-arg GIT_HASH" && false)
 
@@ -37,11 +38,13 @@ RUN test -f /opt/pocketmine/repo/PocketMine-MP.phar
 FROM scratch AS phar
 COPY --from=build-pocketmine /opt/pocketmine/repo/PocketMine-MP.phar /PocketMine-MP.phar
 
-FROM ubuntu:22.04
+FROM ubuntu:resolute
 LABEL maintainer="PMMP Team <team@pmmp.io>"
 
 RUN apt-get update && apt-get install --no-install-recommends -y ca-certificates wget
 
+#Frees uid/gid 1000
+RUN userdel ubuntu && rm -rf /home/ubuntu
 RUN groupadd -g 1000 pocketmine
 RUN useradd -r --no-create-home -u 1000 -g pocketmine pocketmine
 
