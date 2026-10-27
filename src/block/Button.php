@@ -25,6 +25,7 @@ namespace pocketmine\block;
 
 use pocketmine\block\utils\AnyFacing;
 use pocketmine\block\utils\AnyFacingTrait;
+use pocketmine\block\utils\RedstoneSignalEmitter;
 use pocketmine\data\runtime\RuntimeDataDescriber;
 use pocketmine\item\Item;
 use pocketmine\math\Facing;
@@ -34,7 +35,7 @@ use pocketmine\world\BlockTransaction;
 use pocketmine\world\sound\RedstonePowerOffSound;
 use pocketmine\world\sound\RedstonePowerOnSound;
 
-abstract class Button extends Flowable implements AnyFacing{
+abstract class Button extends Flowable implements AnyFacing, RedstoneSignalEmitter{
 	use AnyFacingTrait;
 
 	protected bool $pressed = false;

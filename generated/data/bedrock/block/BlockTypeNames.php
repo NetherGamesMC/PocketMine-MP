@@ -435,6 +435,7 @@ final class BlockTypeNames{
 	public const DIORITE_WALL = "minecraft:diorite_wall";
 	public const DIRT = "minecraft:dirt";
 	public const DIRT_WITH_ROOTS = "minecraft:dirt_with_roots";
+	public const DISC_PRESS = "minecraft:disc_press";
 	public const DISPENSER = "minecraft:dispenser";
 	public const DOUBLE_CUT_COPPER_SLAB = "minecraft:double_cut_copper_slab";
 	public const DRAGON_EGG = "minecraft:dragon_egg";
@@ -712,6 +713,8 @@ final class BlockTypeNames{
 	public const HORN_CORAL_FAN = "minecraft:horn_coral_fan";
 	public const HORN_CORAL_WALL_FAN = "minecraft:horn_coral_wall_fan";
 	public const ICE = "minecraft:ice";
+	public const ICE_CRYSTAL = "minecraft:ice_crystal";
+	public const ICICLE = "minecraft:icicle";
 	public const INFESTED_CHISELED_STONE_BRICKS = "minecraft:infested_chiseled_stone_bricks";
 	public const INFESTED_COBBLESTONE = "minecraft:infested_cobblestone";
 	public const INFESTED_CRACKED_STONE_BRICKS = "minecraft:infested_cracked_stone_bricks";

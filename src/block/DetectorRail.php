@@ -23,9 +23,10 @@ declare(strict_types=1);
 
 namespace pocketmine\block;
 
+use pocketmine\block\utils\RedstoneSignalEmitter;
 use pocketmine\data\runtime\RuntimeDataDescriber;
 
-class DetectorRail extends StraightOnlyRail{
+class DetectorRail extends StraightOnlyRail implements RedstoneSignalEmitter{
 	protected bool $activated = false;
 
 	protected function describeBlockOnlyState(RuntimeDataDescriber $w) : void{

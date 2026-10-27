@@ -146,6 +146,22 @@ final class BlockStateStringValues{
 	public const POTENT_SULFUR_STATE_ERUPTING = "erupting";
 	public const POTENT_SULFUR_STATE_WET = "wet";
 
+	public const REDSTONE_EAST_NONE = "none";
+	public const REDSTONE_EAST_SIDE = "side";
+	public const REDSTONE_EAST_UP = "up";
+
+	public const REDSTONE_NORTH_NONE = "none";
+	public const REDSTONE_NORTH_SIDE = "side";
+	public const REDSTONE_NORTH_UP = "up";
+
+	public const REDSTONE_SOUTH_NONE = "none";
+	public const REDSTONE_SOUTH_SIDE = "side";
+	public const REDSTONE_SOUTH_UP = "up";
+
+	public const REDSTONE_WEST_NONE = "none";
+	public const REDSTONE_WEST_SIDE = "side";
+	public const REDSTONE_WEST_UP = "up";
+
 	public const SEA_GRASS_TYPE_DEFAULT = "default";
 	public const SEA_GRASS_TYPE_DOUBLE_BOT = "double_bot";
 	public const SEA_GRASS_TYPE_DOUBLE_TOP = "double_top";

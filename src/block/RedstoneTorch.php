@@ -25,9 +25,10 @@ namespace pocketmine\block;
 
 use pocketmine\block\utils\Lightable;
 use pocketmine\block\utils\LightableTrait;
+use pocketmine\block\utils\RedstoneSignalEmitter;
 use pocketmine\data\runtime\RuntimeDataDescriber;
 
-class RedstoneTorch extends Torch implements Lightable{
+class RedstoneTorch extends Torch implements Lightable, RedstoneSignalEmitter{
 	use LightableTrait;
 
 	public function __construct(BlockIdentifier $idInfo, string $name, BlockTypeInfo $typeInfo){
