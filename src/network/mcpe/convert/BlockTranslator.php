@@ -46,6 +46,10 @@ final class BlockTranslator{
 			self::CANONICAL_BLOCK_STATES_PATH => '',
 			self::BLOCK_STATE_META_MAP_PATH => '',
 		],
+		ProtocolInfo::PROTOCOL_1_26_50 => [
+			self::CANONICAL_BLOCK_STATES_PATH => '-1.26.50',
+			self::BLOCK_STATE_META_MAP_PATH => '-1.26.50',
+		],
 		ProtocolInfo::PROTOCOL_1_26_45 => [
 			self::CANONICAL_BLOCK_STATES_PATH => '-1.26.40',
 			self::BLOCK_STATE_META_MAP_PATH => '-1.26.40',
@@ -244,6 +248,9 @@ final class BlockTranslator{
 
 	/**
 	 * Looks up the current network state data associated with the given internal state ID.
+	 *
+	 * For palettes that predate some block properties (e.g. fire, chorus plant and redstone wire connections before
+	 * 1.26.60) the properties the client can't represent have their default values.
 	 */
 	public function internalIdToCurrentNetworkStateData(int $internalStateId) : BlockStateData{
 		//we don't directly use the blockstate serializer here - we can't assume that the network blockstate NBT is the
