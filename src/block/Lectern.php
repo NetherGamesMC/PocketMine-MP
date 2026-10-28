@@ -26,6 +26,7 @@ namespace pocketmine\block;
 use pocketmine\block\tile\Lectern as TileLectern;
 use pocketmine\block\utils\FacesOppositePlacingPlayerTrait;
 use pocketmine\block\utils\HorizontalFacing;
+use pocketmine\block\utils\RedstoneSignalEmitter;
 use pocketmine\block\utils\SupportType;
 use pocketmine\data\runtime\RuntimeDataDescriber;
 use pocketmine\item\Item;
@@ -37,7 +38,7 @@ use pocketmine\player\Player;
 use pocketmine\world\sound\LecternPlaceBookSound;
 use function count;
 
-class Lectern extends Transparent implements HorizontalFacing{
+class Lectern extends Transparent implements HorizontalFacing, RedstoneSignalEmitter{
 	use FacesOppositePlacingPlayerTrait;
 
 	protected int $viewedPage = 0;

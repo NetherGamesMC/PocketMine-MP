@@ -112,7 +112,8 @@ class FloatingTextParticle extends BlockParticle{
 				[],
 				$actorMetadata,
 				new PropertySyncData([], []),
-				[]
+				[],
+				null
 			);
 		}
 

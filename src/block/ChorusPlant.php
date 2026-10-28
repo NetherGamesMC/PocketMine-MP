@@ -23,7 +23,9 @@ declare(strict_types=1);
 
 namespace pocketmine\block;
 
+use pocketmine\block\utils\HorizontalConnectable;
 use pocketmine\block\utils\StaticSupportTrait;
+use pocketmine\data\runtime\RuntimeDataDescriber;
 use pocketmine\item\Item;
 use pocketmine\item\VanillaItems;
 use pocketmine\math\Axis;
@@ -31,14 +33,34 @@ use pocketmine\math\AxisAlignedBB;
 use pocketmine\math\Facing;
 use function mt_rand;
 
-final class ChorusPlant extends Flowable{
+final class ChorusPlant extends Flowable implements HorizontalConnectable{
 	use StaticSupportTrait;
 
-	/**
-	 * @var true[]
-	 * @phpstan-var array<int, true>
-	 */
+	/** @var int[] facing => facing */
 	protected array $connections = [];
+
+	protected function describeBlockOnlyState(RuntimeDataDescriber $w) : void{
+		$w->facingFlags($this->connections);
+	}
+
+	/**
+	 * @param int $facing any of Facing::ALL
+	 */
+	public function isConnectedAt(int $facing) : bool{
+		return isset($this->connections[$facing]);
+	}
+
+	/**
+	 * @param int $facing any of Facing::ALL
+	 */
+	public function setConnectedAt(int $facing, bool $connected) : void{
+		Facing::validate($facing);
+		if($connected){
+			$this->connections[$facing] = $facing;
+		}else{
+			unset($this->connections[$facing]);
+		}
+	}
 
 	protected function recalculateCollisionBoxes() : array{
 		$bb = AxisAlignedBB::one();
@@ -51,24 +73,29 @@ final class ChorusPlant extends Flowable{
 		return [$bb];
 	}
 
-	public function readStateFromWorld() : Block{
-		parent::readStateFromWorld();
-
-		$this->collisionBoxes = null;
-
+	private function recalculateConnections() : bool{
+		$changed = false;
 		foreach(Facing::ALL as $facing){
 			$block = $this->getSide($facing);
-			if(match($block->getTypeId()){
-				BlockTypeIds::END_STONE, BlockTypeIds::CHORUS_FLOWER, $this->getTypeId() => true,
+			$connected = match($block->getTypeId()){
+				BlockTypeIds::CHORUS_FLOWER, $this->getTypeId() => true,
+				BlockTypeIds::END_STONE => $facing === Facing::DOWN,
 				default => false
-			}){
-				$this->connections[$facing] = true;
-			}else{
-				unset($this->connections[$facing]);
+			};
+			if($connected !== $this->isConnectedAt($facing)){
+				$this->setConnectedAt($facing, $connected);
+				$changed = true;
 			}
 		}
+		return $changed;
+	}
 
-		return $this;
+	public function onNearbyBlockChange() : void{
+		if(!$this->canBeSupportedAt($this)){
+			$this->position->getWorld()->useBreakOn($this->position);
+		}elseif($this->recalculateConnections()){
+			$this->position->getWorld()->setBlock($this->position, $this);
+		}
 	}
 
 	private function canBeSupportedBy(Block $block) : bool{

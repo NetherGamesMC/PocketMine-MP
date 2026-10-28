@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace pocketmine\block;
 
+use pocketmine\block\utils\RedstoneSignalEmitter;
 use pocketmine\block\utils\StaticSupportTrait;
 use pocketmine\block\utils\SupportType;
 use pocketmine\entity\Entity;
@@ -34,7 +35,7 @@ use pocketmine\world\sound\PressurePlateActivateSound;
 use pocketmine\world\sound\PressurePlateDeactivateSound;
 use function count;
 
-abstract class PressurePlate extends Transparent{
+abstract class PressurePlate extends Transparent implements RedstoneSignalEmitter{
 	use StaticSupportTrait;
 
 	private readonly int $deactivationDelayTicks;

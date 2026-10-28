@@ -23,7 +23,9 @@ declare(strict_types=1);
 
 namespace pocketmine\block;
 
-class TrappedChest extends Chest{
+use pocketmine\block\utils\RedstoneSignalEmitter;
+
+class TrappedChest extends Chest implements RedstoneSignalEmitter{
 
 	//TODO: Redstone!
 

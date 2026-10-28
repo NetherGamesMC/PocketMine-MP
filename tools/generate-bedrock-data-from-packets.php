@@ -96,6 +96,7 @@ use function json_encode;
 use function ksort;
 use function mkdir;
 use function ord;
+use function preg_match;
 use function round;
 use function strlen;
 use const FILE_IGNORE_NEW_LINES;
@@ -325,9 +326,18 @@ class ParserPacketHandler extends PacketHandler{
 		$data = new RecipeIngredientData();
 
 		if($descriptor instanceof StringIdMetaItemDescriptor){
-			$data->name = $descriptor->getId();
-
 			$meta = $descriptor->getMeta();
+
+			//since 1.26.60 the ID may have the meta appended to it
+			$id = $descriptor->getId();
+			$data->name = $id;
+			if(preg_match('/^([^:]+:[^:]+):(\d+)$/', $id, $matches) === 1){
+				if((int) $matches[2] !== $meta){
+					throw new \UnexpectedValueException("Recipe ingredient \"$id\" has meta suffix $matches[2], but its meta is $meta");
+				}
+				$data->name = $matches[1];
+			}
+
 			if($meta !== 32767){
 				$blockStateId = $this->blockTranslator->getBlockStateDictionary()->lookupStateIdFromIdMeta($data->name, $meta);
 				if($this->blockItemIdMap->lookupBlockId($data->name) !== null && $blockStateId !== null){

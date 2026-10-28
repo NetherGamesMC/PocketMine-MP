@@ -27,6 +27,7 @@ use pocketmine\block\utils\AnyFacing;
 use pocketmine\block\utils\AnyFacingTrait;
 use pocketmine\block\utils\CopperMaterial;
 use pocketmine\block\utils\CopperTrait;
+use pocketmine\block\utils\RedstoneSignalEmitter;
 use pocketmine\item\Item;
 use pocketmine\math\Axis;
 use pocketmine\math\AxisAlignedBB;
@@ -35,7 +36,7 @@ use pocketmine\math\Vector3;
 use pocketmine\player\Player;
 use pocketmine\world\BlockTransaction;
 
-final class LightningRod extends Transparent implements AnyFacing, CopperMaterial{
+final class LightningRod extends Transparent implements AnyFacing, CopperMaterial, RedstoneSignalEmitter{
 	use CopperTrait;
 	use AnyFacingTrait;
 

@@ -90,9 +90,11 @@ final class BlockStateNames{
 	public const LIT = "lit";
 	public const MC_BLOCK_FACE = "minecraft:block_face";
 	public const MC_CARDINAL_DIRECTION = "minecraft:cardinal_direction";
+	public const MC_CONNECTION_DOWN = "minecraft:connection_down";
 	public const MC_CONNECTION_EAST = "minecraft:connection_east";
 	public const MC_CONNECTION_NORTH = "minecraft:connection_north";
 	public const MC_CONNECTION_SOUTH = "minecraft:connection_south";
+	public const MC_CONNECTION_UP = "minecraft:connection_up";
 	public const MC_CONNECTION_WEST = "minecraft:connection_west";
 	public const MC_CORNER = "minecraft:corner";
 	public const MC_FACING_DIRECTION = "minecraft:facing_direction";
@@ -119,7 +121,11 @@ final class BlockStateNames{
 	public const PROPAGULE_STAGE = "propagule_stage";
 	public const RAIL_DATA_BIT = "rail_data_bit";
 	public const RAIL_DIRECTION = "rail_direction";
+	public const REDSTONE_EAST = "redstone_east";
+	public const REDSTONE_NORTH = "redstone_north";
 	public const REDSTONE_SIGNAL = "redstone_signal";
+	public const REDSTONE_SOUTH = "redstone_south";
+	public const REDSTONE_WEST = "redstone_west";
 	public const REHYDRATION_LEVEL = "rehydration_level";
 	public const REPEATER_DELAY = "repeater_delay";
 	public const RESPAWN_ANCHOR_CHARGE = "respawn_anchor_charge";
