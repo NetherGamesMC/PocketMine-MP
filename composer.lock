@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "01c34b5648e4177bfa963b48f7da5526",
+    "content-hash": "b3a78e986041953591ffdc356d4345f8",
     "packages": [
         {
             "name": "adhocore/json-comment",
@@ -192,16 +192,16 @@
         },
         {
             "name": "axolotl-pm/nethernet",
-            "version": "0.3.1",
+            "version": "0.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/axolotl-pm/NetherNet.git",
-                "reference": "6ecacdaed3b0605a6a523235e5536f9c09ea56fd"
+                "reference": "16c25367f0bb310215b71cad3393b3b451891b16"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/axolotl-pm/NetherNet/zipball/6ecacdaed3b0605a6a523235e5536f9c09ea56fd",
-                "reference": "6ecacdaed3b0605a6a523235e5536f9c09ea56fd",
+                "url": "https://api.github.com/repos/axolotl-pm/NetherNet/zipball/16c25367f0bb310215b71cad3393b3b451891b16",
+                "reference": "16c25367f0bb310215b71cad3393b3b451891b16",
                 "shasum": ""
             },
             "require": {
@@ -235,9 +235,9 @@
             "description": "A NetherNet (WebRTC) transport implementation written in PHP",
             "support": {
                 "issues": "https://github.com/axolotl-pm/NetherNet/issues",
-                "source": "https://github.com/axolotl-pm/NetherNet/tree/0.3.1"
+                "source": "https://github.com/axolotl-pm/NetherNet/tree/0.3.2"
             },
-            "time": "2026-10-16T02:35:36+00:00"
+            "time": "2026-11-01T04:33:35+00:00"
         },
         {
             "name": "axolotl-pm/xoroshiro128pp",
