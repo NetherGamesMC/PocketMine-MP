@@ -148,6 +148,14 @@ final class NetherNetTransport implements Transport{
 				$bindAddress === "0.0.0.0" ? null : $bindAddress,
 				$configGroup->getProperty(Yml::TRANSPORT_NETHERNET_ADVERTISE_ADDRESSES)
 			);
+			if(
+				$configGroup->getConfigBool(ServerProperties::ENABLE_QUERY, true) &&
+				$iceConfig->isUdpMux() &&
+				$iceConfig->getPortRangeBegin() === $this->server->getPort() &&
+				$iceConfig->getPortRangeEnd() === $this->server->getPort()
+			){
+				throw new NetworkInterfaceStartException(Yml::TRANSPORT_NETHERNET_PORT_RANGE . " cannot be only the server port while " . ServerProperties::ENABLE_QUERY . " and " . Yml::TRANSPORT_NETHERNET_ICE_UDP_MUX . " are enabled, as the query port is already in use");
+			}
 			$mtu = $configGroup->getPropertyInt(Yml::TRANSPORT_NETHERNET_MTU, WebRtcTransportFactory::DEFAULT_MTU);
 			if($mtu < WebRtcTransportFactory::MIN_MTU || $mtu > WebRtcTransportFactory::MAX_MTU){
 				throw new \InvalidArgumentException("mtu must be between " . WebRtcTransportFactory::MIN_MTU . " and " . WebRtcTransportFactory::MAX_MTU . ", got $mtu");
